@@ -3,7 +3,7 @@ import os
 import numpy as np
 
 # ✅ 1. QGIS installation path
-QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.44.1\apps\qgis"
+QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.44.1\bin\python-qgis.bat"
 
 # ✅ 2. Set required environment variables
 os.environ["QGIS_PREFIX_PATH"] = QGIS_PREFIX_PATH

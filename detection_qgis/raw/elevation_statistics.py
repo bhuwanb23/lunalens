@@ -2,7 +2,7 @@ import sys
 import os
 
 # QGIS setup
-QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.44.1\apps\qgis"
+QGIS_PREFIX_PATH = r""
 os.environ["QGIS_PREFIX_PATH"] = QGIS_PREFIX_PATH
 os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = os.path.join(QGIS_PREFIX_PATH, "qt5", "plugins")
 os.environ["PATH"] += ";" + os.path.join(QGIS_PREFIX_PATH, "bin")
