@@ -7,24 +7,19 @@ from skimage import feature, morphology, measure, filters
 from skimage.segmentation import watershed
 from skimage.feature import peak_local_maxima
 
-# ✅ 1. QGIS installation path (corrected)
-QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.40.9"
+# ✅ 1. QGIS installation path
+QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.44.1\apps\qgis"
 
 # ✅ 2. Set required environment variables
 os.environ["QGIS_PREFIX_PATH"] = QGIS_PREFIX_PATH
-os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = os.path.join(QGIS_PREFIX_PATH, "apps", "Qt5", "plugins")
+os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = os.path.join(QGIS_PREFIX_PATH, "qt5", "plugins")
 os.environ["PATH"] += ";" + os.path.join(QGIS_PREFIX_PATH, "bin")
-os.environ["PATH"] += ";" + os.path.join(QGIS_PREFIX_PATH, "apps")
+os.environ["PATH"] += ";" + os.path.join(QGIS_PREFIX_PATH, "lib")
 
 # ✅ 3. Add QGIS Python path to sys.path
-QGIS_PYTHON_PATH = os.path.join(QGIS_PREFIX_PATH, "apps", "Python312")
+QGIS_PYTHON_PATH = os.path.join(QGIS_PREFIX_PATH, "python")
 if QGIS_PYTHON_PATH not in sys.path:
     sys.path.insert(0, QGIS_PYTHON_PATH)
-
-# Add QGIS Python libraries
-QGIS_PYTHON_LIB = os.path.join(QGIS_PREFIX_PATH, "apps", "Python312", "Lib", "site-packages")
-if QGIS_PYTHON_LIB not in sys.path:
-    sys.path.insert(0, QGIS_PYTHON_LIB)
 
 # ✅ 4. Initialize QGIS Application
 from qgis.core import QgsApplication

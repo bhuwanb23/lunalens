@@ -92,6 +92,8 @@ class MinimalBoulderDetector:
         Detect boulders as elevation peaks
         """
         print("🔄 Detecting elevation peaks...")
+        print(f"   - Using {threshold_percentile}th percentile threshold")
+        print(f"   - Minimum area filter: {min_area} pixels")
         
         # Calculate threshold based on percentile
         threshold = np.percentile(self.image, threshold_percentile)
@@ -99,10 +101,12 @@ class MinimalBoulderDetector:
         # Find high elevation points
         high_points = self.image > threshold
         
-        print(f"   - Threshold (95th percentile): {threshold:.2f}")
-        print(f"   - High points found: {np.sum(high_points)}")
+        print(f"   - Threshold value: {threshold:.2f}")
+        print(f"   - High elevation points found: {np.sum(high_points)}")
+        print(f"   - Percentage of high points: {(np.sum(high_points) / (self.height * self.width) * 100):.2f}%")
         
         # Find connected regions
+        print("   - Finding connected regions...")
         boulders = self.find_connected_regions(high_points, min_area)
         
         print(f"✅ Elevation peak detection found {len(boulders)} potential boulders")
@@ -113,12 +117,19 @@ class MinimalBoulderDetector:
         Detect boulders as local maxima
         """
         print("🔄 Detecting local maxima...")
+        print(f"   - Window size: {window_size}x{window_size}")
+        print(f"   - Minimum area filter: {min_area} pixels")
         
         # Create a mask for local maxima
         local_max_mask = np.zeros_like(self.image, dtype=bool)
         
         # Find local maxima using sliding window
         half_window = window_size // 2
+        total_pixels = (self.height - 2*half_window) * (self.width - 2*half_window)
+        processed_pixels = 0
+        
+        print(f"   - Scanning {total_pixels} pixels for local maxima...")
+        
         for i in range(half_window, self.height - half_window):
             for j in range(half_window, self.width - half_window):
                 # Get window around current pixel
@@ -129,10 +140,17 @@ class MinimalBoulderDetector:
                 # Check if center is maximum in window
                 if center_value == np.max(window):
                     local_max_mask[i, j] = True
+                
+                processed_pixels += 1
+                if processed_pixels % 100000 == 0:
+                    progress = (processed_pixels / total_pixels) * 100
+                    print(f"   - Progress: {progress:.1f}%")
         
         print(f"   - Local maxima found: {np.sum(local_max_mask)}")
+        print(f"   - Percentage of local maxima: {(np.sum(local_max_mask) / (self.height * self.width) * 100):.2f}%")
         
         # Find connected regions
+        print("   - Finding connected regions...")
         boulders = self.find_connected_regions(local_max_mask, min_area)
         
         print(f"✅ Local maxima detection found {len(boulders)} potential boulders")
@@ -143,10 +161,15 @@ class MinimalBoulderDetector:
         Find connected regions using simple flood fill
         """
         print("🔄 Finding connected regions...")
+        print(f"   - Minimum area filter: {min_area} pixels")
         
         # Simple connected component labeling
         labeled = np.zeros_like(binary_image, dtype=int)
         current_label = 1
+        total_pixels = np.sum(binary_image)
+        processed_pixels = 0
+        
+        print(f"   - Total pixels to process: {total_pixels}")
         
         # First pass: assign labels
         for i in range(self.height):
@@ -154,14 +177,21 @@ class MinimalBoulderDetector:
                 if binary_image[i, j] and labeled[i, j] == 0:
                     # Flood fill to find connected region
                     region_pixels = self.flood_fill(binary_image, i, j)
+                    processed_pixels += len(region_pixels)
                     
                     if len(region_pixels) >= min_area:
                         # Label the region
                         for y, x in region_pixels:
                             labeled[y, x] = current_label
                         current_label += 1
+                        
+                        if current_label % 10 == 0:
+                            print(f"   - Found {current_label-1} regions so far...")
+        
+        print(f"   - Total regions found: {current_label-1}")
         
         # Second pass: collect region properties
+        print("   - Analyzing region properties...")
         boulders = []
         for label in range(1, current_label):
             # Get region mask
@@ -190,6 +220,7 @@ class MinimalBoulderDetector:
                     'elevation': avg_elevation
                 })
         
+        print(f"   - Valid regions (>= {min_area} pixels): {len(boulders)}")
         return boulders
     
     def flood_fill(self, binary_image, start_y, start_x):
@@ -218,6 +249,8 @@ class MinimalBoulderDetector:
         Combine results from different detection methods
         """
         print("🔄 Combining detection results...")
+        print(f"   - Elevation-based detections: {len(elevation_boulders)}")
+        print(f"   - Local maxima detections: {len(maxima_boulders)}")
         
         all_boulders = []
         
@@ -231,7 +264,10 @@ class MinimalBoulderDetector:
             boulder['method'] = 'local_maxima'
             all_boulders.append(boulder)
         
+        print(f"   - Total before deduplication: {len(all_boulders)}")
+        
         # Remove duplicates
+        print("   - Removing duplicate detections...")
         unique_boulders = self.remove_duplicates(all_boulders)
         
         print(f"✅ Combined detection found {len(unique_boulders)} unique boulders")
@@ -322,35 +358,53 @@ def main():
     output_path = r"E:\moon extract\data\derived\20250207\minimal_boulder_detection_results.txt"
     
     print("🚀 Starting minimal boulder detection...")
+    print("=" * 60)
     
     # Check if file exists
+    print("📁 Step 1: Checking file existence...")
     if not os.path.exists(tif_path):
         print(f"❌ File not found: {tif_path}")
         return
+    else:
+        print(f"✅ File found: {tif_path}")
     
     # Initialize detector
+    print("\n🔧 Step 2: Initializing boulder detector...")
     detector = MinimalBoulderDetector()
+    print("✅ Detector initialized")
     
     # Load TIF file
+    print("\n📂 Step 3: Loading TIF file...")
     if not detector.load_tif_with_qgis(tif_path):
+        print("❌ Failed to load TIF file")
         return
+    print("✅ TIF file loaded successfully")
     
     # Run different detection methods
+    print("\n🔍 Step 4: Running detection algorithms...")
+    print("   - Method 1: Elevation peak detection")
     elevation_boulders = detector.detect_elevation_peaks()
+    print("   - Method 2: Local maxima detection")
     maxima_boulders = detector.detect_local_maxima()
     
     # Combine results
+    print("\n🔄 Step 5: Combining detection results...")
     all_boulders = detector.combine_detections(elevation_boulders, maxima_boulders)
     
     # Save results
+    print("\n💾 Step 6: Saving results...")
     detector.save_results(output_path, all_boulders)
     
     # Print summary
+    print("\n📊 Step 7: Generating summary...")
     detector.print_summary(all_boulders)
     
     # Cleanup
+    print("\n🧹 Step 8: Cleaning up...")
     qgs.exitQgis()
     print("✅ QGIS cleanup completed")
+    print("\n🎉 Boulder detection process completed!")
+    print("=" * 60)
 
 if __name__ == "__main__":
     main() 
