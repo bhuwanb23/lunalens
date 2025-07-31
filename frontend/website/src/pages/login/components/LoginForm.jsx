@@ -1,7 +1,7 @@
 import React from 'react';
 import { LOGIN_CONSTANTS, ICONS } from '../constants';
 
-const LoginForm = ({ formData, errors, isLoading, isSuccess, handleInputChange, handleSubmit }) => {
+const LoginForm = ({ formData, errors, isLoading, isSuccess, serverError, handleInputChange, handleSubmit }) => {
   return (
     <form id="login-form" className="space-y-6" onSubmit={handleSubmit}>
       <div id="username-field">
@@ -62,6 +62,10 @@ const LoginForm = ({ formData, errors, isLoading, isSuccess, handleInputChange, 
           {LOGIN_CONSTANTS.content.login.forgotCode}
         </span>
       </div>
+
+      {serverError && (
+        <div className="text-red-400 text-sm font-inter text-center -mt-2">{serverError}</div>
+      )}
 
       <button 
         id="login-button" 

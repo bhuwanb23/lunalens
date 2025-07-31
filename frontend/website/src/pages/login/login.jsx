@@ -12,6 +12,7 @@ const Login = () => {
     errors,
     isLoading,
     isSuccess,
+    serverError,
     handleInputChange,
     handleSubmit
   } = useLoginForm();
@@ -28,6 +29,7 @@ const Login = () => {
           errors={errors}
           isLoading={isLoading}
           isSuccess={isSuccess}
+          serverError={serverError}
           handleInputChange={handleInputChange}
           handleSubmit={handleSubmit}
         />

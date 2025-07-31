@@ -4,7 +4,7 @@ import LoginForm from './LoginForm';
 import MissionStatus from './MissionStatus';
 import MissionInfo from './MissionInfo';
 
-const LoginCard = ({ formData, errors, isLoading, isSuccess, handleInputChange, handleSubmit }) => {
+const LoginCard = ({ formData, errors, isLoading, isSuccess, serverError, handleInputChange, handleSubmit }) => {
   return (
     <div id="login-card" className="w-full max-w-md">
       <div className="gradient-border backdrop-blur-md rounded-2xl p-8 shadow-2xl">
@@ -27,6 +27,7 @@ const LoginCard = ({ formData, errors, isLoading, isSuccess, handleInputChange, 
           errors={errors}
           isLoading={isLoading}
           isSuccess={isSuccess}
+          serverError={serverError}
           handleInputChange={handleInputChange}
           handleSubmit={handleSubmit}
         />

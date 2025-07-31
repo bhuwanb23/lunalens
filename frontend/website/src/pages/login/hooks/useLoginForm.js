@@ -11,6 +11,7 @@ export const useLoginForm = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [serverError, setServerError] = useState('');
 
   const validateField = (name, value) => {
     const validation = LOGIN_CONSTANTS.validation[name];
@@ -44,6 +45,7 @@ export const useLoginForm = () => {
         [name]: ''
       }));
     }
+    if (serverError) setServerError('');
   };
 
   const handleSubmit = async (e) => {
@@ -66,15 +68,32 @@ export const useLoginForm = () => {
     }
 
     setIsLoading(true);
-    
-    // Simulate API call
+    setServerError('');
+    setIsSuccess(false);
+
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setIsSuccess(true);
-      // Here you would typically make an API call to authenticate
-      console.log('Login attempt:', formData);
+      const response = await fetch('http://localhost:5000/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          missionId: formData.missionId,
+          accessCode: formData.accessCode,
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setIsSuccess(true);
+        setErrors({});
+      } else {
+        setIsSuccess(false);
+        setServerError(data.message || 'Login failed.');
+      }
     } catch (error) {
-      console.error('Login error:', error);
+      setIsSuccess(false);
+      setServerError('Could not connect to server.');
     } finally {
       setIsLoading(false);
     }
@@ -89,6 +108,7 @@ export const useLoginForm = () => {
     setErrors({});
     setIsLoading(false);
     setIsSuccess(false);
+    setServerError('');
   };
 
   return {
@@ -96,6 +116,7 @@ export const useLoginForm = () => {
     errors,
     isLoading,
     isSuccess,
+    serverError,
     handleInputChange,
     handleSubmit,
     resetForm
