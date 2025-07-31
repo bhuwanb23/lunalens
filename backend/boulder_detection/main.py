@@ -5,6 +5,7 @@ Provides a user-friendly interface to run the detection system.
 
 import os
 import sys
+import numpy as np
 from typing import Optional, List
 from detector import BoulderDetector
 from gradcam import GradCAMVisualizer
@@ -74,43 +75,10 @@ class BoulderDetectionController:
         """Calculate physical measurements for detected objects."""
         print("📏 Calculating measurements...")
         
-        calculator = PhysicalCalculator(scale)
-        results = []
-        
-        for i, obj in enumerate(detected_objects):
-            print(f"  Processing object {i+1}/{len(detected_objects)}...")
-            
-            # Basic measurements
-            measurements = calculator.calculate_basic_measurements(obj)
-            
-            # Shape metrics
-            shape_metrics = calculator.calculate_shape_metrics(obj)
-            
-            # Volume
-            volume = calculator.calculate_volume(obj)
-            
-            # Degradation state
-            degradation = calculator.calculate_degradation_state(obj)
-            
-            # Depth estimation (if solar angle provided)
-            depth = None
-            if solar_incidence_angle is not None:
-                depth = calculator.calculate_crater_depth(obj, solar_incidence_angle)
-            
-            # Update object with all measurements
-            obj.size = measurements.size
-            obj.diameter = measurements.diameter
-            obj.area = measurements.area
-            obj.circularity = shape_metrics.circularity
-            obj.elongation = shape_metrics.elongation
-            obj.volume = volume
-            obj.degradation_state = degradation
-            obj.depth = depth
-            
-            results.append(obj)
-        
-        print("✅ Measurements calculated!")
-        return results
+        # The measurements are already calculated in the detector
+        # This method is kept for compatibility but doesn't need to recalculate
+        print("✅ Measurements already calculated by detector!")
+        return detected_objects
     
     def generate_gradcam(self, image_path: str, detected_objects: List[ObjectMeasurements]) -> str:
         """Generate Grad-CAM visualizations for detected objects."""
@@ -182,15 +150,16 @@ class BoulderDetectionController:
             print(f"\nObject {i+1}:")
             print(f"  Class: {obj.class_name}")
             print(f"  Confidence: {obj.confidence:.3f}")
-            print(f"  Size: {obj.size:.2f} m")
-            print(f"  Diameter: {obj.diameter:.2f} m")
-            print(f"  Area: {obj.area:.2f} m²")
-            print(f"  Volume: {obj.volume:.2f} m³")
+            print(f"  Width: {obj.width_real:.2f} m")
+            print(f"  Height: {obj.height_real:.2f} m")
+            print(f"  Diameter: {obj.diameter_real:.2f} m")
+            print(f"  Area: {obj.area_real:.2f} m²")
+            print(f"  Volume: {obj.volume_real:.2f} m³")
             print(f"  Circularity: {obj.circularity:.3f}")
             print(f"  Elongation: {obj.elongation:.3f}")
             print(f"  Degradation State: {obj.degradation_state}")
-            if obj.depth is not None:
-                print(f"  Estimated Depth: {obj.depth:.2f} m")
+            if obj.estimated_depth is not None:
+                print(f"  Estimated Depth: {obj.estimated_depth:.2f} m")
 
 
 def get_user_inputs() -> tuple:
@@ -213,6 +182,8 @@ def show_menu() -> str:
     print("\n" + "="*60)
     print("🌙 BOULDER & CRATER DETECTION SYSTEM")
     print("="*60)
+    print("📁 Using default image: download.png")
+    print("="*60)
     print("1. Detect boulders only")
     print("2. Detect boulders + Calculate measurements")
     print("3. Detect boulders + Generate Grad-CAM")
@@ -228,6 +199,7 @@ def show_menu() -> str:
 def main():
     """Main function to run the detection system."""
     print("🚀 Initializing Boulder Detection System...")
+    print("📁 Default image: download.png (place this file in the current directory)")
     
     # Initialize controller
     controller = BoulderDetectionController()
@@ -240,10 +212,13 @@ def main():
             break
         
         elif choice in ["1", "2", "3", "4", "5", "6"]:
-            # Get image path
-            image_path = input("\nEnter the path to the image: ").strip()
-            if not image_path:
-                print("❌ No image path provided.")
+            # Use default image path
+            image_path = "download.png"
+            print(f"🔍 Using default image: {image_path}")
+            
+            if not os.path.exists(image_path):
+                print(f"❌ Default image not found at: {image_path}")
+                print("Please ensure 'download.png' is in the current directory.")
                 continue
             
             # Get configuration
