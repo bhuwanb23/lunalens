@@ -86,7 +86,7 @@ class BoulderDetectionController:
         
         try:
             # Create Grad-CAM visualizations
-            gradcam_image = self.detector.gradcam_visualizer.create_gradcam_visualization(
+            gradcam_image = self.detector.gradcam_visualizer.create_gradcam_visualization_for_objects(
                 image_path, detected_objects
             )
             
