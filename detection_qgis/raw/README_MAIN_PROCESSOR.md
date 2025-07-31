@@ -28,7 +28,7 @@ Edit the `Config` class in `main_processor.py`:
 ```python
 class Config:
     # QGIS Installation Path (change this to your QGIS installation)
-    QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.44.1"
+    QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.40.9"
     
     # Input/Output Paths (change these to your actual paths)
     INPUT_TIF_PATH = r"E:\moon extract\data\derived\20250207\ch2_tmc_ndn_20250207T1457348573_d_dtm_d18.tif"
