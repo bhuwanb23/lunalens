@@ -6,9 +6,9 @@ Provides a user-friendly interface to run the detection system.
 import os
 import sys
 from typing import Optional, List
-from .detector import BoulderDetector
-from .gradcam import GradCAMVisualizer
-from .measurements import PhysicalCalculator, ObjectMeasurements
+from detector import BoulderDetector
+from gradcam import GradCAMVisualizer
+from measurements import PhysicalCalculator, ObjectMeasurements
 
 
 class BoulderDetectionController:

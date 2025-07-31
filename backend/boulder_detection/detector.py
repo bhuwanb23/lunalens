@@ -8,10 +8,10 @@ import numpy as np
 from PIL import Image
 import torch
 from typing import List, Dict, Any, Optional, Tuple
-from .models import ModelLoader
-from .transforms import DataTransforms
-from .measurements import PhysicalCalculator, ObjectMeasurements
-from .gradcam import GradCAMVisualizer
+from models import ModelLoader
+from transforms import DataTransforms
+from measurements import PhysicalCalculator, ObjectMeasurements
+from gradcam import GradCAMVisualizer
 
 
 class BoulderDetector:

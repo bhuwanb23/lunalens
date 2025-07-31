@@ -10,7 +10,7 @@ from pytorch_grad_cam import GradCAM
 from pytorch_grad_cam.utils.image import show_cam_on_image, preprocess_image
 from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
 from typing import Optional, Tuple
-from .models import YoloCAMWrapper
+from models import YoloCAMWrapper
 
 
 class GradCAMVisualizer:

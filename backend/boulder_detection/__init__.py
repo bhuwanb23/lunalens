@@ -13,12 +13,12 @@ Modules:
     - main: User-friendly interface
 """
 
-from .models import ModelLoader, YoloCAMWrapper
-from .transforms import DataTransforms
-from .measurements import PhysicalCalculator, ObjectMeasurements
-from .gradcam import GradCAMVisualizer
-from .detector import BoulderDetector
-from .main import run_detection, main
+from models import ModelLoader, YoloCAMWrapper
+from transforms import DataTransforms
+from measurements import PhysicalCalculator, ObjectMeasurements
+from gradcam import GradCAMVisualizer
+from detector import BoulderDetector
+from main import run_detection, main
 
 __version__ = "1.0.0"
 __author__ = "Boulder Detection Team"

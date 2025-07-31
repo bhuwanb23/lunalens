@@ -5,7 +5,7 @@ This script shows different usage scenarios and configurations.
 
 import os
 import sys
-from boulder_detection import BoulderDetector, run_detection
+from detector import BoulderDetector
 
 
 def example_basic_detection():
