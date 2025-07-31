@@ -60,7 +60,7 @@ def home():
 def login():
     data = request.get_json()
     mission_id = data.get('missionId')
-    access_code = data.get('AccessCode')
+    access_code = data.get('accessCode')
 
     if mission_id == DEMO_USER['missionId'] and access_code == DEMO_USER['accessCode']:
         return jsonify({"success": True, "message": "Login successful!"}), 200
