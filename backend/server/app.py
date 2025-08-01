@@ -64,6 +64,10 @@ def get_user_by_mission_id(mission_id):
 def home():
     return render_template('home.html')
 
+@app.route('/credentials', methods=['GET'])
+def credentials():
+    return render_template('login_credentials.html')
+
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
