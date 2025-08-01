@@ -4,7 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest' };</script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <script>window.FontAwesomeConfig = { autoReplaceSvg: 'nest' };</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous"
         referrerpolicy="no-referrer"></script>
 
@@ -853,27 +864,33 @@
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', monospace;
         }
 
-        .moon-glow {
-            box-shadow: 0 0 30px rgba(147, 197, 253, 0.3);
+        .orbitron {
+            font-family: 'Orbitron', monospace;
         }
 
-        .star {
-            animation: twinkle 2s infinite;
+        .glow {
+            box-shadow: 0 0 20px rgba(147, 197, 253, 0.5);
         }
 
-        @keyframes twinkle {
+        .glow-purple {
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+        }
 
-            0%,
-            100% {
-                opacity: 0.3;
-            }
+        .lunar-surface {
+            background: radial-gradient(circle at 20% 30%, rgba(75, 85, 99, 0.8) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(55, 65, 81, 0.6) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(107, 114, 128, 0.4) 0%, transparent 50%);
+        }
 
-            50% {
-                opacity: 1;
-            }
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-delayed {
+            animation: float 6s ease-in-out infinite 2s;
         }
 
         @keyframes float {
@@ -888,39 +905,22 @@
             }
         }
 
-        .floating {
-            animation: float 6s ease-in-out infinite;
+        .pulse-glow {
+            animation: pulseGlow 3s ease-in-out infinite;
         }
 
-        .gradient-border {
-            background: linear-gradient(45deg, #3b82f6, #8b5cf6, #06b6d4);
-            padding: 2px;
-            border-radius: 12px;
-        }
+        @keyframes pulseGlow {
 
-        .gradient-border-inner {
-            background: #0f172a;
-            border-radius: 10px;
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(147, 197, 253, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 30px rgba(147, 197, 253, 0.7);
+            }
         }
     </style>
-    <script>tailwind.config = {
-            "theme": {
-                "extend": {
-                    "colors": {
-                        "space-dark": "#0f172a",
-                        "space-blue": "#1e293b",
-                        "moon-gray": "#64748b",
-                        "cosmic-purple": "#8b5cf6"
-                    },
-                    "fontFamily": {
-                        "sans": [
-                            "Inter",
-                            "sans-serif"
-                        ]
-                    }
-                }
-            }
-        };</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
     <link rel="stylesheet"
@@ -1300,6 +1300,40 @@
             display: none
         }
 
+        .container {
+            width: 100%
+        }
+
+        @media (min-width: 640px) {
+            .container {
+                max-width: 640px
+            }
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                max-width: 768px
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .container {
+                max-width: 1024px
+            }
+        }
+
+        @media (min-width: 1280px) {
+            .container {
+                max-width: 1280px
+            }
+        }
+
+        @media (min-width: 1536px) {
+            .container {
+                max-width: 1536px
+            }
+        }
+
         .fixed {
             position: fixed
         }
@@ -1312,73 +1346,53 @@
             position: relative
         }
 
-        .inset-0 {
-            inset: 0px
-        }
-
-        .-right-1 {
-            right: -0.25rem
-        }
-
-        .-top-1 {
-            top: -0.25rem
-        }
-
-        .bottom-20 {
-            bottom: 5rem
-        }
-
-        .bottom-40 {
-            bottom: 10rem
+        .bottom-4 {
+            bottom: 1rem
         }
 
         .left-0 {
             left: 0px
         }
 
-        .left-1\/3 {
-            left: 33.333333%
+        .left-4 {
+            left: 1rem
         }
 
-        .left-20 {
-            left: 5rem
+        .right-0 {
+            right: 0px
         }
 
-        .left-40 {
-            left: 10rem
-        }
-
-        .right-20 {
-            right: 5rem
-        }
-
-        .right-40 {
-            right: 10rem
+        .right-4 {
+            right: 1rem
         }
 
         .top-0 {
             top: 0px
         }
 
-        .top-10 {
-            top: 2.5rem
+        .top-4 {
+            top: 1rem
         }
 
-        .top-32 {
-            top: 8rem
-        }
-
-        .top-64 {
-            top: 16rem
-        }
-
-        .z-10 {
-            z-index: 10
+        .z-50 {
+            z-index: 50
         }
 
         .mx-auto {
             margin-left: auto;
             margin-right: auto
+        }
+
+        .mb-1 {
+            margin-bottom: 0.25rem
+        }
+
+        .mb-12 {
+            margin-bottom: 3rem
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem
         }
 
         .mb-3 {
@@ -1393,18 +1407,6 @@
             margin-bottom: 1.5rem
         }
 
-        .mb-8 {
-            margin-bottom: 2rem
-        }
-
-        .ml-64 {
-            margin-left: 16rem
-        }
-
-        .mr-2 {
-            margin-right: 0.5rem
-        }
-
         .flex {
             display: flex
         }
@@ -1413,28 +1415,24 @@
             display: grid
         }
 
-        .h-1 {
-            height: 0.25rem
+        .hidden {
+            display: none
         }
 
         .h-10 {
             height: 2.5rem
         }
 
-        .h-12 {
-            height: 3rem
-        }
-
-        .h-20 {
-            height: 5rem
-        }
-
-        .h-3 {
-            height: 0.75rem
-        }
-
         .h-32 {
             height: 8rem
+        }
+
+        .h-8 {
+            height: 2rem
+        }
+
+        .h-80 {
+            height: 20rem
         }
 
         .h-full {
@@ -1445,36 +1443,16 @@
             min-height: 100vh
         }
 
-        .w-1 {
-            width: 0.25rem
-        }
-
         .w-10 {
             width: 2.5rem
         }
 
-        .w-12 {
-            width: 3rem
-        }
-
-        .w-20 {
-            width: 5rem
-        }
-
-        .w-3 {
-            width: 0.75rem
-        }
-
-        .w-64 {
-            width: 16rem
+        .w-8 {
+            width: 2rem
         }
 
         .w-full {
             width: 100%
-        }
-
-        .flex-1 {
-            flex: 1 1 0%
         }
 
         .cursor-pointer {
@@ -1485,8 +1463,12 @@
             grid-template-columns: repeat(1, minmax(0, 1fr))
         }
 
-        .grid-cols-2 {
-            grid-template-columns: repeat(2, minmax(0, 1fr))
+        .grid-cols-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr))
+        }
+
+        .flex-col {
+            flex-direction: column
         }
 
         .items-center {
@@ -1509,6 +1491,16 @@
             gap: 1.5rem
         }
 
+        .gap-8 {
+            gap: 2rem
+        }
+
+        .space-x-2> :not([hidden])~ :not([hidden]) {
+            --tw-space-x-reverse: 0;
+            margin-right: calc(0.5rem * var(--tw-space-x-reverse));
+            margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)))
+        }
+
         .space-x-3> :not([hidden])~ :not([hidden]) {
             --tw-space-x-reverse: 0;
             margin-right: calc(0.75rem * var(--tw-space-x-reverse));
@@ -1521,10 +1513,16 @@
             margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)))
         }
 
-        .space-y-2> :not([hidden])~ :not([hidden]) {
-            --tw-space-y-reverse: 0;
-            margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
-            margin-bottom: calc(0.5rem * var(--tw-space-y-reverse))
+        .space-x-6> :not([hidden])~ :not([hidden]) {
+            --tw-space-x-reverse: 0;
+            margin-right: calc(1.5rem * var(--tw-space-x-reverse));
+            margin-left: calc(1.5rem * calc(1 - var(--tw-space-x-reverse)))
+        }
+
+        .space-x-8> :not([hidden])~ :not([hidden]) {
+            --tw-space-x-reverse: 0;
+            margin-right: calc(2rem * var(--tw-space-x-reverse));
+            margin-left: calc(2rem * calc(1 - var(--tw-space-x-reverse)))
         }
 
         .space-y-3> :not([hidden])~ :not([hidden]) {
@@ -1533,20 +1531,22 @@
             margin-bottom: calc(0.75rem * var(--tw-space-y-reverse))
         }
 
-        .space-y-4> :not([hidden])~ :not([hidden]) {
-            --tw-space-y-reverse: 0;
-            margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
-            margin-bottom: calc(1rem * var(--tw-space-y-reverse))
-        }
-
         .space-y-6> :not([hidden])~ :not([hidden]) {
             --tw-space-y-reverse: 0;
             margin-top: calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));
             margin-bottom: calc(1.5rem * var(--tw-space-y-reverse))
         }
 
+        .overflow-hidden {
+            overflow: hidden
+        }
+
         .overflow-x-hidden {
             overflow-x: hidden
+        }
+
+        .rounded-2xl {
+            border-radius: 1rem
         }
 
         .rounded-full {
@@ -1573,39 +1573,42 @@
             border-bottom-width: 1px
         }
 
-        .border-r {
-            border-right-width: 1px
+        .border-t {
+            border-top-width: 1px
         }
 
-        .border-blue-500 {
+        .border-blue-400 {
             --tw-border-opacity: 1;
-            border-color: rgb(59 130 246 / var(--tw-border-opacity, 1))
+            border-color: rgb(96 165 250 / var(--tw-border-opacity, 1))
         }
 
-        .border-blue-500\/30 {
-            border-color: rgb(59 130 246 / 0.3)
+        .border-gray-700\/30 {
+            border-color: rgb(55 65 81 / 0.3)
         }
 
-        .border-slate-700\/50 {
-            border-color: rgb(51 65 85 / 0.5)
+        .border-gray-700\/50 {
+            border-color: rgb(55 65 81 / 0.5)
         }
 
-        .bg-black\/50 {
-            background-color: rgb(0 0 0 / 0.5)
+        .border-green-500\/30 {
+            border-color: rgb(34 197 94 / 0.3)
         }
 
-        .bg-blue-300 {
+        .border-red-500\/30 {
+            border-color: rgb(239 68 68 / 0.3)
+        }
+
+        .border-yellow-500\/30 {
+            border-color: rgb(234 179 8 / 0.3)
+        }
+
+        .bg-gray-900 {
             --tw-bg-opacity: 1;
-            background-color: rgb(147 197 253 / var(--tw-bg-opacity, 1))
+            background-color: rgb(17 24 39 / var(--tw-bg-opacity, 1))
         }
 
-        .bg-blue-500 {
-            --tw-bg-opacity: 1;
-            background-color: rgb(59 130 246 / var(--tw-bg-opacity, 1))
-        }
-
-        .bg-blue-500\/20 {
-            background-color: rgb(59 130 246 / 0.2)
+        .bg-blue-500\/80 {
+            background-color: rgb(59 130 246 / 0.8)
         }
 
         .bg-blue-600 {
@@ -1613,104 +1616,86 @@
             background-color: rgb(37 99 235 / var(--tw-bg-opacity, 1))
         }
 
-        .bg-blue-600\/20 {
-            background-color: rgb(37 99 235 / 0.2)
-        }
-
-        .bg-green-500 {
+        .bg-gray-700 {
             --tw-bg-opacity: 1;
-            background-color: rgb(34 197 94 / var(--tw-bg-opacity, 1))
+            background-color: rgb(55 65 81 / var(--tw-bg-opacity, 1))
         }
 
-        .bg-green-500\/20 {
-            background-color: rgb(34 197 94 / 0.2)
+        .bg-gray-800\/60 {
+            background-color: rgb(31 41 55 / 0.6)
         }
 
-        .bg-orange-500\/20 {
-            background-color: rgb(249 115 22 / 0.2)
+        .bg-gray-900\/50 {
+            background-color: rgb(17 24 39 / 0.5)
         }
 
-        .bg-purple-300 {
+        .bg-gray-900\/80 {
+            background-color: rgb(17 24 39 / 0.8)
+        }
+
+        .bg-green-500\/10 {
+            background-color: rgb(34 197 94 / 0.1)
+        }
+
+        .bg-orange-500\/80 {
+            background-color: rgb(249 115 22 / 0.8)
+        }
+
+        .bg-purple-500\/80 {
+            background-color: rgb(168 85 247 / 0.8)
+        }
+
+        .bg-purple-600 {
             --tw-bg-opacity: 1;
-            background-color: rgb(216 180 254 / var(--tw-bg-opacity, 1))
+            background-color: rgb(147 51 234 / var(--tw-bg-opacity, 1))
         }
 
-        .bg-purple-500\/20 {
-            background-color: rgb(168 85 247 / 0.2)
+        .bg-red-500\/10 {
+            background-color: rgb(239 68 68 / 0.1)
         }
 
-        .bg-red-500 {
+        .bg-yellow-400 {
             --tw-bg-opacity: 1;
-            background-color: rgb(239 68 68 / var(--tw-bg-opacity, 1))
+            background-color: rgb(250 204 21 / var(--tw-bg-opacity, 1))
         }
 
-        .bg-slate-900\/50 {
-            background-color: rgb(15 23 42 / 0.5)
-        }
-
-        .bg-slate-900\/80 {
-            background-color: rgb(15 23 42 / 0.8)
-        }
-
-        .bg-white {
-            --tw-bg-opacity: 1;
-            background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1))
-        }
-
-        .bg-yellow-500 {
-            --tw-bg-opacity: 1;
-            background-color: rgb(234 179 8 / var(--tw-bg-opacity, 1))
+        .bg-yellow-500\/10 {
+            background-color: rgb(234 179 8 / 0.1)
         }
 
         .bg-gradient-to-br {
             background-image: linear-gradient(to bottom right, var(--tw-gradient-stops))
         }
 
-        .bg-gradient-to-r {
-            background-image: linear-gradient(to right, var(--tw-gradient-stops))
-        }
-
-        .from-slate-900 {
-            --tw-gradient-from: #0f172a var(--tw-gradient-from-position);
-            --tw-gradient-to: rgb(15 23 42 / 0) var(--tw-gradient-to-position);
+        .from-blue-400 {
+            --tw-gradient-from: #60a5fa var(--tw-gradient-from-position);
+            --tw-gradient-to: rgb(96 165 250 / 0) var(--tw-gradient-to-position);
             --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to)
         }
 
-        .from-blue-500 {
-            --tw-gradient-from: #3b82f6 var(--tw-gradient-from-position);
-            --tw-gradient-to: rgb(59 130 246 / 0) var(--tw-gradient-to-position);
-            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to)
-        }
-
-        .from-gray-300 {
-            --tw-gradient-from: #d1d5db var(--tw-gradient-from-position);
-            --tw-gradient-to: rgb(209 213 219 / 0) var(--tw-gradient-to-position);
-            --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to)
-        }
-
-        .via-blue-900 {
-            --tw-gradient-to: rgb(30 58 138 / 0) var(--tw-gradient-to-position);
-            --tw-gradient-stops: var(--tw-gradient-from), #1e3a8a var(--tw-gradient-via-position), var(--tw-gradient-to)
-        }
-
-        .to-indigo-900 {
-            --tw-gradient-to: #312e81 var(--tw-gradient-to-position)
-        }
-
-        .to-gray-600 {
-            --tw-gradient-to: #4b5563 var(--tw-gradient-to-position)
-        }
-
-        .to-purple-600 {
-            --tw-gradient-to: #9333ea var(--tw-gradient-to-position)
+        .to-purple-500 {
+            --tw-gradient-to: #a855f7 var(--tw-gradient-to-position)
         }
 
         .object-cover {
             object-fit: cover
         }
 
+        .p-3 {
+            padding: 0.75rem
+        }
+
+        .p-4 {
+            padding: 1rem
+        }
+
         .p-6 {
             padding: 1.5rem
+        }
+
+        .px-3 {
+            padding-left: 0.75rem;
+            padding-right: 0.75rem
         }
 
         .px-4 {
@@ -1736,6 +1721,20 @@
         .py-4 {
             padding-top: 1rem;
             padding-bottom: 1rem
+        }
+
+        .py-6 {
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem
+        }
+
+        .py-8 {
+            padding-top: 2rem;
+            padding-bottom: 2rem
+        }
+
+        .pt-20 {
+            padding-top: 5rem
         }
 
         .text-center {
@@ -1767,17 +1766,47 @@
             line-height: 1.75rem
         }
 
+        .text-xs {
+            font-size: 0.75rem;
+            line-height: 1rem
+        }
+
         .font-bold {
             font-weight: 700
         }
 
-        .font-medium {
-            font-weight: 500
+        .font-semibold {
+            font-weight: 600
+        }
+
+        .text-gray-100 {
+            --tw-text-opacity: 1;
+            color: rgb(243 244 246 / var(--tw-text-opacity, 1))
+        }
+
+        .text-blue-300 {
+            --tw-text-opacity: 1;
+            color: rgb(147 197 253 / var(--tw-text-opacity, 1))
         }
 
         .text-blue-400 {
             --tw-text-opacity: 1;
             color: rgb(96 165 250 / var(--tw-text-opacity, 1))
+        }
+
+        .text-gray-400 {
+            --tw-text-opacity: 1;
+            color: rgb(156 163 175 / var(--tw-text-opacity, 1))
+        }
+
+        .text-gray-500 {
+            --tw-text-opacity: 1;
+            color: rgb(107 114 128 / var(--tw-text-opacity, 1))
+        }
+
+        .text-green-300 {
+            --tw-text-opacity: 1;
+            color: rgb(134 239 172 / var(--tw-text-opacity, 1))
         }
 
         .text-green-400 {
@@ -1790,19 +1819,24 @@
             color: rgb(251 146 60 / var(--tw-text-opacity, 1))
         }
 
+        .text-purple-300 {
+            --tw-text-opacity: 1;
+            color: rgb(216 180 254 / var(--tw-text-opacity, 1))
+        }
+
         .text-purple-400 {
             --tw-text-opacity: 1;
             color: rgb(192 132 252 / var(--tw-text-opacity, 1))
         }
 
-        .text-slate-300 {
+        .text-red-300 {
             --tw-text-opacity: 1;
-            color: rgb(203 213 225 / var(--tw-text-opacity, 1))
+            color: rgb(252 165 165 / var(--tw-text-opacity, 1))
         }
 
-        .text-slate-400 {
+        .text-red-400 {
             --tw-text-opacity: 1;
-            color: rgb(148 163 184 / var(--tw-text-opacity, 1))
+            color: rgb(248 113 113 / var(--tw-text-opacity, 1))
         }
 
         .text-white {
@@ -1810,16 +1844,24 @@
             color: rgb(255 255 255 / var(--tw-text-opacity, 1))
         }
 
-        .opacity-0 {
-            opacity: 0
+        .text-yellow-300 {
+            --tw-text-opacity: 1;
+            color: rgb(253 224 71 / var(--tw-text-opacity, 1))
         }
 
-        .opacity-30 {
-            opacity: 0.3
+        .text-yellow-400 {
+            --tw-text-opacity: 1;
+            color: rgb(250 204 21 / var(--tw-text-opacity, 1))
         }
 
         .backdrop-blur-lg {
             --tw-backdrop-blur: blur(16px);
+            -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+            backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)
+        }
+
+        .backdrop-blur-sm {
+            --tw-backdrop-blur: blur(4px);
             -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
             backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)
         }
@@ -1832,37 +1874,50 @@
             transition-duration: 150ms
         }
 
-        .transition-opacity {
-            transition-property: opacity;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            transition-duration: 150ms
-        }
-
         .hover\:bg-blue-700:hover {
             --tw-bg-opacity: 1;
             background-color: rgb(29 78 216 / var(--tw-bg-opacity, 1))
         }
 
-        .hover\:bg-slate-800\/50:hover {
-            background-color: rgb(30 41 59 / 0.5)
+        .hover\:bg-gray-600:hover {
+            --tw-bg-opacity: 1;
+            background-color: rgb(75 85 99 / var(--tw-bg-opacity, 1))
         }
 
-        .hover\:text-white:hover {
+        .hover\:bg-purple-700:hover {
+            --tw-bg-opacity: 1;
+            background-color: rgb(126 34 206 / var(--tw-bg-opacity, 1))
+        }
+
+        .hover\:text-blue-200:hover {
             --tw-text-opacity: 1;
-            color: rgb(255 255 255 / var(--tw-text-opacity, 1))
+            color: rgb(191 219 254 / var(--tw-text-opacity, 1))
         }
 
-        .group:hover .group-hover\:opacity-100 {
-            opacity: 1
+        .hover\:text-blue-300:hover {
+            --tw-text-opacity: 1;
+            color: rgb(147 197 253 / var(--tw-text-opacity, 1))
         }
 
         @media (min-width: 768px) {
-            .md\:grid-cols-2 {
-                grid-template-columns: repeat(2, minmax(0, 1fr))
+            .md\:mb-0 {
+                margin-bottom: 0px
+            }
+
+            .md\:flex {
+                display: flex
             }
 
             .md\:grid-cols-3 {
                 grid-template-columns: repeat(3, minmax(0, 1fr))
+            }
+
+            .md\:grid-cols-4 {
+                grid-template-columns: repeat(4, minmax(0, 1fr))
+            }
+
+            .md\:flex-row {
+                flex-direction: row
             }
         }
 
@@ -1874,387 +1929,313 @@
             .lg\:grid-cols-3 {
                 grid-template-columns: repeat(3, minmax(0, 1fr))
             }
-
-            .lg\:grid-cols-4 {
-                grid-template-columns: repeat(4, minmax(0, 1fr))
-            }
         }
     </style>
 </head>
 
-<body class="bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 min-h-screen relative overflow-x-hidden">
+<body class="bg-gray-900 text-gray-100 overflow-x-hidden">
 
-    <div class="absolute inset-0 opacity-30">
-        <div class="star absolute top-10 left-20 w-1 h-1 bg-white rounded-full"></div>
-        <div class="star absolute top-32 right-40 w-1 h-1 bg-blue-300 rounded-full"></div>
-        <div class="star absolute top-64 left-1/3 w-1 h-1 bg-white rounded-full"></div>
-        <div class="star absolute bottom-40 right-20 w-1 h-1 bg-purple-300 rounded-full"></div>
-        <div class="star absolute bottom-20 left-40 w-1 h-1 bg-white rounded-full"></div>
-    </div>
-
-    <div id="sidebar"
-        class="fixed left-0 top-0 h-full w-64 bg-slate-900/80 backdrop-blur-lg border-r border-slate-700/50 z-10">
-        <div class="p-6">
-            <div class="flex items-center space-x-3 mb-8">
+    <header id="header"
+        class="fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-lg border-b border-gray-700/50">
+        <div class="flex items-center justify-between px-6 py-4">
+            <div class="flex items-center space-x-3">
                 <div
-                    class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                    <i class="text-white text-lg" data-fa-i2svg=""><svg class="svg-inline--fa fa-rocket"
-                            aria-hidden="true" focusable="false" data-prefix="fas" data-icon="rocket" role="img"
-                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
+                    class="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center glow">
+                    <i class="text-white text-lg" data-fa-i2svg=""><svg class="svg-inline--fa fa-moon"
+                            aria-hidden="true" focusable="false" data-prefix="fas" data-icon="moon" role="img"
+                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" data-fa-i2svg="">
                             <path fill="currentColor"
-                                d="M156.6 384.9L125.7 354c-8.5-8.5-11.5-20.8-7.7-32.2c3-8.9 7-20.5 11.8-33.8L24 288c-8.6 0-16.6-4.6-20.9-12.1s-4.2-16.7 .2-24.1l52.5-88.5c13-21.9 36.5-35.3 61.9-35.3l82.3 0c2.4-4 4.8-7.7 7.2-11.3C289.1-4.1 411.1-8.1 483.9 5.3c11.6 2.1 20.6 11.2 22.8 22.8c13.4 72.9 9.3 194.8-111.4 276.7c-3.5 2.4-7.3 4.8-11.3 7.2v82.3c0 25.4-13.4 49-35.3 61.9l-88.5 52.5c-7.4 4.4-16.6 4.5-24.1 .2s-12.1-12.2-12.1-20.9V380.8c-14.1 4.9-26.4 8.9-35.7 11.9c-11.2 3.6-23.4 .5-31.8-7.8zM384 168a40 40 0 1 0 0-80 40 40 0 1 0 0 80z">
+                                d="M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z">
                             </path>
                         </svg></i>
                 </div>
-                <div>
-                    <h1 class="text-white font-bold text-lg">ISRO</h1>
-                    <p class="text-slate-400 text-sm">Moon Mission</p>
-                </div>
+                <h1 class="text-2xl font-bold orbitron text-blue-300">LunaLens</h1>
             </div>
-
-            <nav class="space-y-2">
-                <span
-                    class="flex items-center space-x-3 px-4 py-3 text-white bg-blue-600/20 rounded-lg border border-blue-500/30 cursor-pointer">
-                    <i data-fa-i2svg=""><svg class="svg-inline--fa fa-gauge-high" aria-hidden="true" focusable="false"
-                            data-prefix="fas" data-icon="gauge-high" role="img" xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 512 512" data-fa-i2svg="">
-                            <path fill="currentColor"
-                                d="M0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zM288 96a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM256 416c35.3 0 64-28.7 64-64c0-17.4-6.9-33.1-18.1-44.6L366 161.7c5.3-12.1-.2-26.3-12.3-31.6s-26.3 .2-31.6 12.3L257.9 288c-.6 0-1.3 0-1.9 0c-35.3 0-64 28.7-64 64s28.7 64 64 64zM176 144a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM96 288a32 32 0 1 0 0-64 32 32 0 1 0 0 64zm352-32a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z">
-                            </path>
-                        </svg></i>
-                    <span>Dashboard</span>
-                </span>
-                <span
-                    class="flex items-center space-x-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-slate-800/50 rounded-lg cursor-pointer">
-                    <i data-fa-i2svg=""><svg class="svg-inline--fa fa-images" aria-hidden="true" focusable="false"
-                            data-prefix="fas" data-icon="images" role="img" xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 576 512" data-fa-i2svg="">
-                            <path fill="currentColor"
-                                d="M160 32c-35.3 0-64 28.7-64 64V320c0 35.3 28.7 64 64 64H512c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H160zM396 138.7l96 144c4.9 7.4 5.4 16.8 1.2 24.6S480.9 320 472 320H328 280 200c-9.2 0-17.6-5.3-21.6-13.6s-2.9-18.2 2.9-25.4l64-80c4.6-5.7 11.4-9 18.7-9s14.2 3.3 18.7 9l17.3 21.6 56-84C360.5 132 368 128 376 128s15.5 4 20 10.7zM192 128a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zM48 120c0-13.3-10.7-24-24-24S0 106.7 0 120V344c0 75.1 60.9 136 136 136H456c13.3 0 24-10.7 24-24s-10.7-24-24-24H136c-48.6 0-88-39.4-88-88V120z">
-                            </path>
-                        </svg></i>
-                    <span>Moon Images</span>
-                </span>
-                <span
-                    class="flex items-center space-x-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-slate-800/50 rounded-lg cursor-pointer">
-                    <i data-fa-i2svg=""><svg class="svg-inline--fa fa-satellite" aria-hidden="true" focusable="false"
-                            data-prefix="fas" data-icon="satellite" role="img" xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 512 512" data-fa-i2svg="">
-                            <path fill="currentColor"
-                                d="M233 7c-9.4-9.4-24.6-9.4-33.9 0l-96 96c-9.4 9.4-9.4 24.6 0 33.9l89.4 89.4-15.5 15.5C152.3 230.4 124.9 224 96 224c-31.7 0-61.5 7.7-87.8 21.2c-9 4.7-10.3 16.7-3.1 23.8L112.7 376.7 96.3 393.1c-2.6-.7-5.4-1.1-8.3-1.1c-17.7 0-32 14.3-32 32s14.3 32 32 32s32-14.3 32-32c0-2.9-.4-5.6-1.1-8.3l16.4-16.4L242.9 506.9c7.2 7.2 19.2 5.9 23.8-3.1C280.3 477.5 288 447.7 288 416c0-28.9-6.4-56.3-17.8-80.9l15.5-15.5L375 409c9.4 9.4 24.6 9.4 33.9 0l96-96c9.4-9.4 9.4-24.6 0-33.9l-89.4-89.4 55-55c12.5-12.5 12.5-32.8 0-45.3l-48-48c-12.5-12.5-32.8-12.5-45.3 0l-55 55L233 7zm159 351l-72.4-72.4 62.1-62.1L454.1 296 392 358.1zM226.3 192.4L153.9 120 216 57.9l72.4 72.4-62.1 62.1z">
-                            </path>
-                        </svg></i>
-                    <span>Missions</span>
-                </span>
-                <span
-                    class="flex items-center space-x-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-slate-800/50 rounded-lg cursor-pointer">
-                    <i data-fa-i2svg=""><svg class="svg-inline--fa fa-chart-line" aria-hidden="true" focusable="false"
-                            data-prefix="fas" data-icon="chart-line" role="img" xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 512 512" data-fa-i2svg="">
-                            <path fill="currentColor"
-                                d="M64 64c0-17.7-14.3-32-32-32S0 46.3 0 64V400c0 44.2 35.8 80 80 80H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H80c-8.8 0-16-7.2-16-16V64zm406.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L320 210.7l-57.4-57.4c-12.5-12.5-32.8-12.5-45.3 0l-112 112c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L240 221.3l57.4 57.4c12.5 12.5 32.8 12.5 45.3 0l128-128z">
-                            </path>
-                        </svg></i>
-                    <span>Analytics</span>
-                </span>
-                <span
-                    class="flex items-center space-x-3 px-4 py-3 text-slate-300 hover:text-white hover:bg-slate-800/50 rounded-lg cursor-pointer">
-                    <i data-fa-i2svg=""><svg class="svg-inline--fa fa-gear" aria-hidden="true" focusable="false"
-                            data-prefix="fas" data-icon="gear" role="img" xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 512 512" data-fa-i2svg="">
-                            <path fill="currentColor"
-                                d="M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z">
-                            </path>
-                        </svg></i>
-                    <span>Settings</span>
-                </span>
+            <nav class="hidden md:flex items-center space-x-8">
+                <span class="text-blue-300 hover:text-blue-200 transition-colors cursor-pointer">Dashboard</span>
+                <span class="text-gray-400 hover:text-blue-300 transition-colors cursor-pointer">Models</span>
+                <span class="text-gray-400 hover:text-blue-300 transition-colors cursor-pointer">Analytics</span>
+                <span class="text-gray-400 hover:text-blue-300 transition-colors cursor-pointer">Settings</span>
             </nav>
-        </div>
-    </div>
-
-    <div id="main-content" class="ml-64">
-        <header id="header" class="bg-slate-900/50 backdrop-blur-lg border-b border-slate-700/50 px-6 py-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h2 class="text-2xl font-bold text-white">Moon Mission Dashboard</h2>
-                    <p class="text-slate-400">Real-time lunar exploration data</p>
-                </div>
-                <div class="flex items-center space-x-4">
-                    <div class="relative">
-                        <i class="text-slate-400 text-lg" data-fa-i2svg=""><svg class="svg-inline--fa fa-bell"
-                                aria-hidden="true" focusable="false" data-prefix="fas" data-icon="bell" role="img"
-                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg="">
-                                <path fill="currentColor"
-                                    d="M224 0c-17.7 0-32 14.3-32 32V51.2C119 66 64 130.6 64 208v18.8c0 47-17.3 92.4-48.5 127.6l-7.4 8.3c-8.4 9.4-10.4 22.9-5.3 34.4S19.4 416 32 416H416c12.6 0 24-7.4 29.2-18.9s3.1-25-5.3-34.4l-7.4-8.3C401.3 319.2 384 273.9 384 226.8V208c0-77.4-55-142-128-156.8V32c0-17.7-14.3-32-32-32zm45.3 493.3c12-12 18.7-28.3 18.7-45.3H224 160c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7z">
-                                </path>
-                            </svg></i>
-                        <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
-                    </div>
-                    <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg"
-                        class="w-10 h-10 rounded-full border-2 border-blue-500">
-                </div>
+            <div class="flex items-center space-x-4">
+                <div class="w-8 h-8 bg-yellow-400 rounded-full pulse-glow"></div>
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg"
+                    class="w-10 h-10 rounded-full border-2 border-blue-400 glow">
             </div>
-        </header>
+        </div>
+    </header>
 
-        <main id="dashboard-main" class="p-6">
-            <div id="stats-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="gradient-border">
-                    <div class="gradient-border-inner p-6">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-slate-400 text-sm">Total Images</p>
-                                <p class="text-3xl font-bold text-white">12,847</p>
+    <main id="main-dashboard" class="pt-20 lunar-surface min-h-screen">
+        <div class="container mx-auto px-6 py-8">
+
+            <section id="hero-stats" class="mb-12">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div id="model-status-card"
+                        class="floating bg-gray-800/60 backdrop-blur-lg rounded-2xl p-6 border border-gray-700/50 glow">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold orbitron text-blue-300">Model Status</h3>
+                            <i class="text-green-400 text-xl" data-fa-i2svg=""><svg class="svg-inline--fa fa-robot"
+                                    aria-hidden="true" focusable="false" data-prefix="fas" data-icon="robot" role="img"
+                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" data-fa-i2svg="">
+                                    <path fill="currentColor"
+                                        d="M320 0c17.7 0 32 14.3 32 32V96H472c39.8 0 72 32.2 72 72V440c0 39.8-32.2 72-72 72H168c-39.8 0-72-32.2-72-72V168c0-39.8 32.2-72 72-72H288V32c0-17.7 14.3-32 32-32zM208 384c-8.8 0-16 7.2-16 16s7.2 16 16 16h32c8.8 0 16-7.2 16-16s-7.2-16-16-16H208zm96 0c-8.8 0-16 7.2-16 16s7.2 16 16 16h32c8.8 0 16-7.2 16-16s-7.2-16-16-16H304zm96 0c-8.8 0-16 7.2-16 16s7.2 16 16 16h32c8.8 0 16-7.2 16-16s-7.2-16-16-16H400zM264 256a40 40 0 1 0 -80 0 40 40 0 1 0 80 0zm152 40a40 40 0 1 0 0-80 40 40 0 1 0 0 80zM48 224H64V416H48c-26.5 0-48-21.5-48-48V272c0-26.5 21.5-48 48-48zm544 0c26.5 0 48 21.5 48 48v96c0 26.5-21.5 48-48 48H576V224h16z">
+                                    </path>
+                                </svg></i>
+                        </div>
+                        <div class="text-3xl font-bold text-green-400 mb-2">Online</div>
+                        <div class="text-sm text-gray-400">Last updated: 2m ago</div>
+                    </div>
+
+                    <div id="crater-detection-card"
+                        class="floating-delayed bg-gray-800/60 backdrop-blur-lg rounded-2xl p-6 border border-gray-700/50 glow-purple">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold orbitron text-purple-300">Craters Detected</h3>
+                            <i class="text-purple-400 text-xl" data-fa-i2svg=""><svg class="svg-inline--fa fa-circle"
+                                    aria-hidden="true" focusable="false" data-prefix="fas" data-icon="circle" role="img"
+                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
+                                    <path fill="currentColor" d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z">
+                                    </path>
+                                </svg></i>
+                        </div>
+                        <div class="text-3xl font-bold text-purple-400 mb-2">1,247</div>
+                        <div class="text-sm text-gray-400">↑ 12% from last scan</div>
+                    </div>
+
+                    <div id="boulder-analysis-card"
+                        class="floating bg-gray-800/60 backdrop-blur-lg rounded-2xl p-6 border border-gray-700/50 glow">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold orbitron text-blue-300">Boulder Analysis</h3>
+                            <i class="text-orange-400 text-xl" data-fa-i2svg=""><svg class="svg-inline--fa fa-mountain"
+                                    aria-hidden="true" focusable="false" data-prefix="fas" data-icon="mountain"
+                                    role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
+                                    data-fa-i2svg="">
+                                    <path fill="currentColor"
+                                        d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z">
+                                    </path>
+                                </svg></i>
+                        </div>
+                        <div class="text-3xl font-bold text-orange-400 mb-2">892</div>
+                        <div class="text-sm text-gray-400">Objects classified</div>
+                    </div>
+
+                    <div id="processing-speed-card"
+                        class="floating-delayed bg-gray-800/60 backdrop-blur-lg rounded-2xl p-6 border border-gray-700/50 glow-purple">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold orbitron text-purple-300">Processing Speed</h3>
+                            <i class="text-yellow-400 text-xl" data-fa-i2svg=""><svg
+                                    class="svg-inline--fa fa-gauge-high" aria-hidden="true" focusable="false"
+                                    data-prefix="fas" data-icon="gauge-high" role="img"
+                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
+                                    <path fill="currentColor"
+                                        d="M0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256zM288 96a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM256 416c35.3 0 64-28.7 64-64c0-17.4-6.9-33.1-18.1-44.6L366 161.7c5.3-12.1-.2-26.3-12.3-31.6s-26.3 .2-31.6 12.3L257.9 288c-.6 0-1.3 0-1.9 0c-35.3 0-64 28.7-64 64s28.7 64 64 64zM176 144a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zM96 288a32 32 0 1 0 0-64 32 32 0 1 0 0 64zm352-32a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z">
+                                    </path>
+                                </svg></i>
+                        </div>
+                        <div class="text-3xl font-bold text-yellow-400 mb-2">2.4s</div>
+                        <div class="text-sm text-gray-400">Per image analysis</div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="main-content" class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+
+                <div id="lunar-insights-panel" class="lg:col-span-2">
+                    <div class="bg-gray-800/60 backdrop-blur-lg rounded-2xl p-6 border border-gray-700/50 glow">
+                        <h2 class="text-xl font-bold orbitron text-blue-300 mb-6">Lunar Surface Analysis</h2>
+                        <div class="relative h-80 bg-gray-900 rounded-xl overflow-hidden mb-4">
+                            <img class="w-full h-full object-cover"
+                                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/f66f4d46a4-ff60f6803bae54706d23.png"
+                                alt="lunar surface with craters and boulders, dark space background, high contrast">
+                            <div class="absolute top-4 left-4 bg-blue-500/80 backdrop-blur-sm rounded-lg px-3 py-2">
+                                <span class="text-sm font-semibold">Region: Mare Tranquillitatis</span>
                             </div>
-                            <div class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                                <i class="text-blue-400 text-xl" data-fa-i2svg=""><svg class="svg-inline--fa fa-camera"
-                                        aria-hidden="true" focusable="false" data-prefix="fas" data-icon="camera"
-                                        role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
-                                        data-fa-i2svg="">
-                                        <path fill="currentColor"
-                                            d="M149.1 64.8L138.7 96H64C28.7 96 0 124.7 0 160V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V160c0-35.3-28.7-64-64-64H373.3L362.9 64.8C356.4 45.2 338.1 32 317.4 32H194.6c-20.7 0-39 13.2-45.5 32.8zM256 192a96 96 0 1 1 0 192 96 96 0 1 1 0-192z">
-                                        </path>
-                                    </svg></i>
+                            <div class="absolute bottom-4 right-4 flex space-x-2">
+                                <div class="bg-purple-500/80 backdrop-blur-sm rounded-lg px-3 py-2">
+                                    <span class="text-sm">47 Craters</span>
+                                </div>
+                                <div class="bg-orange-500/80 backdrop-blur-sm rounded-lg px-3 py-2">
+                                    <span class="text-sm">23 Boulders</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-blue-400">94.2%</div>
+                                <div class="text-sm text-gray-400">Accuracy</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-purple-400">156</div>
+                                <div class="text-sm text-gray-400">Features</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-orange-400">8.7km²</div>
+                                <div class="text-sm text-gray-400">Area Scanned</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="gradient-border">
-                    <div class="gradient-border-inner p-6">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-slate-400 text-sm">Processed</p>
-                                <p class="text-3xl font-bold text-white">9,234</p>
-                            </div>
-                            <div class="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-                                <i class="text-green-400 text-xl" data-fa-i2svg=""><svg
-                                        class="svg-inline--fa fa-circle-check" aria-hidden="true" focusable="false"
-                                        data-prefix="fas" data-icon="circle-check" role="img"
+                <div id="alerts-panel" class="space-y-6">
+                    <div class="bg-gray-800/60 backdrop-blur-lg rounded-2xl p-6 border border-gray-700/50 glow-purple">
+                        <h3 class="text-lg font-bold orbitron text-purple-300 mb-4">System Alerts</h3>
+                        <div class="space-y-3">
+                            <div
+                                class="flex items-center space-x-3 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+                                <i class="text-red-400" data-fa-i2svg=""><svg
+                                        class="svg-inline--fa fa-triangle-exclamation" aria-hidden="true"
+                                        focusable="false" data-prefix="fas" data-icon="triangle-exclamation" role="img"
                                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
+                                        <path fill="currentColor"
+                                            d="M256 32c14.2 0 27.3 7.5 34.5 19.8l216 368c7.3 12.4 7.3 27.7 .2 40.1S486.3 480 472 480H40c-14.3 0-27.6-7.7-34.7-20.1s-7-27.8 .2-40.1l216-368C228.7 39.5 241.8 32 256 32zm0 128c-13.3 0-24 10.7-24 24V296c0 13.3 10.7 24 24 24s24-10.7 24-24V184c0-13.3-10.7-24-24-24zm32 224a32 32 0 1 0 -64 0 32 32 0 1 0 64 0z">
+                                        </path>
+                                    </svg></i>
+                                <div>
+                                    <div class="text-sm font-semibold text-red-300">High Crater Density</div>
+                                    <div class="text-xs text-gray-400">Sector 7-Alpha</div>
+                                </div>
+                            </div>
+                            <div
+                                class="flex items-center space-x-3 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+                                <i class="text-yellow-400" data-fa-i2svg=""><svg class="svg-inline--fa fa-circle-info"
+                                        aria-hidden="true" focusable="false" data-prefix="fas" data-icon="circle-info"
+                                        role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
+                                        data-fa-i2svg="">
+                                        <path fill="currentColor"
+                                            d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM216 336h24V272H216c-13.3 0-24-10.7-24-24s10.7-24 24-24h48c13.3 0 24 10.7 24 24v88h8c13.3 0 24 10.7 24 24s-10.7 24-24 24H216c-13.3 0-24-10.7-24-24s10.7-24 24-24zm40-208a32 32 0 1 1 0 64 32 32 0 1 1 0-64z">
+                                        </path>
+                                    </svg></i>
+                                <div>
+                                    <div class="text-sm font-semibold text-yellow-300">Model Update Available</div>
+                                    <div class="text-xs text-gray-400">Version 2.4.1</div>
+                                </div>
+                            </div>
+                            <div
+                                class="flex items-center space-x-3 p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
+                                <i class="text-green-400" data-fa-i2svg=""><svg class="svg-inline--fa fa-circle-check"
+                                        aria-hidden="true" focusable="false" data-prefix="fas" data-icon="circle-check"
+                                        role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
+                                        data-fa-i2svg="">
                                         <path fill="currentColor"
                                             d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z">
                                         </path>
                                     </svg></i>
+                                <div>
+                                    <div class="text-sm font-semibold text-green-300">Scan Complete</div>
+                                    <div class="text-xs text-gray-400">Mare Serenitatis</div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="gradient-border">
-                    <div class="gradient-border-inner p-6">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-slate-400 text-sm">Active Missions</p>
-                                <p class="text-3xl font-bold text-white">3</p>
-                            </div>
-                            <div class="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                                <i class="text-purple-400 text-xl" data-fa-i2svg=""><svg
-                                        class="svg-inline--fa fa-rocket" aria-hidden="true" focusable="false"
-                                        data-prefix="fas" data-icon="rocket" role="img"
+                    <div class="bg-gray-800/60 backdrop-blur-lg rounded-2xl p-6 border border-gray-700/50 glow">
+                        <h3 class="text-lg font-bold orbitron text-blue-300 mb-4">Quick Actions</h3>
+                        <div class="space-y-3">
+                            <button
+                                class="w-full bg-blue-600 hover:bg-blue-700 rounded-lg py-3 px-4 transition-colors flex items-center justify-center space-x-2">
+                                <i data-fa-i2svg=""><svg class="svg-inline--fa fa-play" aria-hidden="true"
+                                        focusable="false" data-prefix="fas" data-icon="play" role="img"
+                                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" data-fa-i2svg="">
+                                        <path fill="currentColor"
+                                            d="M73 39c-14.8-9.1-33.4-9.4-48.5-.9S0 62.6 0 80V432c0 17.4 9.4 33.4 24.5 41.9s33.7 8.1 48.5-.9L361 297c14.3-8.7 23-24.2 23-41s-8.7-32.2-23-41L73 39z">
+                                        </path>
+                                    </svg></i>
+                                <span>Start New Scan</span>
+                            </button>
+                            <button
+                                class="w-full bg-purple-600 hover:bg-purple-700 rounded-lg py-3 px-4 transition-colors flex items-center justify-center space-x-2">
+                                <i data-fa-i2svg=""><svg class="svg-inline--fa fa-download" aria-hidden="true"
+                                        focusable="false" data-prefix="fas" data-icon="download" role="img"
                                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
                                         <path fill="currentColor"
-                                            d="M156.6 384.9L125.7 354c-8.5-8.5-11.5-20.8-7.7-32.2c3-8.9 7-20.5 11.8-33.8L24 288c-8.6 0-16.6-4.6-20.9-12.1s-4.2-16.7 .2-24.1l52.5-88.5c13-21.9 36.5-35.3 61.9-35.3l82.3 0c2.4-4 4.8-7.7 7.2-11.3C289.1-4.1 411.1-8.1 483.9 5.3c11.6 2.1 20.6 11.2 22.8 22.8c13.4 72.9 9.3 194.8-111.4 276.7c-3.5 2.4-7.3 4.8-11.3 7.2v82.3c0 25.4-13.4 49-35.3 61.9l-88.5 52.5c-7.4 4.4-16.6 4.5-24.1 .2s-12.1-12.2-12.1-20.9V380.8c-14.1 4.9-26.4 8.9-35.7 11.9c-11.2 3.6-23.4 .5-31.8-7.8zM384 168a40 40 0 1 0 0-80 40 40 0 1 0 0 80z">
+                                            d="M288 32c0-17.7-14.3-32-32-32s-32 14.3-32 32V274.7l-73.4-73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l128 128c12.5 12.5 32.8 12.5 45.3 0l128-128c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L288 274.7V32zM64 352c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V416c0-35.3-28.7-64-64-64H346.5l-45.3 45.3c-25 25-65.5 25-90.5 0L165.5 352H64zm368 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48z">
                                         </path>
                                     </svg></i>
+                                <span>Export Results</span>
+                            </button>
+                            <button
+                                class="w-full bg-gray-700 hover:bg-gray-600 rounded-lg py-3 px-4 transition-colors flex items-center justify-center space-x-2">
+                                <i data-fa-i2svg=""><svg class="svg-inline--fa fa-gear" aria-hidden="true"
+                                        focusable="false" data-prefix="fas" data-icon="gear" role="img"
+                                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg="">
+                                        <path fill="currentColor"
+                                            d="M495.9 166.6c3.2 8.7 .5 18.4-6.4 24.6l-43.3 39.4c1.1 8.3 1.7 16.8 1.7 25.4s-.6 17.1-1.7 25.4l43.3 39.4c6.9 6.2 9.6 15.9 6.4 24.6c-4.4 11.9-9.7 23.3-15.8 34.3l-4.7 8.1c-6.6 11-14 21.4-22.1 31.2c-5.9 7.2-15.7 9.6-24.5 6.8l-55.7-17.7c-13.4 10.3-28.2 18.9-44 25.4l-12.5 57.1c-2 9.1-9 16.3-18.2 17.8c-13.8 2.3-28 3.5-42.5 3.5s-28.7-1.2-42.5-3.5c-9.2-1.5-16.2-8.7-18.2-17.8l-12.5-57.1c-15.8-6.5-30.6-15.1-44-25.4L83.1 425.9c-8.8 2.8-18.6 .3-24.5-6.8c-8.1-9.8-15.5-20.2-22.1-31.2l-4.7-8.1c-6.1-11-11.4-22.4-15.8-34.3c-3.2-8.7-.5-18.4 6.4-24.6l43.3-39.4C64.6 273.1 64 264.6 64 256s.6-17.1 1.7-25.4L22.4 191.2c-6.9-6.2-9.6-15.9-6.4-24.6c4.4-11.9 9.7-23.3 15.8-34.3l4.7-8.1c6.6-11 14-21.4 22.1-31.2c5.9-7.2 15.7-9.6 24.5-6.8l55.7 17.7c13.4-10.3 28.2-18.9 44-25.4l12.5-57.1c2-9.1 9-16.3 18.2-17.8C227.3 1.2 241.5 0 256 0s28.7 1.2 42.5 3.5c9.2 1.5 16.2 8.7 18.2 17.8l12.5 57.1c15.8 6.5 30.6 15.1 44 25.4l55.7-17.7c8.8-2.8 18.6-.3 24.5 6.8c8.1 9.8 15.5 20.2 22.1 31.2l4.7 8.1c6.1 11 11.4 22.4 15.8 34.3zM256 336a80 80 0 1 0 0-160 80 80 0 1 0 0 160z">
+                                        </path>
+                                    </svg></i>
+                                <span>Model Settings</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="recent-scans" class="mb-12">
+                <div class="bg-gray-800/60 backdrop-blur-lg rounded-2xl p-6 border border-gray-700/50 glow">
+                    <h2 class="text-xl font-bold orbitron text-blue-300 mb-6">Recent Lunar Scans</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-gray-900/50 rounded-xl p-4 border border-gray-700/30">
+                            <img class="w-full h-32 object-cover rounded-lg mb-3"
+                                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/01c61ad778-03f4674ad7dbba969208.png"
+                                alt="lunar crater close-up, detailed surface texture">
+                            <h4 class="font-semibold text-blue-300 mb-1">Crater Formation Alpha-7</h4>
+                            <p class="text-sm text-gray-400 mb-2">Diameter: 2.3km • Depth: 450m</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-green-400">Analyzed</span>
+                                <span class="text-xs text-gray-500">2 hours ago</span>
+                            </div>
+                        </div>
+                        <div class="bg-gray-900/50 rounded-xl p-4 border border-gray-700/30">
+                            <img class="w-full h-32 object-cover rounded-lg mb-3"
+                                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/93694a70eb-7e0b0cb34153c342e219.png"
+                                alt="lunar boulder field, rocky terrain with shadows">
+                            <h4 class="font-semibold text-blue-300 mb-1">Boulder Field Beta-12</h4>
+                            <p class="text-sm text-gray-400 mb-2">Objects: 34 • Size: 0.5-3.2m</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-yellow-400">Processing</span>
+                                <span class="text-xs text-gray-500">5 minutes ago</span>
+                            </div>
+                        </div>
+                        <div class="bg-gray-900/50 rounded-xl p-4 border border-gray-700/30">
+                            <img class="w-full h-32 object-cover rounded-lg mb-3"
+                                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/6dbfa107d8-e81582e5d655cc891411.png"
+                                alt="lunar highland terrain, mountainous surface">
+                            <h4 class="font-semibold text-blue-300 mb-1">Highland Region Gamma-5</h4>
+                            <p class="text-sm text-gray-400 mb-2">Elevation: 4.2km • Features: 67</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-blue-400">Queued</span>
+                                <span class="text-xs text-gray-500">Pending</span>
                             </div>
                         </div>
                     </div>
                 </div>
+            </section>
 
-                <div class="gradient-border">
-                    <div class="gradient-border-inner p-6">
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-slate-400 text-sm">Data Size</p>
-                                <p class="text-3xl font-bold text-white">2.4TB</p>
-                            </div>
-                            <div class="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center">
-                                <i class="text-orange-400 text-xl" data-fa-i2svg=""><svg
-                                        class="svg-inline--fa fa-database" aria-hidden="true" focusable="false"
-                                        data-prefix="fas" data-icon="database" role="img"
-                                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg="">
-                                        <path fill="currentColor"
-                                            d="M448 80v48c0 44.2-100.3 80-224 80S0 172.2 0 128V80C0 35.8 100.3 0 224 0S448 35.8 448 80zM393.2 214.7c20.8-7.4 39.9-16.9 54.8-28.6V288c0 44.2-100.3 80-224 80S0 332.2 0 288V186.1c14.9 11.8 34 21.2 54.8 28.6C99.7 230.7 159.5 240 224 240s124.3-9.3 169.2-25.3zM0 346.1c14.9 11.8 34 21.2 54.8 28.6C99.7 390.7 159.5 400 224 400s124.3-9.3 169.2-25.3c20.8-7.4 39.9-16.9 54.8-28.6V432c0 44.2-100.3 80-224 80S0 476.2 0 432V346.1z">
-                                        </path>
-                                    </svg></i>
-                            </div>
-                        </div>
+        </div>
+    </main>
+
+    <footer id="footer" class="bg-gray-900/80 backdrop-blur-lg border-t border-gray-700/50 py-6">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="flex items-center space-x-4 mb-4 md:mb-0">
+                    <div
+                        class="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
+                        <i class="text-white text-sm" data-fa-i2svg=""><svg class="svg-inline--fa fa-moon"
+                                aria-hidden="true" focusable="false" data-prefix="fas" data-icon="moon" role="img"
+                                xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" data-fa-i2svg="">
+                                <path fill="currentColor"
+                                    d="M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z">
+                                </path>
+                            </svg></i>
                     </div>
+                    <span class="text-gray-400 orbitron">LunaLens AI • Lunar Surface Analysis Platform</span>
+                </div>
+                <div class="flex items-center space-x-6 text-sm text-gray-500">
+                    <span>Status: <span class="text-green-400">Operational</span></span>
+                    <span>Uptime: 99.7%</span>
+                    <span>Last Update: 2 min ago</span>
                 </div>
             </div>
-
-            <div id="content-grid" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div id="moon-images-section"
-                    class="lg:col-span-2 bg-slate-900/50 backdrop-blur-lg rounded-xl border border-slate-700/50 p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-xl font-bold text-white">Recent Moon Images</h3>
-                        <button class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                            View All
-                        </button>
-                    </div>
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        <div class="relative group cursor-pointer">
-                            <img class="w-full h-32 object-cover rounded-lg moon-glow"
-                                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/543f003373-16695fbcbcef577945ae.png"
-                                alt="detailed lunar surface crater with shadows and rocky terrain">
-                            <div
-                                class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                                <i class="text-white text-xl" data-fa-i2svg=""><svg class="svg-inline--fa fa-expand"
-                                        aria-hidden="true" focusable="false" data-prefix="fas" data-icon="expand"
-                                        role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"
-                                        data-fa-i2svg="">
-                                        <path fill="currentColor"
-                                            d="M32 32C14.3 32 0 46.3 0 64v96c0 17.7 14.3 32 32 32s32-14.3 32-32V96h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H32zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7 14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H64V352zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32h64v64c0 17.7 14.3 32 32 32s32-14.3 32-32V64c0-17.7-14.3-32-32-32H320zM448 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v64H320c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32V352z">
-                                        </path>
-                                    </svg></i>
-                            </div>
-                        </div>
-                        <div class="relative group cursor-pointer">
-                            <img class="w-full h-32 object-cover rounded-lg moon-glow"
-                                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/9dc101dca6-92491f1cb49bf44cd891.png"
-                                alt="moon surface with earth in background space view">
-                            <div
-                                class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                                <i class="text-white text-xl" data-fa-i2svg=""><svg class="svg-inline--fa fa-expand"
-                                        aria-hidden="true" focusable="false" data-prefix="fas" data-icon="expand"
-                                        role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"
-                                        data-fa-i2svg="">
-                                        <path fill="currentColor"
-                                            d="M32 32C14.3 32 0 46.3 0 64v96c0 17.7 14.3 32 32 32s32-14.3 32-32V96h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H32zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7 14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H64V352zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32h64v64c0 17.7 14.3 32 32 32s32-14.3 32-32V64c0-17.7-14.3-32-32-32H320zM448 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v64H320c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32V352z">
-                                        </path>
-                                    </svg></i>
-                            </div>
-                        </div>
-                        <div class="relative group cursor-pointer">
-                            <img class="w-full h-32 object-cover rounded-lg moon-glow"
-                                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/baae0bebae-7582909abdfe6908a35e.png"
-                                alt="lunar rover on moon surface with tracks in dust">
-                            <div
-                                class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                                <i class="text-white text-xl" data-fa-i2svg=""><svg class="svg-inline--fa fa-expand"
-                                        aria-hidden="true" focusable="false" data-prefix="fas" data-icon="expand"
-                                        role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"
-                                        data-fa-i2svg="">
-                                        <path fill="currentColor"
-                                            d="M32 32C14.3 32 0 46.3 0 64v96c0 17.7 14.3 32 32 32s32-14.3 32-32V96h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H32zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7 14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H64V352zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32h64v64c0 17.7 14.3 32 32 32s32-14.3 32-32V64c0-17.7-14.3-32-32-32H320zM448 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v64H320c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32V352z">
-                                        </path>
-                                    </svg></i>
-                            </div>
-                        </div>
-                        <div class="relative group cursor-pointer">
-                            <img class="w-full h-32 object-cover rounded-lg moon-glow"
-                                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/4d1b180f79-62a6f57fe4ab2728ff55.png"
-                                alt="close up moon surface texture with rocks and dust">
-                            <div
-                                class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                                <i class="text-white text-xl" data-fa-i2svg=""><svg class="svg-inline--fa fa-expand"
-                                        aria-hidden="true" focusable="false" data-prefix="fas" data-icon="expand"
-                                        role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"
-                                        data-fa-i2svg="">
-                                        <path fill="currentColor"
-                                            d="M32 32C14.3 32 0 46.3 0 64v96c0 17.7 14.3 32 32 32s32-14.3 32-32V96h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H32zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7 14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H64V352zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32h64v64c0 17.7 14.3 32 32 32s32-14.3 32-32V64c0-17.7-14.3-32-32-32H320zM448 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v64H320c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32V352z">
-                                        </path>
-                                    </svg></i>
-                            </div>
-                        </div>
-                        <div class="relative group cursor-pointer">
-                            <img class="w-full h-32 object-cover rounded-lg moon-glow"
-                                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/0e9beeec8b-7c77c432755c12e854c2.png"
-                                alt="lunar landscape with mountains and valleys">
-                            <div
-                                class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                                <i class="text-white text-xl" data-fa-i2svg=""><svg class="svg-inline--fa fa-expand"
-                                        aria-hidden="true" focusable="false" data-prefix="fas" data-icon="expand"
-                                        role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"
-                                        data-fa-i2svg="">
-                                        <path fill="currentColor"
-                                            d="M32 32C14.3 32 0 46.3 0 64v96c0 17.7 14.3 32 32 32s32-14.3 32-32V96h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H32zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7 14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H64V352zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32h64v64c0 17.7 14.3 32 32 32s32-14.3 32-32V64c0-17.7-14.3-32-32-32H320zM448 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v64H320c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32V352z">
-                                        </path>
-                                    </svg></i>
-                            </div>
-                        </div>
-                        <div class="relative group cursor-pointer">
-                            <img class="w-full h-32 object-cover rounded-lg moon-glow"
-                                src="https://storage.googleapis.com/uxpilot-auth.appspot.com/c997e33ca2-f1bdfecedb6b6db65ec6.png"
-                                alt="moon phases composite image showing different lunar phases">
-                            <div
-                                class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center">
-                                <i class="text-white text-xl" data-fa-i2svg=""><svg class="svg-inline--fa fa-expand"
-                                        aria-hidden="true" focusable="false" data-prefix="fas" data-icon="expand"
-                                        role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"
-                                        data-fa-i2svg="">
-                                        <path fill="currentColor"
-                                            d="M32 32C14.3 32 0 46.3 0 64v96c0 17.7 14.3 32 32 32s32-14.3 32-32V96h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H32zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7 14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H64V352zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32h64v64c0 17.7 14.3 32 32 32s32-14.3 32-32V64c0-17.7-14.3-32-32-32H320zM448 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v64H320c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32V352z">
-                                        </path>
-                                    </svg></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="mission-status-section" class="space-y-6">
-                    <div class="bg-slate-900/50 backdrop-blur-lg rounded-xl border border-slate-700/50 p-6">
-                        <h3 class="text-xl font-bold text-white mb-4">Mission Status</h3>
-                        <div class="space-y-4">
-                            <div class="flex items-center space-x-3">
-                                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-                                <div class="flex-1">
-                                    <p class="text-white font-medium">Chandrayaan-3</p>
-                                    <p class="text-slate-400 text-sm">Active - Landing Site</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
-                                <div class="flex-1">
-                                    <p class="text-white font-medium">Lunar Orbiter</p>
-                                    <p class="text-slate-400 text-sm">Mapping - 67% Complete</p>
-                                </div>
-                            </div>
-                            <div class="flex items-center space-x-3">
-                                <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                                <div class="flex-1">
-                                    <p class="text-white font-medium">Sample Collection</p>
-                                    <p class="text-slate-400 text-sm">In Progress</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-900/50 backdrop-blur-lg rounded-xl border border-slate-700/50 p-6">
-                        <h3 class="text-xl font-bold text-white mb-4">Processing Queue</h3>
-                        <div class="space-y-3">
-                            <div class="flex items-center justify-between">
-                                <span class="text-slate-300">High Resolution</span>
-                                <span class="text-blue-400">234</span>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-slate-300">Spectral Analysis</span>
-                                <span class="text-purple-400">89</span>
-                            </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-slate-300">3D Mapping</span>
-                                <span class="text-green-400">45</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="bg-slate-900/50 backdrop-blur-lg rounded-xl border border-slate-700/50 p-6">
-                        <h3 class="text-xl font-bold text-white mb-4 flex items-center">
-                            <span class="floating mr-2">🌙</span>
-                            Live Moon Phase
-                        </h3>
-                        <div class="text-center">
-                            <div
-                                class="w-20 h-20 mx-auto mb-3 bg-gradient-to-br from-gray-300 to-gray-600 rounded-full moon-glow">
-                            </div>
-                            <p class="text-white font-medium">Waxing Gibbous</p>
-                            <p class="text-slate-400 text-sm">87% Illuminated</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
+        </div>
+    </footer>
 
 
 </body>
