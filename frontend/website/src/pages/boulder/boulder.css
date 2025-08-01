@@ -1,82 +1,47 @@
-/* Boulder Detection Page Custom Styles */
+/* Boulder Detection Page - Essential Custom Styles Only */
 
-/* Hide scrollbar */
-::-webkit-scrollbar {
-  display: none;
+/* Custom animations that cannot be achieved with Tailwind */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-body {
-  font-family: 'Inter', sans-serif;
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out;
 }
 
-/* Glow effects */
+/* Custom glow effects for specific elements */
 .glow-effect {
   box-shadow: 0 0 20px rgba(251, 146, 60, 0.3);
 }
 
-.moon-glow {
-  background: radial-gradient(circle, rgba(251, 146, 60, 0.1) 0%, transparent 70%);
+.glow-effect:hover {
+  box-shadow: 0 0 30px rgba(251, 146, 60, 0.5);
 }
 
-.selected-card {
-  background: linear-gradient(135deg, rgba(251, 146, 60, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%) !important;
-  border: 2px solid rgba(251, 146, 60, 0.5) !important;
-  box-shadow: 0 0 30px rgba(251, 146, 60, 0.4) !important;
-}
-
-.card-hover:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-}
-
-/* Pulse animation */
-.pulse-animation {
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
+/* Custom pulse animation for success states */
+@keyframes successPulse {
   0%, 100% {
-    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
   }
   50% {
-    opacity: 0.7;
+    transform: scale(1.05);
+    box-shadow: 0 0 0 20px rgba(34, 197, 94, 0);
   }
 }
 
-/* Selection card animations */
-.selection-card {
-  transition: all 0.3s ease;
+.success-pulse {
+  animation: successPulse 2s infinite;
 }
 
-.selection-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
-}
-
-/* Background gradient animations */
-.bg-gradient-to-br {
-  background-size: 200% 200%;
-  animation: gradientShift 3s ease infinite;
-}
-
-@keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-/* Text gradient animations */
-.bg-clip-text {
-  background-size: 200% 200%;
-  animation: textGradient 4s ease infinite;
-}
-
+/* Custom text gradient animation */
 @keyframes textGradient {
   0% {
     background-position: 0% 50%;
@@ -89,7 +54,130 @@ body {
   }
 }
 
-/* Floating animation for hero elements */
+.bg-clip-text {
+  background-size: 200% 200%;
+  animation: textGradient 4s ease infinite;
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+/* Focus states for accessibility */
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 2px solid #f97316;
+  outline-offset: 2px;
+}
+
+/* Custom loading animation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Custom bounce animation with delays */
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -30px, 0);
+  }
+  70% {
+    transform: translate3d(0, -15px, 0);
+  }
+  90% {
+    transform: translate3d(0, -4px, 0);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
+/* Custom pulse animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Custom slide in animation */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-in-up {
+  animation: slideInUp 0.6s ease-out;
+}
+
+/* Custom scale animation */
+@keyframes scale {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-scale {
+  animation: scale 0.3s ease-in-out;
+}
+
+/* Custom twinkle animation for decorative elements */
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-twinkle {
+  animation: twinkle 3s infinite;
+}
+
+/* Custom floating animation */
 @keyframes floating {
   0%, 100% {
     transform: translateY(0px);
@@ -99,22 +187,212 @@ body {
   }
 }
 
-/* Image upload area styles */
-.border-dashed {
-  border-style: dashed;
+.animate-floating {
+  animation: floating 3s ease-in-out infinite;
 }
 
-.border-dashed:hover {
-  border-color: rgba(251, 146, 60, 0.5);
+/* Custom gradient shift animation */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+}
+
+/* Custom icon glow animation */
+@keyframes iconGlow {
+  from {
+    box-shadow: 0 0 20px rgba(251, 146, 60, 0.3);
+  }
+  to {
+    box-shadow: 0 0 30px rgba(251, 146, 60, 0.6);
+  }
+}
+
+.animate-icon-glow {
+  animation: iconGlow 1s ease-in-out infinite alternate;
+}
+
+/* Custom success scale animation */
+@keyframes successScale {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-success-scale {
+  animation: successScale 0.5s ease-out;
+}
+
+/* Custom count up animation */
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-count-up {
+  animation: countUp 1s ease-out;
+}
+
+/* Custom fade in up animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Custom loading pulse animation */
+@keyframes loadingPulse {
+  0%, 100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-loading-pulse {
+  animation: loadingPulse 1.5s ease-in-out infinite;
+}
+
+/* Custom success pulse animation */
+@keyframes successPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 20px rgba(34, 197, 94, 0);
+  }
+}
+
+.animate-success-pulse {
+  animation: successPulse 2s infinite;
+}
+
+/* Custom detection image hover effects */
+.detection-image {
+  transition: all 0.3s ease;
+}
+
+.detection-image:hover {
+  transform: scale(1.02);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+}
+
+/* Custom stats card animations */
+.stats-card {
+  animation: slideInUp 0.6s ease-out;
+}
+
+/* Custom action button hover effects */
+.action-button {
+  transition: all 0.3s ease;
+}
+
+.action-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Custom object card hover effects */
+.object-card {
+  transition: all 0.3s ease;
+}
+
+.object-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  border-color: #3b82f6;
+}
+
+/* Custom selection card animations */
+.selection-card {
+  transition: all 0.3s ease;
+}
+
+.selection-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Custom selected card styles */
+.selected-card {
+  background: linear-gradient(135deg, rgba(251, 146, 60, 0.2) 0%, rgba(239, 68, 68, 0.1) 100%) !important;
+  border: 2px solid rgba(251, 146, 60, 0.5) !important;
+  box-shadow: 0 0 30px rgba(251, 146, 60, 0.4) !important;
+}
+
+/* Custom card hover effects */
+.card-hover:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+/* Custom moon glow effect */
+.moon-glow {
+  background: radial-gradient(circle, rgba(251, 146, 60, 0.1) 0%, transparent 70%);
+}
+
+/* Custom upload area animations */
+.upload-area {
+  transition: all 0.3s ease;
+}
+
+.upload-area:hover {
+  border-color: rgba(251, 146, 60, 0.8);
   background-color: rgba(251, 146, 60, 0.05);
 }
 
-/* File upload button styles */
-input[type="file"] {
-  display: none;
+.upload-area.dragover {
+  border-color: #f97316;
+  background-color: rgba(251, 146, 60, 0.1);
+  transform: scale(1.02);
 }
 
-/* Upload preview styles */
+/* Custom results grid animations */
+.results-grid {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Custom metric value animations */
+.metric-value {
+  animation: countUp 1s ease-out;
+}
+
+/* Custom upload preview styles */
 .upload-preview {
   transition: all 0.3s ease;
 }
@@ -123,7 +401,7 @@ input[type="file"] {
   transform: scale(1.05);
 }
 
-/* Analysis type cards */
+/* Custom analysis card animations */
 .analysis-card {
   transition: all 0.3s ease;
   position: relative;
@@ -145,23 +423,12 @@ input[type="file"] {
   left: 100%;
 }
 
-/* Results section animations */
+/* Custom results section animations */
 .results-section {
   animation: slideInUp 0.5s ease-out;
 }
 
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Metric cards */
+/* Custom metric cards */
 .metric-card {
   transition: all 0.3s ease;
   border: 1px solid rgba(75, 85, 99, 0.5);
@@ -191,194 +458,11 @@ input[type="file"] {
   }
 }
 
-/* Smooth transitions */
-.transition-all {
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-
-/* Custom button hover effects */
-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(251, 146, 60, 0.3);
-}
-
-/* Navigation hover effects */
-nav span:hover {
-  transform: translateY(-1px);
-}
-
-/* Icon animations */
-.selection-card:hover .glow-effect {
-  animation: iconGlow 1s ease-in-out infinite alternate;
-}
-
-@keyframes iconGlow {
-  from {
-    box-shadow: 0 0 20px rgba(251, 146, 60, 0.3);
-  }
-  to {
-    box-shadow: 0 0 30px rgba(251, 146, 60, 0.6);
-  }
-}
-
-/* Loading animation for analysis */
-.loading-analysis {
-  animation: loadingPulse 1.5s ease-in-out infinite;
-}
-
-@keyframes loadingPulse {
-  0%, 100% {
-    opacity: 0.6;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-/* Success animation */
-.success-check {
-  animation: successScale 0.5s ease-out;
-}
-
-@keyframes successScale {
-  0% {
-    transform: scale(0);
-  }
-  50% {
-    transform: scale(1.2);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-/* Background star effect */
-.stars {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-}
-
-.star {
-  position: absolute;
-  background: white;
-  border-radius: 50%;
-  animation: twinkle 3s infinite;
-}
-
-@keyframes twinkle {
-  0%, 100% {
-    opacity: 0.3;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-/* Custom scrollbar for webkit browsers */
+/* Hide scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  display: none;
 }
 
-::-webkit-scrollbar-track {
-  background: #1f2937;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #4b5563;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #6b7280;
-}
-
-/* Focus states for accessibility */
-button:focus,
-.selection-card:focus {
-  outline: 2px solid #f97316;
-  outline-offset: 2px;
-}
-
-/* Loading states */
-.loading {
-  opacity: 0.7;
-  pointer-events: none;
-}
-
-.loading::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 20px;
-  height: 20px;
-  margin: -10px 0 0 -10px;
-  border: 2px solid #f97316;
-  border-top: 2px solid transparent;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* Upload area animations */
-.upload-area {
-  transition: all 0.3s ease;
-}
-
-.upload-area:hover {
-  border-color: rgba(251, 146, 60, 0.8);
-  background-color: rgba(251, 146, 60, 0.05);
-}
-
-.upload-area.dragover {
-  border-color: #f97316;
-  background-color: rgba(251, 146, 60, 0.1);
-  transform: scale(1.02);
-}
-
-/* Results grid animations */
-.results-grid {
-  animation: fadeInUp 0.6s ease-out;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Metric value animations */
-.metric-value {
-  animation: countUp 1s ease-out;
-}
-
-@keyframes countUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+body {
+  font-family: 'Inter', sans-serif;
 } 

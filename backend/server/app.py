@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_cors import CORS
 import jwt
 import datetime
@@ -41,7 +41,7 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff'}
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Initialize CORS
-CORS(app, origins=['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:5173'])
+CORS(app, supports_credentials=True, origins=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000"])
 
 # Store active tokens (in production, use Redis or database)
 ACTIVE_TOKENS = set()
@@ -327,14 +327,21 @@ def analyze_boulder():
                     "path": gradcam_path
                 })
         
-        if analysis_type in ['visualization', 'full']:
-            # Create visualization
-            viz_path = boulder_controller.create_visualization(absolute_filepath, detected_objects)
-            if viz_path:
-                results["additional_files"].append({
-                    "type": "visualization",
-                    "path": viz_path
-                })
+        # Always create detection visualization
+        viz_path = boulder_controller.create_visualization(absolute_filepath, detected_objects)
+        if viz_path:
+            # Move/copy the visualization image to uploads folder
+            import shutil
+            uploads_dir = os.path.join(os.path.dirname(__file__), 'uploads')
+            viz_filename = os.path.basename(viz_path)
+            uploads_viz_path = os.path.join(uploads_dir, viz_filename)
+            if os.path.abspath(viz_path) != os.path.abspath(uploads_viz_path):
+                shutil.copyfile(viz_path, uploads_viz_path)
+            # Return the path as /uploads/filename for frontend
+            results["additional_files"].append({
+                "type": "visualization",
+                "path": f"/uploads/{viz_filename}"
+            })
         
         # Calculate density analysis
         density_analysis = boulder_controller.calculate_density_analysis(detected_objects, absolute_filepath)
@@ -352,6 +359,11 @@ def analyze_boulder():
             "success": False,
             "message": f"Error during analysis: {str(e)}"
         }), 500
+
+@app.route('/uploads/<filename>')
+def serve_upload(filename):
+    """Serve uploaded files"""
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/api/boulder/status', methods=['GET'])
 def boulder_status():

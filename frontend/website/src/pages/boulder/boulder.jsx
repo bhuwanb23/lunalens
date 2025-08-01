@@ -107,7 +107,9 @@ const Boulder = () => {
           confidence: analysisResult.detected_objects.reduce((sum, obj) => sum + obj.confidence, 0) / analysisResult.detected_objects.length || 0,
           processingTime: 2.4, // This would come from backend
           detectedObjects: analysisResult.detected_objects,
-          additionalFiles: analysisResult.additional_files || []
+          additionalFiles: analysisResult.additional_files || [],
+          visualizationImage: analysisResult.additional_files?.find(file => file.type === 'visualization')?.path,
+          gradcamImage: analysisResult.additional_files?.find(file => file.type === 'gradcam')?.path
         };
         
         setAnalysisResults(results);
@@ -177,39 +179,39 @@ const Boulder = () => {
 
   return (
     <div className="bg-gray-900 text-white overflow-x-hidden">
-      {/* Header */}
-      <header className="bg-gray-800 border-b border-gray-700">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+      {/* Enhanced Header */}
+      <header className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 border-b border-gray-700 shadow-2xl backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center">
-                <i className="text-white text-lg">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 512 512">
+            <div className="flex items-center space-x-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-orange-400 via-red-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg hover:shadow-orange-500/25 transition-all duration-300 transform hover:scale-110">
+                <i className="text-white text-xl">
+                  <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 512 512">
                     <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
                   </svg>
                 </i>
               </div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-orange-400 via-red-500 to-orange-600 bg-clip-text text-transparent animate-pulse">
                 Boulder Detection
               </h1>
             </div>
-            <nav className="flex items-center space-x-6">
+            <nav className="flex items-center space-x-8">
               <span 
-                className="text-gray-300 hover:text-blue-400 transition-colors cursor-pointer"
+                className="text-gray-300 hover:text-blue-400 transition-all duration-300 cursor-pointer font-medium hover:scale-105 transform"
                 onClick={() => navigate('/dashboard')}
               >
                 Dashboard
               </span>
               <span 
-                className="text-gray-300 hover:text-blue-400 transition-colors cursor-pointer"
+                className="text-gray-300 hover:text-blue-400 transition-all duration-300 cursor-pointer font-medium hover:scale-105 transform"
                 onClick={() => navigate('/analytics')}
               >
                 Analytics
               </span>
-              <span className="text-orange-400 font-medium cursor-pointer">Boulder Detection</span>
-              <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center">
+              <span className="text-orange-400 font-semibold cursor-pointer bg-gradient-to-r from-orange-500/20 to-red-500/20 px-4 py-2 rounded-xl border border-orange-500/30">Boulder Detection</span>
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-600 to-gray-700 flex items-center justify-center shadow-lg hover:shadow-gray-500/25 transition-all duration-300 transform hover:scale-110">
                 <i className="text-sm">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 448 512">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 448 512">
                     <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z" />
                   </svg>
                 </i>
@@ -221,34 +223,51 @@ const Boulder = () => {
 
       {/* Main Content */}
       <main className="min-h-screen bg-gray-900">
-        {/* Hero Section */}
-        <section className="relative h-[300px] flex items-center justify-center overflow-hidden">
-          <div className="absolute inset-0 moon-glow"></div>
-          <div className="absolute top-10 right-20 w-32 h-32 rounded-full bg-gradient-to-br from-orange-200 to-red-400 opacity-20"></div>
-          <div className="absolute bottom-10 left-16 w-20 h-20 rounded-full bg-gradient-to-br from-orange-300 to-red-500 opacity-10"></div>
-          <div className="text-center z-10">
-            <h2 className="text-5xl font-light mb-4 bg-gradient-to-r from-gray-200 to-orange-300 bg-clip-text text-transparent">
-              Boulder & Crater Detection
-            </h2>
-            <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-              Advanced AI-powered detection system for lunar boulders and craters with physical measurements and analysis
-            </p>
-          </div>
-        </section>
-
-        {/* Image Upload Section */}
-        <section className="py-8 px-6">
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-gray-800 border-2 border-dashed border-gray-600 rounded-2xl p-8 text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <i className="text-2xl text-white">
-                  <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 512 512">
+        {/* Enhanced Hero Section */}
+        <section className="relative h-[400px] flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+          {/* Animated background elements */}
+          <div className="absolute inset-0 bg-gradient-to-br from-orange-500/5 via-red-500/3 to-orange-600/5 animate-pulse"></div>
+          <div className="absolute top-10 right-20 w-40 h-40 rounded-full bg-gradient-to-br from-orange-200 to-red-400 opacity-20 animate-bounce"></div>
+          <div className="absolute bottom-10 left-16 w-24 h-24 rounded-full bg-gradient-to-br from-orange-300 to-red-500 opacity-15 animate-pulse"></div>
+          <div className="absolute top-1/4 left-1/4 w-16 h-16 rounded-full bg-gradient-to-br from-red-300 to-orange-400 opacity-10 animate-spin"></div>
+          
+          <div className="text-center z-10 relative">
+            <div className="mb-8">
+              <div className="w-20 h-20 bg-gradient-to-br from-orange-400 via-red-500 to-orange-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl hover:shadow-orange-500/50 transition-all duration-500 transform hover:scale-110">
+                <i className="text-white text-3xl">
+                  <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 512 512">
                     <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
                   </svg>
                 </i>
               </div>
-              <h3 className="text-2xl font-semibold mb-4 text-gray-200">Upload Lunar Image</h3>
-              <p className="text-gray-400 mb-6">Upload a lunar surface image for boulder and crater detection analysis</p>
+            </div>
+            <h2 className="text-6xl font-bold mb-6 bg-gradient-to-r from-gray-100 via-orange-200 to-red-300 bg-clip-text text-transparent animate-pulse">
+              Boulder & Crater Detection
+            </h2>
+            <p className="text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed font-light">
+              Advanced AI-powered detection system for lunar boulders and craters with physical measurements and analysis
+            </p>
+            <div className="mt-8 flex justify-center space-x-4">
+              <div className="w-3 h-3 bg-orange-400 rounded-full animate-bounce"></div>
+              <div className="w-3 h-3 bg-red-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+              <div className="w-3 h-3 bg-orange-600 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+            </div>
+          </div>
+        </section>
+
+        {/* Enhanced Image Upload Section */}
+        <section className="py-12 px-6">
+          <div className="max-w-5xl mx-auto">
+            <div className="bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 border-2 border-dashed border-orange-500/30 rounded-3xl p-12 text-center shadow-2xl hover:shadow-orange-500/20 transition-all duration-500 transform hover:scale-[1.02]">
+              <div className="w-20 h-20 bg-gradient-to-br from-orange-400 via-red-500 to-orange-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl hover:shadow-orange-500/50 transition-all duration-300 transform hover:scale-110">
+                <i className="text-3xl text-white">
+                  <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 512 512">
+                    <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
+                  </svg>
+                </i>
+              </div>
+              <h3 className="text-3xl font-bold mb-4 bg-gradient-to-r from-gray-200 to-orange-300 bg-clip-text text-transparent">Upload Lunar Image</h3>
+              <p className="text-gray-300 mb-8 text-lg leading-relaxed">Upload a lunar surface image for boulder and crater detection analysis</p>
               <input
                 type="file"
                 accept="image/*"
@@ -258,42 +277,63 @@ const Boulder = () => {
               />
               <label
                 htmlFor="image-upload"
-                className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 px-8 py-3 rounded-xl font-medium transition-all duration-300 glow-effect cursor-pointer inline-block"
+                className="bg-gradient-to-r from-orange-500 via-red-600 to-orange-700 hover:from-orange-600 hover:via-red-700 hover:to-orange-800 px-10 py-4 rounded-2xl font-semibold transition-all duration-300 shadow-lg hover:shadow-orange-500/50 cursor-pointer inline-block transform hover:scale-105 hover:-translate-y-1"
               >
-                Choose Image
+                <span className="flex items-center space-x-2">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 512 512">
+                    <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
+                  </svg>
+                  <span>Choose Image</span>
+                </span>
               </label>
               {uploadedImage && (
-                <div className="mt-4">
-                  <img src={uploadedImage} alt="Uploaded" className="max-w-xs mx-auto rounded-lg" />
-                  <p className="text-green-400 mt-2">✓ Image uploaded successfully</p>
+                <div className="mt-8 animate-fade-in">
+                  <div className="relative inline-block">
+                    <img src={uploadedImage} alt="Uploaded" className="max-w-sm mx-auto rounded-2xl shadow-2xl border-4 border-green-500/30" />
+                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
+                      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 448 512">
+                        <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
+                      </svg>
+                    </div>
+                  </div>
+                  <p className="text-green-400 mt-4 text-lg font-semibold flex items-center justify-center">
+                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 448 512">
+                      <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
+                    </svg>
+                    Image uploaded successfully
+                  </p>
                 </div>
               )}
             </div>
           </div>
         </section>
 
-        {/* Analysis Selection Section */}
-        <section className="py-16 px-6">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-12">
-              <h3 className="text-3xl font-semibold mb-4 text-gray-200">Choose Analysis Type</h3>
-              <p className="text-gray-400">Select your preferred detection method for lunar surface analysis</p>
+        {/* Enhanced Analysis Selection Section */}
+        <section className="py-20 px-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h3 className="text-4xl font-bold mb-6 bg-gradient-to-r from-gray-200 to-orange-300 bg-clip-text text-transparent">Choose Analysis Type</h3>
+              <p className="text-gray-300 text-xl leading-relaxed max-w-3xl mx-auto">Select your preferred detection method for lunar surface analysis</p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               {analysisTypes.map((analysis) => (
                 <div 
                   key={analysis.id}
-                  className={`selection-card bg-gray-800 border-2 border-gray-700 rounded-2xl p-6 cursor-pointer transition-all duration-300 card-hover relative overflow-hidden ${
-                    selectedAnalysis === analysis.id ? 'selected-card' : ''
+                  className={`bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 border-2 border-gray-600 rounded-3xl p-8 cursor-pointer transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 relative overflow-hidden shadow-xl hover:shadow-2xl ${
+                    selectedAnalysis === analysis.id 
+                      ? 'border-orange-500 shadow-orange-500/50 bg-gradient-to-br from-orange-900/20 via-red-900/20 to-orange-900/20' 
+                      : 'hover:border-gray-500'
                   }`}
                   onClick={() => handleAnalysisSelect(analysis.id)}
                 >
-                  <div className={`absolute top-0 right-0 w-20 h-20 rounded-full bg-gradient-to-br from-${analysis.color}-400 to-${analysis.color === 'orange' ? 'red' : analysis.color === 'blue' ? 'indigo' : analysis.color === 'green' ? 'emerald' : 'purple'}-500 opacity-10 -mr-10 -mt-10`}></div>
+                  {/* Background glow effect */}
+                  <div className={`absolute top-0 right-0 w-24 h-24 rounded-full bg-gradient-to-br from-${analysis.color}-400 to-${analysis.color === 'orange' ? 'red' : analysis.color === 'blue' ? 'indigo' : analysis.color === 'green' ? 'emerald' : 'purple'}-500 opacity-10 -mr-12 -mt-12 animate-pulse`}></div>
+                  
                   <div className="relative z-10">
-                    <div className={`w-12 h-12 bg-gradient-to-br from-${analysis.color}-400 to-${analysis.color === 'orange' ? 'red' : analysis.color === 'blue' ? 'indigo' : analysis.color === 'green' ? 'emerald' : 'purple'}-500 rounded-xl flex items-center justify-center mb-4 glow-effect`}>
-                      <i className="text-xl text-white">
-                        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 512 512">
+                    <div className={`w-16 h-16 bg-gradient-to-br from-${analysis.color}-400 via-${analysis.color === 'orange' ? 'red' : analysis.color === 'blue' ? 'indigo' : analysis.color === 'green' ? 'emerald' : 'purple'}-500 to-${analysis.color === 'orange' ? 'red' : analysis.color === 'blue' ? 'indigo' : analysis.color === 'green' ? 'emerald' : 'purple'}-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg hover:shadow-${analysis.color}-500/50 transition-all duration-300 transform hover:scale-110`}>
+                      <i className="text-2xl text-white">
+                        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 512 512">
                           {analysis.icon === 'mountain' && (
                             <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
                           )}
@@ -309,12 +349,12 @@ const Boulder = () => {
                         </svg>
                       </i>
                     </div>
-                    <h4 className="text-lg font-semibold mb-2 text-gray-200">{analysis.title}</h4>
-                    <p className="text-gray-400 text-sm mb-4 leading-relaxed">{analysis.description}</p>
-                    <div className="space-y-1">
+                    <h4 className="text-xl font-bold mb-3 text-gray-200">{analysis.title}</h4>
+                    <p className="text-gray-300 text-sm mb-6 leading-relaxed">{analysis.description}</p>
+                    <div className="space-y-2">
                       {analysis.features.map((feature, index) => (
-                        <div key={index} className="flex items-center text-xs text-gray-300">
-                          <span className="w-1 h-1 bg-gray-400 rounded-full mr-2"></span>
+                        <div key={index} className="flex items-center text-sm text-gray-300">
+                          <span className="w-2 h-2 bg-gray-400 rounded-full mr-3"></span>
                           {feature}
                         </div>
                       ))}
@@ -326,43 +366,48 @@ const Boulder = () => {
           </div>
         </section>
 
-        {/* Confirmation Section */}
+        {/* Enhanced Confirmation Section */}
         {showConfirmation && (
-          <section className="py-12 px-6">
-            <div className="max-w-2xl mx-auto text-center">
-              <div className="bg-gray-800 border border-gray-700 rounded-2xl p-8">
-                <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center mx-auto mb-6 pulse-animation">
-                  <i className="text-3xl text-white">
-                    <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 448 512">
+          <section className="py-16 px-6">
+            <div className="max-w-3xl mx-auto text-center">
+              <div className="bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 border-2 border-orange-500/30 rounded-3xl p-12 shadow-2xl">
+                <div className="w-24 h-24 bg-gradient-to-br from-orange-400 via-red-500 to-orange-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-xl animate-pulse">
+                  <i className="text-4xl text-white">
+                    <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 448 512">
                       <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
                     </svg>
                   </i>
                 </div>
-                <h3 className="text-2xl font-semibold mb-4 text-gray-200">Analysis Initiated</h3>
-                <p className="text-gray-400 mb-8">
+                <h3 className="text-3xl font-bold mb-6 bg-gradient-to-r from-gray-200 to-orange-300 bg-clip-text text-transparent">Analysis Initiated</h3>
+                <p className="text-gray-300 text-lg mb-10 leading-relaxed">
                   {getAnalysisName(selectedAnalysis)} has been initiated and is now processing lunar surface data...
                 </p>
                 {error && (
-                  <div className="mb-4 p-4 bg-red-900 border border-red-700 rounded-lg">
-                    <p className="text-red-300">{error}</p>
+                  <div className="mb-6 p-6 bg-gradient-to-r from-red-900 to-red-800 border-2 border-red-600 rounded-2xl">
+                    <p className="text-red-200 font-semibold">{error}</p>
                   </div>
                 )}
                 <button 
                   onClick={handleStartAnalysis}
                   disabled={isAnalyzing}
-                  className={`px-8 py-3 rounded-xl font-medium transition-all duration-300 glow-effect ${
+                  className={`px-12 py-5 rounded-2xl font-bold text-lg transition-all duration-500 shadow-xl transform hover:scale-105 ${
                     isAnalyzing 
-                      ? 'bg-gray-600 cursor-not-allowed' 
-                      : 'bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700'
+                      ? 'bg-gray-600 cursor-not-allowed shadow-gray-600/50' 
+                      : 'bg-gradient-to-r from-orange-500 via-red-600 to-orange-700 hover:from-orange-600 hover:via-red-700 hover:to-orange-800 shadow-orange-500/50 hover:shadow-orange-500/75'
                   }`}
                 >
                   {isAnalyzing ? (
-                    <div className="flex items-center space-x-2">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <div className="flex items-center space-x-3">
+                      <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
                       <span>Analyzing...</span>
                     </div>
                   ) : (
-                    'Start Analysis'
+                    <span className="flex items-center space-x-2">
+                      <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 512 512">
+                        <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
+                      </svg>
+                      <span>Start Analysis</span>
+                    </span>
                   )}
                 </button>
               </div>
@@ -370,111 +415,260 @@ const Boulder = () => {
           </section>
         )}
 
-        {/* Results Section */}
+        {/* Enhanced Results Section */}
         {analysisResults && (
-          <section className="py-12 px-6">
-            <div className="max-w-6xl mx-auto">
-              <div className="bg-gray-800 border border-gray-700 rounded-2xl p-8">
-                <h3 className="text-2xl font-semibold mb-6 text-gray-200">Analysis Results</h3>
-                <div className="grid md:grid-cols-3 gap-6">
-                  <div className="bg-gray-700 rounded-xl p-6">
-                    <h4 className="text-lg font-semibold mb-2 text-gray-200">Objects Detected</h4>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Boulders:</span>
-                        <span className="text-orange-400 font-semibold">{analysisResults.boulders}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Craters:</span>
-                        <span className="text-blue-400 font-semibold">{analysisResults.craters}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Total:</span>
-                        <span className="text-green-400 font-semibold">{analysisResults.totalObjects}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-gray-700 rounded-xl p-6">
-                    <h4 className="text-lg font-semibold mb-2 text-gray-200">Analysis Metrics</h4>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Density:</span>
-                        <span className="text-purple-400 font-semibold">{analysisResults.density} obj/m²</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Avg Size:</span>
-                        <span className="text-yellow-400 font-semibold">{analysisResults.averageSize}m</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Confidence:</span>
-                        <span className="text-green-400 font-semibold">{(analysisResults.confidence * 100).toFixed(1)}%</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-gray-700 rounded-xl p-6">
-                    <h4 className="text-lg font-semibold mb-2 text-gray-200">Processing Info</h4>
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Time:</span>
-                        <span className="text-blue-400 font-semibold">{analysisResults.processingTime}s</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Status:</span>
-                        <span className="text-green-400 font-semibold">Complete</span>
-                      </div>
-                    </div>
-                  </div>
+          <section className="py-20 px-6">
+            <div className="max-w-7xl mx-auto">
+              {/* Enhanced Success Header */}
+              <div className="text-center mb-16">
+                <div className="w-24 h-24 bg-gradient-to-br from-green-400 via-emerald-500 to-green-600 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-2xl animate-pulse">
+                  <i className="text-4xl text-white">
+                    <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 448 512">
+                      <path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z" />
+                    </svg>
+                  </i>
                 </div>
-                {analysisResults.detectedObjects && analysisResults.detectedObjects.length > 0 && (
-                  <div className="mt-8">
-                    <h4 className="text-lg font-semibold mb-4 text-gray-200">Detected Objects Details</h4>
-                    <div className="bg-gray-700 rounded-xl p-4 max-h-64 overflow-y-auto">
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {analysisResults.detectedObjects.map((obj, index) => (
-                          <div key={index} className="bg-gray-600 rounded-lg p-3">
-                            <div className="flex justify-between items-center mb-2">
-                              <span className="text-sm font-medium text-gray-300">
-                                {obj.class_name.charAt(0).toUpperCase() + obj.class_name.slice(1)} {index + 1}
-                              </span>
-                              <span className="text-xs text-gray-400">
-                                {(obj.confidence * 100).toFixed(1)}%
-                              </span>
-                            </div>
-                            <div className="space-y-1 text-xs text-gray-400">
-                              <div>Size: {obj.diameter_real.toFixed(2)}m</div>
-                              <div>Area: {obj.area_real.toFixed(2)}m²</div>
-                              <div>Volume: {obj.volume_real.toFixed(2)}m³</div>
-                              {obj.estimated_depth && (
-                                <div>Depth: {obj.estimated_depth.toFixed(2)}m</div>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                )}
+                <h3 className="text-5xl font-bold mb-4 bg-gradient-to-r from-green-400 via-emerald-500 to-green-600 bg-clip-text text-transparent animate-pulse">
+                  Analysis Complete!
+                </h3>
+                <p className="text-gray-300 text-2xl font-light">
+                  Successfully detected <span className="text-green-400 font-bold">{analysisResults.totalObjects}</span> objects in the lunar surface
+                </p>
                 <div className="mt-8 flex justify-center space-x-4">
-                  <button 
-                    onClick={handleProceed}
-                    className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 px-6 py-3 rounded-xl font-medium transition-all duration-300"
-                  >
-                    Back to Dashboard
-                  </button>
-                  <button className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 px-6 py-3 rounded-xl font-medium transition-all duration-300">
-                    Export Results
-                  </button>
+                  <div className="w-3 h-3 bg-green-400 rounded-full animate-bounce"></div>
+                  <div className="w-3 h-3 bg-emerald-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+                  <div className="w-3 h-3 bg-green-600 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
                 </div>
+              </div>
+
+              {/* Enhanced Main Results Grid */}
+              <div className="grid lg:grid-cols-3 gap-10 mb-12">
+                {/* Enhanced Detection Visualization */}
+                <div className="lg:col-span-2">
+                  <div className="bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 border-2 border-gray-600 rounded-3xl p-8 shadow-2xl">
+                    <h4 className="text-2xl font-bold mb-6 text-gray-200 flex items-center">
+                      <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-xl flex items-center justify-center mr-3">
+                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 512 512">
+                          <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
+                        </svg>
+                      </div>
+                      Detection Visualization
+                    </h4>
+                    {analysisResults.visualizationImage ? (
+                      <div className="relative group">
+                        <img 
+                          src={`http://localhost:5000${analysisResults.visualizationImage}`}
+                          alt="Detection Visualization"
+                          className="w-full rounded-2xl border-2 border-gray-600 shadow-2xl transition-all duration-500 transform group-hover:scale-[1.02] group-hover:shadow-3xl"
+                        />
+                        <div className="absolute top-6 right-6 bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-semibold shadow-lg">
+                          {analysisResults.totalObjects} Objects Detected
+                        </div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      </div>
+                    ) : (
+                      <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-2xl p-12 text-center border-2 border-dashed border-gray-600">
+                        <div className="w-20 h-20 bg-gray-600 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                          <svg className="w-12 h-12 text-gray-500" fill="currentColor" viewBox="0 0 512 512">
+                            <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
+                          </svg>
+                        </div>
+                        <p className="text-gray-400 text-lg font-medium">Visualization not available</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Enhanced Statistics Cards */}
+                <div className="space-y-8">
+                  {/* Enhanced Detection Summary */}
+                  <div className="bg-gradient-to-br from-blue-600 via-indigo-700 to-blue-800 rounded-3xl p-8 text-white shadow-2xl transform hover:scale-105 transition-all duration-300">
+                    <h4 className="text-xl font-bold mb-6 flex items-center">
+                      <div className="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center mr-3">
+                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 512 512">
+                          <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
+                        </svg>
+                      </div>
+                      Detection Summary
+                    </h4>
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center p-3 bg-white/10 rounded-xl">
+                        <span className="text-blue-100 font-medium">Total Objects:</span>
+                        <span className="text-3xl font-bold text-white">{analysisResults.totalObjects}</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-white/10 rounded-xl">
+                        <span className="text-orange-200 font-medium">Boulders:</span>
+                        <span className="text-2xl font-bold text-orange-300">{analysisResults.boulders}</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-white/10 rounded-xl">
+                        <span className="text-yellow-200 font-medium">Craters:</span>
+                        <span className="text-2xl font-bold text-yellow-300">{analysisResults.craters}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Enhanced Analysis Metrics */}
+                  <div className="bg-gradient-to-br from-purple-600 via-pink-700 to-purple-800 rounded-3xl p-8 text-white shadow-2xl transform hover:scale-105 transition-all duration-300">
+                    <h4 className="text-xl font-bold mb-6 flex items-center">
+                      <div className="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center mr-3">
+                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 512 512">
+                          <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
+                        </svg>
+                      </div>
+                      Analysis Metrics
+                    </h4>
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center p-3 bg-white/10 rounded-xl">
+                        <span className="text-purple-100 font-medium">Confidence:</span>
+                        <span className="text-2xl font-bold text-purple-300">{(analysisResults.confidence * 100).toFixed(1)}%</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-white/10 rounded-xl">
+                        <span className="text-pink-100 font-medium">Avg Size:</span>
+                        <span className="text-xl font-bold text-pink-300">{analysisResults.averageSize.toFixed(1)}m</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-white/10 rounded-xl">
+                        <span className="text-purple-100 font-medium">Density:</span>
+                        <span className="text-lg font-bold text-purple-300">{analysisResults.density.toFixed(6)} obj/m²</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Enhanced Processing Info */}
+                  <div className="bg-gradient-to-br from-green-600 via-emerald-700 to-green-800 rounded-3xl p-8 text-white shadow-2xl transform hover:scale-105 transition-all duration-300">
+                    <h4 className="text-xl font-bold mb-6 flex items-center">
+                      <div className="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center mr-3">
+                        <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 512 512">
+                          <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
+                        </svg>
+                      </div>
+                      Processing Info
+                    </h4>
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center p-3 bg-white/10 rounded-xl">
+                        <span className="text-green-100 font-medium">Status:</span>
+                        <span className="text-2xl font-bold text-green-300">Complete</span>
+                      </div>
+                      <div className="flex justify-between items-center p-3 bg-white/10 rounded-xl">
+                        <span className="text-emerald-100 font-medium">Time:</span>
+                        <span className="text-xl font-bold text-emerald-300">{analysisResults.processingTime}s</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Grad-CAM Visualization */}
+              {analysisResults.gradcamImage && (
+                <div className="mb-8">
+                  <div className="bg-gray-800 border border-gray-700 rounded-2xl p-6">
+                    <h4 className="text-xl font-semibold mb-4 text-gray-200 flex items-center">
+                      <i className="mr-2">
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 512 512">
+                          <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
+                        </svg>
+                      </i>
+                      Grad-CAM Visualization
+                    </h4>
+                    <img 
+                      src={`http://localhost:5000${analysisResults.gradcamImage}`}
+                      alt="Grad-CAM Visualization"
+                      className="w-full rounded-xl border border-gray-600 shadow-2xl"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Detailed Object Analysis */}
+              {analysisResults.detectedObjects && analysisResults.detectedObjects.length > 0 && (
+                <div className="mb-8">
+                  <div className="bg-gray-800 border border-gray-700 rounded-2xl p-6">
+                    <h4 className="text-xl font-semibold mb-6 text-gray-200 flex items-center">
+                      <i className="mr-2">
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 512 512">
+                          <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
+                        </svg>
+                      </i>
+                      Detailed Object Analysis
+                    </h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {analysisResults.detectedObjects.map((obj, index) => (
+                        <div key={index} className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl p-4 border border-gray-600 hover:border-gray-500 transition-all duration-300">
+                          <div className="flex justify-between items-center mb-3">
+                            <span className="text-sm font-semibold text-gray-300 bg-gray-600 px-3 py-1 rounded-full">
+                              {obj.class_name.charAt(0).toUpperCase() + obj.class_name.slice(1)} #{index + 1}
+                            </span>
+                            <span className="text-xs text-gray-400 bg-gray-600 px-2 py-1 rounded">
+                              {(obj.confidence * 100).toFixed(1)}%
+                            </span>
+                          </div>
+                          <div className="space-y-2 text-sm text-gray-300">
+                            <div className="flex justify-between">
+                              <span>Diameter:</span>
+                              <span className="font-semibold text-orange-400">{obj.diameter_real.toFixed(2)}m</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Area:</span>
+                              <span className="font-semibold text-blue-400">{obj.area_real.toFixed(2)}m²</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Volume:</span>
+                              <span className="font-semibold text-green-400">{obj.volume_real.toFixed(2)}m³</span>
+                            </div>
+                            {obj.estimated_depth && (
+                              <div className="flex justify-between">
+                                <span>Depth:</span>
+                                <span className="font-semibold text-purple-400">{obj.estimated_depth.toFixed(2)}m</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Enhanced Action Buttons */}
+              <div className="flex justify-center space-x-8">
+                <button 
+                  onClick={handleProceed}
+                  className="bg-gradient-to-r from-blue-500 via-indigo-600 to-blue-700 hover:from-blue-600 hover:via-indigo-700 hover:to-blue-800 px-12 py-5 rounded-2xl font-bold text-lg transition-all duration-500 transform hover:scale-110 hover:-translate-y-1 shadow-2xl hover:shadow-blue-500/50"
+                >
+                  <span className="flex items-center space-x-3">
+                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 512 512">
+                      <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
+                    </svg>
+                    <span>Back to Dashboard</span>
+                  </span>
+                </button>
+                <button className="bg-gradient-to-r from-green-500 via-emerald-600 to-green-700 hover:from-green-600 hover:via-emerald-700 hover:to-green-800 px-12 py-5 rounded-2xl font-bold text-lg transition-all duration-500 transform hover:scale-110 hover:-translate-y-1 shadow-2xl hover:shadow-green-500/50">
+                  <span className="flex items-center space-x-3">
+                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 512 512">
+                      <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
+                    </svg>
+                    <span>Export Results</span>
+                  </span>
+                </button>
               </div>
             </div>
           </section>
         )}
       </main>
 
-      {/* Footer */}
-      <footer className="bg-gray-800 border-t border-gray-700 py-8">
+      {/* Enhanced Footer */}
+      <footer className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 border-t border-gray-700 py-12">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <p className="text-gray-400">© 2024 LunaLens Boulder Detection. Advanced AI-powered lunar analysis.</p>
+          <div className="flex items-center justify-center space-x-4 mb-4">
+            <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center">
+              <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 512 512">
+                <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent">
+              LunaLens Boulder Detection
+            </h3>
+          </div>
+          <p className="text-gray-300 text-lg font-light">© 2024 Advanced AI-powered lunar analysis</p>
         </div>
       </footer>
     </div>
