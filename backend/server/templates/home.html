@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LunaLens Flask Backend</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #181c24; 
+            color: #f3f3f3; 
+            margin: 0; 
+            padding: 0; 
+        }
+        .container { 
+            max-width: 700px; 
+            margin: 40px auto; 
+            background: #23283a; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 24px #0003; 
+            padding: 32px; 
+        }
+        h1 { color: #60a5fa; }
+        h2 { color: #a78bfa; }
+        code { 
+            background: #181c24; 
+            color: #fbbf24; 
+            padding: 2px 6px; 
+            border-radius: 4px; 
+        }
+        ul { margin-top: 0; }
+        .endpoint { color: #4ade80; }
+        .credentials-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .credentials-table th,
+        .credentials-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #374151;
+        }
+        .credentials-table th {
+            background: #1f2937;
+            color: #60a5fa;
+            font-weight: bold;
+        }
+        .credentials-table tr:hover {
+            background: #374151;
+        }
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status.admin { background: #dc2626; color: white; }
+        .status.user { background: #2563eb; color: white; }
+        .status.researcher { background: #7c3aed; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 LunaLens Flask Backend</h1>
+        <p>This server powers the LunaLens web application, providing API endpoints for authentication and (future) lunar data analysis.</p>
+        
+        <h2>Available API Endpoints</h2>
+        <ul>
+            <li><span class="endpoint">POST <code>/login</code></span> — User login (expects <code>missionId</code> and <code>accessCode</code> in JSON)</li>
+            <li><span class="endpoint">POST <code>/logout</code></span> — User logout (expects <code>token</code> in JSON)</li>
+            <li><span class="endpoint">POST <code>/verify-token</code></span> — Verify authentication token</li>
+        </ul>
+        
+        <h2>Demo Login Credentials</h2>
+        <table class="credentials-table">
+            <thead>
+                <tr>
+                    <th>Mission ID</th>
+                    <th>Access Code</th>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>isro123</code></td>
+                    <td><code>moon@2024</code></td>
+                    <td>ISRO Mission Control</td>
+                    <td>Admin</td>
+                    <td><span class="status admin">Active</span></td>
+                </tr>
+                <tr>
+                    <td><code>mission001</code></td>
+                    <td><code>lunar@2024</code></td>
+                    <td>Lunar Mission Team</td>
+                    <td>User</td>
+                    <td><span class="status user">Active</span></td>
+                </tr>
+                <tr>
+                    <td><code>research002</code></td>
+                    <td><code>research@2024</code></td>
+                    <td>Research Team</td>
+                    <td>Researcher</td>
+                    <td><span class="status researcher">Active</span></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h2>How it works</h2>
+        <ul>
+            <li>Handles <b>API calls</b> from the React frontend</li>
+            <li>Authenticates users with JWT tokens</li>
+            <li>Supports multiple user roles and permissions</li>
+            <li>Ready for <b>database integration</b> (future)</li>
+            <li>Can be extended for lunar data, mission logs, and more</li>
+        </ul>
+        
+        <h2>Quick Test</h2>
+        <p>You can test the login API using curl:</p>
+        <code>
+            curl -X POST http://localhost:5000/login \<br>
+            &nbsp;&nbsp;-H "Content-Type: application/json" \<br>
+            &nbsp;&nbsp;-d '{"missionId": "isro123", "accessCode": "moon@2024"}'
+        </code>
+        
+        <p style="margin-top:32px; color:#94a3b8;">&copy; 2024 LunaLens | ISRO Mission Control</p>
+    </div>
+</body>
+</html> 

@@ -6,7 +6,7 @@ import LoginCard from './components/LoginCard';
 import Footer from './components/Footer';
 import './login.css';
 
-const Login = () => {
+const Login = ({ onLoginSuccess }) => {
   const {
     formData,
     errors,
@@ -15,7 +15,7 @@ const Login = () => {
     serverError,
     handleInputChange,
     handleSubmit
-  } = useLoginForm();
+  } = useLoginForm(onLoginSuccess);
 
   return (
     <div id="main-container" className="relative h-screen w-full bg-gradient-to-br from-gray-900 via-blue-900 to-black">

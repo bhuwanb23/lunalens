@@ -1,0 +1,36 @@
+# LunaLens Backend Environment Variables Template
+# Copy this file to .env and fill in your values
+
+# Flask Configuration
+FLASK_ENV=development
+FLASK_DEBUG=True
+
+# Security Keys (CHANGE THESE IN PRODUCTION!)
+SECRET_KEY=your-super-secret-key-here-change-in-production
+JWT_SECRET_KEY=your-jwt-secret-key-here-change-in-production
+
+# Database Configuration (for future use)
+DATABASE_URL=sqlite:///lunalens.db
+
+# CORS Configuration
+CORS_ORIGINS=http://localhost:3000,http://localhost:5173
+
+# Security Configuration
+SESSION_COOKIE_SECURE=False
+SESSION_COOKIE_HTTPONLY=True
+SESSION_COOKIE_SAMESITE=Lax
+
+# Logging Configuration
+LOG_LEVEL=INFO
+
+# File Upload Configuration
+MAX_CONTENT_LENGTH=16777216
+UPLOAD_FOLDER=uploads
+
+# Rate Limiting
+RATELIMIT_ENABLED=True
+RATELIMIT_STORAGE_URL=memory://
+
+# API Configuration
+API_VERSION=v1
+API_PREFIX=/api/v1 
