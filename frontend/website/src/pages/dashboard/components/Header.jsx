@@ -30,6 +30,8 @@ const Header = ({ onLogout }) => {
               onClick={() => {
                 if (item.label === 'Analytics') {
                   navigate('/analytics');
+                } else if (item.label === 'Boulder Detection') {
+                  navigate('/boulder');
                 }
               }}
             >

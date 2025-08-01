@@ -132,8 +132,8 @@ export const DASHBOARD_DATA = {
 
 export const NAVIGATION_ITEMS = [
   { label: 'Dashboard', active: true },
-  { label: 'Models', active: false },
   { label: 'Analytics', active: false },
+  { label: 'Boulder Detection', active: false },
   { label: 'Settings', active: false }
 ];
 

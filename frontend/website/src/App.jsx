@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/login';
 import Dashboard from './pages/dashboard/dashboard';
 import Analytics from './pages/analytics/analytics';
+import Boulder from './pages/boulder/boulder';
 import './App.css';
 
 function App() {
@@ -61,6 +62,14 @@ function App() {
             element={
               isAuthenticated ? 
               <Analytics /> : 
+              <Navigate to="/login" replace />
+            } 
+          />
+          <Route 
+            path="/boulder" 
+            element={
+              isAuthenticated ? 
+              <Boulder /> : 
               <Navigate to="/login" replace />
             } 
           />
