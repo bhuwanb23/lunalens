@@ -18,7 +18,7 @@ from transforms import DataTransforms
 from measurements import PhysicalCalculator, ObjectMeasurements
 from gradcam import GradCAMVisualizer
 from detector import BoulderDetector
-from main import run_detection, main
+from main import main, BoulderDetectionController
 
 __version__ = "1.0.0"
 __author__ = "Boulder Detection Team"
@@ -31,6 +31,6 @@ __all__ = [
     'ObjectMeasurements',
     'GradCAMVisualizer',
     'BoulderDetector',
-    'run_detection',
+    'BoulderDetectionController',
     'main'
 ] 

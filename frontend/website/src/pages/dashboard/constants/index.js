@@ -134,7 +134,6 @@ export const NAVIGATION_ITEMS = [
   { label: 'Dashboard', active: true },
   { label: 'Analytics', active: false },
   { label: 'Boulder Detection', active: false },
-  { label: 'Settings', active: false }
 ];
 
 export const FOOTER_DATA = {

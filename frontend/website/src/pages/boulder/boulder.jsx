@@ -6,7 +6,10 @@ const Boulder = () => {
   const [selectedAnalysis, setSelectedAnalysis] = useState(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [uploadedImage, setUploadedImage] = useState(null);
+  const [uploadedFile, setUploadedFile] = useState(null);
   const [analysisResults, setAnalysisResults] = useState(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const handleAnalysisSelect = (analysisType) => {
@@ -20,27 +23,102 @@ const Boulder = () => {
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
+      setUploadedFile(file);
       const reader = new FileReader();
       reader.onload = (e) => {
         setUploadedImage(e.target.result);
       };
       reader.readAsDataURL(file);
+      setError(null);
     }
   };
 
-  const handleStartAnalysis = () => {
-    // Simulate analysis process
-    setTimeout(() => {
-      setAnalysisResults({
-        boulders: 23,
-        craters: 47,
-        totalObjects: 70,
-        density: 0.15,
-        averageSize: 2.3,
-        confidence: 0.94,
-        processingTime: 2.4
+  const uploadImage = async (file) => {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      const response = await fetch('http://localhost:5000/api/boulder/upload', {
+        method: 'POST',
+        body: formData,
       });
-    }, 2000);
+
+      if (!response.ok) {
+        throw new Error('Failed to upload image');
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Upload error:', error);
+      throw error;
+    }
+  };
+
+  const analyzeImage = async (filepath, analysisType) => {
+    try {
+      const response = await fetch('http://localhost:5000/api/boulder/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          filepath: filepath,
+          analysisType: analysisType
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to analyze image');
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Analysis error:', error);
+      throw error;
+    }
+  };
+
+  const handleStartAnalysis = async () => {
+    if (!uploadedFile || !selectedAnalysis) {
+      setError('Please upload an image and select an analysis type');
+      return;
+    }
+
+    setIsAnalyzing(true);
+    setError(null);
+
+    try {
+      // Upload image
+      const uploadResult = await uploadImage(uploadedFile);
+      
+      // Analyze image
+      const analysisResult = await analyzeImage(uploadResult.filepath, selectedAnalysis);
+      
+      if (analysisResult.success) {
+        // Process results
+        const results = {
+          totalObjects: analysisResult.detected_objects.length,
+          boulders: analysisResult.detected_objects.filter(obj => obj.class_name === 'boulder').length,
+          craters: analysisResult.detected_objects.filter(obj => obj.class_name === 'crater').length,
+          density: analysisResult.density_analysis?.density || 0,
+          averageSize: analysisResult.detected_objects.reduce((sum, obj) => sum + obj.diameter_real, 0) / analysisResult.detected_objects.length || 0,
+          confidence: analysisResult.detected_objects.reduce((sum, obj) => sum + obj.confidence, 0) / analysisResult.detected_objects.length || 0,
+          processingTime: 2.4, // This would come from backend
+          detectedObjects: analysisResult.detected_objects,
+          additionalFiles: analysisResult.additional_files || []
+        };
+        
+        setAnalysisResults(results);
+      } else {
+        setError(analysisResult.message || 'Analysis failed');
+      }
+    } catch (error) {
+      setError(error.message || 'An error occurred during analysis');
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const handleProceed = () => {
@@ -264,11 +342,28 @@ const Boulder = () => {
                 <p className="text-gray-400 mb-8">
                   {getAnalysisName(selectedAnalysis)} has been initiated and is now processing lunar surface data...
                 </p>
+                {error && (
+                  <div className="mb-4 p-4 bg-red-900 border border-red-700 rounded-lg">
+                    <p className="text-red-300">{error}</p>
+                  </div>
+                )}
                 <button 
                   onClick={handleStartAnalysis}
-                  className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 px-8 py-3 rounded-xl font-medium transition-all duration-300 glow-effect"
+                  disabled={isAnalyzing}
+                  className={`px-8 py-3 rounded-xl font-medium transition-all duration-300 glow-effect ${
+                    isAnalyzing 
+                      ? 'bg-gray-600 cursor-not-allowed' 
+                      : 'bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700'
+                  }`}
                 >
-                  Start Analysis
+                  {isAnalyzing ? (
+                    <div className="flex items-center space-x-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span>Analyzing...</span>
+                    </div>
+                  ) : (
+                    'Start Analysis'
+                  )}
                 </button>
               </div>
             </div>
@@ -330,6 +425,35 @@ const Boulder = () => {
                     </div>
                   </div>
                 </div>
+                {analysisResults.detectedObjects && analysisResults.detectedObjects.length > 0 && (
+                  <div className="mt-8">
+                    <h4 className="text-lg font-semibold mb-4 text-gray-200">Detected Objects Details</h4>
+                    <div className="bg-gray-700 rounded-xl p-4 max-h-64 overflow-y-auto">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {analysisResults.detectedObjects.map((obj, index) => (
+                          <div key={index} className="bg-gray-600 rounded-lg p-3">
+                            <div className="flex justify-between items-center mb-2">
+                              <span className="text-sm font-medium text-gray-300">
+                                {obj.class_name.charAt(0).toUpperCase() + obj.class_name.slice(1)} {index + 1}
+                              </span>
+                              <span className="text-xs text-gray-400">
+                                {(obj.confidence * 100).toFixed(1)}%
+                              </span>
+                            </div>
+                            <div className="space-y-1 text-xs text-gray-400">
+                              <div>Size: {obj.diameter_real.toFixed(2)}m</div>
+                              <div>Area: {obj.area_real.toFixed(2)}m²</div>
+                              <div>Volume: {obj.volume_real.toFixed(2)}m³</div>
+                              {obj.estimated_depth && (
+                                <div>Depth: {obj.estimated_depth.toFixed(2)}m</div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
                 <div className="mt-8 flex justify-center space-x-4">
                   <button 
                     onClick={handleProceed}
