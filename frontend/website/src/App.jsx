@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/login';
 import Dashboard from './pages/dashboard/dashboard';
+import Analytics from './pages/analytics/analytics';
 import './App.css';
 
 function App() {
@@ -52,6 +53,14 @@ function App() {
             element={
               isAuthenticated ? 
               <Dashboard onLogout={handleLogout} /> : 
+              <Navigate to="/login" replace />
+            } 
+          />
+          <Route 
+            path="/analytics" 
+            element={
+              isAuthenticated ? 
+              <Analytics /> : 
               <Navigate to="/login" replace />
             } 
           />

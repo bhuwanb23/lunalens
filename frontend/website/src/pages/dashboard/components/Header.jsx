@@ -1,7 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { NAVIGATION_ITEMS } from '../constants';
 
 const Header = ({ onLogout }) => {
+  const navigate = useNavigate();
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-gray-900/80 backdrop-blur-lg border-b border-gray-700/50">
       <div className="flex items-center justify-between px-6 py-4">
@@ -25,6 +27,11 @@ const Header = ({ onLogout }) => {
                   ? 'text-blue-300 hover:text-blue-200' 
                   : 'text-gray-400 hover:text-blue-300'
               }`}
+              onClick={() => {
+                if (item.label === 'Analytics') {
+                  navigate('/analytics');
+                }
+              }}
             >
               {item.label}
             </span>
