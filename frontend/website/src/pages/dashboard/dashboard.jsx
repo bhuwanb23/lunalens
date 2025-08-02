@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Header,
   StatsCard,
   LunarAnalysis,
   AlertsPanel,
@@ -11,10 +10,9 @@ import {
 import { DASHBOARD_DATA } from './constants';
 import './dashboard.css';
 
-const Dashboard = ({ onLogout }) => {
+const Dashboard = () => {
   return (
     <div className="bg-gray-900 text-gray-100 overflow-x-hidden">
-      <Header onLogout={onLogout} />
       
       <main className="pt-20 lunar-surface min-h-screen">
         <div className="container mx-auto px-6 py-8">

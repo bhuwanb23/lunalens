@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Header,
   HeroSection,
   ImageUpload,
   AnalysisSelection,
@@ -193,8 +192,6 @@ const Boulder = () => {
 
   return (
     <div className="bg-gray-900 text-white overflow-x-hidden">
-      <Header />
-
       <main className="min-h-screen bg-gray-900">
         <HeroSection />
 

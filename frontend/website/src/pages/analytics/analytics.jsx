@@ -34,43 +34,6 @@ const Analytics = () => {
 
   return (
     <div className="bg-gray-900 text-white overflow-x-hidden">
-      {/* Header */}
-      <header className="bg-gray-800 border-b border-gray-700">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-full flex items-center justify-center">
-                <i className="text-white text-lg">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 384 512">
-                    <path d="M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z" />
-                  </svg>
-                </i>
-              </div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
-                Lunar Analytics
-              </h1>
-            </div>
-            <nav className="flex items-center space-x-6">
-              <span 
-                className="text-gray-300 hover:text-blue-400 transition-colors cursor-pointer"
-                onClick={() => navigate('/dashboard')}
-              >
-                Dashboard
-              </span>
-              <span className="text-blue-400 font-medium cursor-pointer">Analytics</span>
-              <span className="text-gray-300 hover:text-blue-400 transition-colors cursor-pointer">Reports</span>
-              <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center">
-                <i className="text-sm">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 448 512">
-                    <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z" />
-                  </svg>
-                </i>
-              </div>
-            </nav>
-          </div>
-        </div>
-      </header>
-
       {/* Main Content */}
       <main className="min-h-screen bg-gray-900">
         {/* Hero Section */}

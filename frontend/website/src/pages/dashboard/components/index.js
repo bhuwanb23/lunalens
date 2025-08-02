@@ -1,4 +1,3 @@
-export { default as Header } from './Header';
 export { default as StatsCard } from './StatsCard';
 export { default as LunarAnalysis } from './LunarAnalysis';
 export { default as AlertsPanel } from './AlertsPanel';

@@ -4,7 +4,20 @@ import Login from './pages/login';
 import Dashboard from './pages/dashboard/dashboard';
 import Analytics from './pages/analytics/analytics';
 import Boulder from './pages/boulder/boulder';
+import Header from './components/Header';
 import './App.css';
+
+// Layout wrapper for authenticated pages
+const AuthenticatedLayout = ({ children, onLogout }) => {
+  return (
+    <div className="min-h-screen bg-gray-900">
+      <Header onLogout={onLogout} />
+      <div className="pt-20">
+        {children}
+      </div>
+    </div>
+  );
+};
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -53,7 +66,9 @@ function App() {
             path="/dashboard" 
             element={
               isAuthenticated ? 
-              <Dashboard onLogout={handleLogout} /> : 
+              <AuthenticatedLayout onLogout={handleLogout}>
+                <Dashboard />
+              </AuthenticatedLayout> : 
               <Navigate to="/login" replace />
             } 
           />
@@ -61,7 +76,9 @@ function App() {
             path="/analytics" 
             element={
               isAuthenticated ? 
-              <Analytics /> : 
+              <AuthenticatedLayout onLogout={handleLogout}>
+                <Analytics />
+              </AuthenticatedLayout> : 
               <Navigate to="/login" replace />
             } 
           />
@@ -69,7 +86,9 @@ function App() {
             path="/boulder" 
             element={
               isAuthenticated ? 
-              <Boulder /> : 
+              <AuthenticatedLayout onLogout={handleLogout}>
+                <Boulder />
+              </AuthenticatedLayout> : 
               <Navigate to="/login" replace />
             } 
           />

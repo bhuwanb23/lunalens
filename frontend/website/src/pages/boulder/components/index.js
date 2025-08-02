@@ -1,4 +1,3 @@
-export { default as Header } from './Header';
 export { default as HeroSection } from './HeroSection';
 export { default as ImageUpload } from './ImageUpload';
 export { default as AnalysisSelection } from './AnalysisSelection';
