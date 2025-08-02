@@ -48,7 +48,7 @@ const AlertsPanel = ({ alerts }) => {
 
   return (
     <div className="bg-gray-800/60 backdrop-blur-lg rounded-2xl p-6 border border-gray-700/50 glow-purple">
-      <h3 className="text-lg font-bold orbitron text-purple-300 mb-4">System Alerts</h3>
+      <h3 className="text-lg font-bold text-purple-300 mb-4">System Alerts</h3>
       <div className="space-y-3">
         {alerts.map((alert) => {
           const colors = getColorClasses(alert.color);

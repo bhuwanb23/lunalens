@@ -11,7 +11,7 @@ const Header = () => {
           </i>
         </div>
         <div>
-          <h1 className="font-orbitron text-xl sm:text-2xl font-bold text-white">
+          <h1 className="text-xl sm:text-2xl font-bold text-white">
             {LOGIN_CONSTANTS.content.header.title}
           </h1>
           <p className="text-gray-300 text-xs sm:text-sm font-inter">

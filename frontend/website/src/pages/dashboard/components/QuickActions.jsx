@@ -38,7 +38,7 @@ const QuickActions = ({ actions }) => {
 
   return (
     <div className="bg-gray-800/60 backdrop-blur-lg rounded-2xl p-6 border border-gray-700/50 glow">
-      <h3 className="text-lg font-bold orbitron text-blue-300 mb-4">Quick Actions</h3>
+      <h3 className="text-lg font-bold text-blue-300 mb-4">Quick Actions</h3>
       <div className="space-y-3">
         {actions.map((action) => (
           <button

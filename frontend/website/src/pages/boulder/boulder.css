@@ -1,5 +1,10 @@
 /* Boulder Detection Page - Essential Animations Only */
 
+/* Font family - same as analytics page */
+body {
+  font-family: 'Inter', sans-serif;
+}
+
 /* Custom fade-in animation */
 @keyframes fade-in {
   from {

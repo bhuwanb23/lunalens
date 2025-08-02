@@ -12,7 +12,7 @@ const LunarAnalysis = ({ data }) => {
 
   return (
     <div className="bg-gray-800/60 backdrop-blur-lg rounded-2xl p-6 border border-gray-700/50 glow">
-      <h2 className="text-xl font-bold orbitron text-blue-300 mb-6">Lunar Surface Analysis</h2>
+      <h2 className="text-xl font-bold text-blue-300 mb-6">Lunar Surface Analysis</h2>
       
       <div className="relative h-80 bg-gray-900 rounded-xl overflow-hidden mb-4">
         <img 

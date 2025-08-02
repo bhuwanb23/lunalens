@@ -14,7 +14,7 @@ const LoginCard = ({ formData, errors, isLoading, isSuccess, serverError, handle
               <i className={ICONS.moon}></i>
             </i>
           </div>
-          <h2 className="font-orbitron text-xl sm:text-2xl font-bold text-white mb-1">
+          <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">
             {LOGIN_CONSTANTS.content.login.title}
           </h2>
           <p className="text-gray-300 font-inter text-xs sm:text-sm">

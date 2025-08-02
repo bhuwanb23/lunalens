@@ -41,7 +41,7 @@ const StatsCard = ({ stat, animationClass = 'floating' }) => {
   return (
     <div className={`${animationClass} bg-gray-800/60 backdrop-blur-lg rounded-2xl p-6 border border-gray-700/50 ${stat.glow}`}>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold orbitron text-blue-300">{stat.title}</h3>
+        <h3 className="text-lg font-semibold text-blue-300">{stat.title}</h3>
         <i className={`${getColorClasses(stat.color)} text-xl`}>
           {getIcon(stat.icon)}
         </i>
