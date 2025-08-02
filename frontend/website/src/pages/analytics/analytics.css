@@ -18,143 +18,100 @@ body {
   background: radial-gradient(circle, rgba(147, 197, 253, 0.1) 0%, transparent 70%);
 }
 
-.selected-card {
-  background: linear-gradient(135deg, rgba(67, 56, 202, 0.2) 0%, rgba(147, 197, 253, 0.1) 100%) !important;
-  border: 2px solid rgba(147, 197, 253, 0.5) !important;
-  box-shadow: 0 0 30px rgba(147, 197, 253, 0.4) !important;
+/* Table styles */
+.analytics-table {
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
-.card-hover:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+.analytics-table th {
+  background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+  border-bottom: 1px solid #6b7280;
 }
 
-/* Pulse animation */
-.pulse-animation {
-  animation: pulse 2s infinite;
+.analytics-table td {
+  border-bottom: 1px solid #374151;
 }
 
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
+.analytics-table tr:hover {
+  background: rgba(55, 65, 81, 0.5);
 }
 
-/* Selection card animations */
-.selection-card {
-  transition: all 0.3s ease;
+/* Status badges */
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
-.selection-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+.status-completed {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+  border: 1px solid rgba(34, 197, 94, 0.3);
 }
 
-/* Background gradient animations */
-.bg-gradient-to-br {
-  background-size: 200% 200%;
-  animation: gradientShift 3s ease infinite;
+.status-processing {
+  background: rgba(251, 191, 36, 0.2);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.3);
 }
 
-@keyframes gradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+.status-failed {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
-/* Text gradient animations */
-.bg-clip-text {
-  background-size: 200% 200%;
-  animation: textGradient 4s ease infinite;
+/* Modal styles */
+.modal-overlay {
+  backdrop-filter: blur(4px);
 }
 
-@keyframes textGradient {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
+.modal-content {
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
-/* Floating animation for hero elements */
-@keyframes floating {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
+/* Progress bars */
+.progress-bar {
+  transition: width 0.3s ease;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .text-5xl {
-    font-size: 2.5rem;
-  }
-  
-  .grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .selection-card {
-    margin-bottom: 1rem;
-  }
-}
-
-/* Smooth transitions */
-.transition-all {
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-
-/* Custom button hover effects */
-button:hover {
+/* Card hover effects */
+.stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
-/* Navigation hover effects */
-nav span:hover {
-  transform: translateY(-1px);
+/* Filter styles */
+.filter-input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-/* Icon animations */
-.selection-card:hover .glow-effect {
-  animation: iconGlow 1s ease-in-out infinite alternate;
-}
-
-@keyframes iconGlow {
-  from {
-    box-shadow: 0 0 20px rgba(147, 197, 253, 0.3);
+/* Responsive table */
+@media (max-width: 768px) {
+  .analytics-table {
+    font-size: 0.875rem;
   }
-  to {
-    box-shadow: 0 0 30px rgba(147, 197, 253, 0.6);
+  
+  .analytics-table th,
+  .analytics-table td {
+    padding: 0.5rem;
   }
 }
 
-/* Confirmation section animations */
-.confirmation-section {
-  animation: slideInUp 0.5s ease-out;
+/* Animation classes */
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
 }
 
-@keyframes slideInUp {
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -162,30 +119,18 @@ nav span:hover {
   }
 }
 
-/* Background star effect */
-.stars {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
+.slide-up {
+  animation: slideUp 0.3s ease-out;
 }
 
-.star {
-  position: absolute;
-  background: white;
-  border-radius: 50%;
-  animation: twinkle 3s infinite;
-}
-
-@keyframes twinkle {
-  0%, 100% {
-    opacity: 0.3;
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  50% {
+  to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -209,7 +154,8 @@ nav span:hover {
 
 /* Focus states for accessibility */
 button:focus,
-.selection-card:focus {
+input:focus,
+select:focus {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }
@@ -241,4 +187,35 @@ button:focus,
   100% {
     transform: rotate(360deg);
   }
+}
+
+/* Grid hover effects */
+.grid-hover:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease;
+}
+
+/* Text gradient animations */
+.bg-clip-text {
+  background-size: 200% 200%;
+  animation: textGradient 4s ease infinite;
+}
+
+@keyframes textGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Smooth transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 } 
