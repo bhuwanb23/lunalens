@@ -52,7 +52,8 @@ const Boulder = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to upload image');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
       }
 
       const data = await response.json();
@@ -77,7 +78,8 @@ const Boulder = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to analyze image');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
       }
 
       const data = await response.json();
@@ -105,23 +107,35 @@ const Boulder = () => {
       const analysisResult = await analyzeImage(uploadResult.filepath, selectedAnalysis);
       
       if (analysisResult.success) {
-        // Process results
+        // Process results with comprehensive data
         const results = {
-          totalObjects: analysisResult.detected_objects.length,
-          boulders: analysisResult.detected_objects.filter(obj => obj.class_name === 'boulder').length,
-          craters: analysisResult.detected_objects.filter(obj => obj.class_name === 'crater').length,
+          // Basic counts
+          totalObjects: analysisResult.analysis_summary?.total_objects || analysisResult.detected_objects.length,
+          boulders: analysisResult.analysis_summary?.boulder_count || analysisResult.detected_objects.filter(obj => obj.class_name === 'boulder').length,
+          craters: analysisResult.analysis_summary?.crater_count || analysisResult.detected_objects.filter(obj => obj.class_name === 'crater').length,
+          
+          // Analysis metrics
           density: analysisResult.density_analysis?.density || 0,
-          averageSize: analysisResult.detected_objects.reduce((sum, obj) => sum + obj.diameter_real, 0) / analysisResult.detected_objects.length || 0,
-          confidence: analysisResult.detected_objects.reduce((sum, obj) => sum + obj.confidence, 0) / analysisResult.detected_objects.length || 0,
-          processingTime: 2.4, // This would come from backend
+          averageSize: analysisResult.analysis_summary?.average_diameter || analysisResult.detected_objects.reduce((sum, obj) => sum + obj.diameter_real, 0) / analysisResult.detected_objects.length || 0,
+          confidence: analysisResult.analysis_summary?.average_confidence || analysisResult.detected_objects.reduce((sum, obj) => sum + obj.confidence, 0) / analysisResult.detected_objects.length || 0,
+          processingTime: analysisResult.analysis_summary?.processing_time || 2.4,
+          
+          // Comprehensive data
           detectedObjects: analysisResult.detected_objects,
           additionalFiles: analysisResult.additional_files || [],
           visualizationImage: analysisResult.additional_files?.find(file => file.type === 'visualization')?.path,
-          gradcamImage: analysisResult.additional_files?.find(file => file.type === 'gradcam')?.path
+          gradcamImage: analysisResult.additional_files?.find(file => file.type === 'gradcam')?.path,
+          
+          // Analysis summary
+          analysisSummary: analysisResult.analysis_summary || {},
+          densityAnalysis: analysisResult.density_analysis || {},
+          analysisType: analysisResult.analysis_type || selectedAnalysis,
+          imageFilename: analysisResult.analysis_summary?.image_filename || 'Unknown'
         };
         
         // Debug logging
-        console.log('Analysis result:', analysisResult);
+        console.log('Full analysis result:', analysisResult);
+        console.log('Processed results:', results);
         console.log('Additional files:', analysisResult.additional_files);
         console.log('Grad-CAM image path:', results.gradcamImage);
         
