@@ -571,7 +571,7 @@
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 107, 53, 0.2);
             z-index: 1000;
-            padding: 15px 0;
+            padding: 10px 0;
         }
 
         .nav-container {
@@ -586,15 +586,15 @@
         .nav-brand {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .nav-logo {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
         }
 
         .nav-title {
-            font-size: 1.3rem;
+            font-size: 1rem;
             font-weight: 600;
             background: linear-gradient(45deg, #ff6b35, #f7931e);
             -webkit-background-clip: text;
@@ -603,16 +603,17 @@
 
         .nav-links {
             display: flex;
-            gap: 20px;
+            gap: 15px;
         }
 
         .nav-link {
             color: #b0b0b0;
             text-decoration: none;
-            padding: 8px 16px;
+            padding: 6px 12px;
             border-radius: 20px;
             transition: all 0.3s ease;
             font-weight: 500;
+            font-size: 0.85rem;
         }
 
         .nav-link:hover {
@@ -627,7 +628,7 @@
 
         /* Adjust container padding for fixed header */
         .container {
-            padding-top: 100px;
+            padding-top: 80px;
         }
 
         @media (max-width: 768px) {
@@ -661,6 +662,7 @@
                 <a href="/" class="nav-link">🏠 Home</a>
                 <a href="/credentials" class="nav-link">📋 Credentials</a>
                 <a href="/boulder-detection" class="nav-link active">🌙 Boulder Detection</a>
+                <a href="/database" class="nav-link">🗄️ Database</a>
                 <a href="http://localhost:5173" class="nav-link" target="_blank">🌐 Frontend</a>
             </div>
         </div>

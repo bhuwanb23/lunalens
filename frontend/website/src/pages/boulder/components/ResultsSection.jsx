@@ -364,7 +364,7 @@ const ResultsSection = ({ analysisResults, handleProceed }) => {
                               <span className="font-bold text-gray-400">
                                 N/A
                       </span>
-                            </div>
+                    </div>
                           )}
                         </td>
                       </tr>

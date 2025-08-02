@@ -8,6 +8,11 @@ import numpy as np
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 
+# Import database components
+from models import db, User, Analysis, DetectedObject, DensityAnalysis, AnalysisSession, SystemLog
+from database import init_db, create_analysis_record, get_user_analyses, get_analysis_with_details, log_system_event, get_analytics_summary
+from config import config
+
 # Add boulder_detection to path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'boulder_detection'))
 
@@ -25,20 +30,15 @@ except ImportError as e:
 # Load environment variables
 load_dotenv()
 
-# Simple Flask app setup
+# Create Flask app
 app = Flask(__name__)
 
-# Configuration
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your-secret-key-here')
-app.config['DEBUG'] = os.environ.get('FLASK_DEBUG', 'True').lower() == 'true'
+# Load configuration
+config_name = os.environ.get('FLASK_CONFIG', 'development')
+app.config.from_object(config[config_name])
 
-# File upload configuration
-app.config['UPLOAD_FOLDER'] = 'uploads'
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff'}
-
-# Create uploads directory if it doesn't exist
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+# Initialize database
+init_db(app)
 
 # Initialize CORS
 CORS(app, supports_credentials=True, origins=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000"])
@@ -82,46 +82,21 @@ def init_boulder_detection():
 def allowed_file(filename):
     """Check if file extension is allowed"""
     return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-# Simple login credentials
-DEMO_CREDENTIALS = {
-    "isro123": {
-        "accessCode": "moon@2024",
-        "name": "ISRO Mission Control",
-        "role": "admin",
-        "permissions": ["dashboard", "analytics", "settings", "boulder_detection"]
-    },
-    "mission001": {
-        "accessCode": "lunar@2024",
-        "name": "Lunar Mission Team",
-        "role": "user",
-        "permissions": ["dashboard", "analytics", "boulder_detection"]
-    },
-    "research002": {
-        "accessCode": "research@2024",
-        "name": "Research Team",
-        "role": "researcher",
-        "permissions": ["dashboard", "analytics", "data_export", "boulder_detection"]
-    },
-    "test001": {
-        "accessCode": "test@2024",
-        "name": "Test User",
-        "role": "user",
-        "permissions": ["dashboard", "boulder_detection"]
-    }
-}
+           filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
 def validate_credentials(mission_id, access_code):
-    """Validate user credentials"""
-    user = DEMO_CREDENTIALS.get(mission_id)
-    if user and user['accessCode'] == access_code:
-        return user
+    """Validate user credentials from database"""
+    user = User.query.filter_by(mission_id=mission_id).first()
+    if user and user.is_active:
+        # In a real system, you'd hash the access code
+        # For demo purposes, we'll use a simple check
+        if access_code == f"{mission_id}@2024":
+            return user
     return None
 
 def get_user_by_mission_id(mission_id):
-    """Get user credentials by mission ID"""
-    return DEMO_CREDENTIALS.get(mission_id)
+    """Get user by mission ID from database"""
+    return User.query.filter_by(mission_id=mission_id).first()
 
 @app.route('/', methods=['GET'])
 def home():
@@ -136,6 +111,11 @@ def boulder_detection():
     """Serve the boulder detection HTML interface"""
     return render_template('boulder_detection.html')
 
+@app.route('/database', methods=['GET'])
+def database_view():
+    """Serve the database management HTML interface"""
+    return render_template('database_view.html')
+
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -145,14 +125,22 @@ def login():
     # Validate user credentials
     user = validate_credentials(mission_id, access_code)
     if user:
+        # Update last login
+        user.last_login = datetime.datetime.utcnow()
+        db.session.commit()
+        
         # Generate JWT token
         payload = {
             'missionId': mission_id,
+            'user_id': user.id,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24),
             'iat': datetime.datetime.utcnow()
         }
         token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
         ACTIVE_TOKENS.add(token)
+        
+        # Log login event
+        log_system_event('INFO', 'auth', f'User {mission_id} logged in successfully', user.id)
         
         return jsonify({
             "success": True, 
@@ -160,12 +148,13 @@ def login():
             "token": token,
             "user": {
                 "missionId": mission_id,
-                "name": user['name'],
-                "role": user['role'],
-                "permissions": user['permissions']
+                "name": user.name,
+                "role": user.role,
+                "permissions": user.get_permissions()
             }
         }), 200
     else:
+        log_system_event('WARNING', 'auth', f'Failed login attempt for mission_id: {mission_id}')
         return jsonify({"success": False, "message": "Invalid credentials."}), 401
 
 @app.route('/logout', methods=['POST'])
@@ -175,6 +164,7 @@ def logout():
     
     if token and token in ACTIVE_TOKENS:
         ACTIVE_TOKENS.remove(token)
+        log_system_event('INFO', 'auth', 'User logged out successfully')
         return jsonify({"success": True, "message": "Logout successful!"}), 200
     else:
         return jsonify({"success": False, "message": "Invalid token."}), 401
@@ -194,18 +184,18 @@ def verify_token():
         # Check if token is still active
         if token in ACTIVE_TOKENS:
             user_info = get_user_by_mission_id(payload['missionId'])
-            if user_info:
+            if user_info and user_info.is_active:
                 return jsonify({
                     "valid": True, 
                     "user": {
                         "missionId": payload['missionId'],
-                        "name": user_info['name'],
-                        "role": user_info['role'],
-                        "permissions": user_info['permissions']
+                        "name": user_info.name,
+                        "role": user_info.role,
+                        "permissions": user_info.get_permissions()
                     }
                 }), 200
             else:
-                return jsonify({"valid": False, "message": "User not found."}), 401
+                return jsonify({"valid": False, "message": "User not found or inactive."}), 401
         else:
             return jsonify({"valid": False, "message": "Token has been revoked."}), 401
             
@@ -213,6 +203,82 @@ def verify_token():
         return jsonify({"valid": False, "message": "Token has expired."}), 401
     except jwt.InvalidTokenError:
         return jsonify({"valid": False, "message": "Invalid token."}), 401
+
+# Database API Endpoints
+
+@app.route('/api/analytics/summary', methods=['GET'])
+def get_analytics_summary():
+    """Get analytics summary for dashboard"""
+    try:
+        summary = get_analytics_summary()
+        return jsonify({
+            "success": True,
+            "data": summary
+        }), 200
+    except Exception as e:
+        log_system_event('ERROR', 'analytics', f'Error getting analytics summary: {str(e)}')
+        return jsonify({
+            "success": False,
+            "message": "Error retrieving analytics data"
+        }), 500
+
+@app.route('/api/analyses', methods=['GET'])
+def get_analyses():
+    """Get all analyses with pagination"""
+    try:
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 20, type=int)
+        user_id = request.args.get('user_id', type=int)
+        
+        query = Analysis.query
+        
+        if user_id:
+            query = query.filter_by(user_id=user_id)
+        
+        analyses = query.order_by(Analysis.created_at.desc())\
+            .paginate(page=page, per_page=per_page, error_out=False)
+        
+        return jsonify({
+            "success": True,
+            "data": {
+                "analyses": [analysis.to_dict() for analysis in analyses.items],
+                "total": analyses.total,
+                "pages": analyses.pages,
+                "current_page": page,
+                "per_page": per_page
+            }
+        }), 200
+        
+    except Exception as e:
+        log_system_event('ERROR', 'api', f'Error getting analyses: {str(e)}')
+        return jsonify({
+            "success": False,
+            "message": "Error retrieving analyses"
+        }), 500
+
+@app.route('/api/analyses/<int:analysis_id>', methods=['GET'])
+def get_analysis_details(analysis_id):
+    """Get detailed analysis with all related data"""
+    try:
+        analysis_data = get_analysis_with_details(analysis_id)
+        
+        if not analysis_data:
+            return jsonify({
+                "success": False,
+                "message": "Analysis not found"
+            }), 404
+        
+        return jsonify({
+            "success": True,
+            "data": analysis_data
+        }), 200
+        
+    except Exception as e:
+        log_system_event('ERROR', 'api', f'Error getting analysis {analysis_id}: {str(e)}')
+        return jsonify({
+            "success": False,
+            "message": "Error retrieving analysis details"
+        }), 500
 
 # Boulder Detection API Endpoints
 
@@ -259,10 +325,24 @@ def analyze_boulder():
     filepath = data.get('filepath')
     analysis_type = data.get('analysisType', 'basic')
     
+    # Get user from token
+    token = request.headers.get('Authorization', '').replace('Bearer ', '')
+    user = None
+    if token:
+        try:
+            payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+            user = get_user_by_mission_id(payload['missionId'])
+        except:
+            pass
+    
     if not filepath or not os.path.exists(filepath):
         return jsonify({"success": False, "message": "Image file not found"}), 400
     
     try:
+        # Log analysis start
+        if user:
+            log_system_event('INFO', 'analysis', f'Starting {analysis_type} analysis for {filepath}', user.id)
+        
         # Change to boulder_detection directory for model loading
         boulder_dir = os.path.join(os.path.dirname(__file__), '..', 'boulder_detection')
         os.chdir(boulder_dir)
@@ -304,17 +384,17 @@ def analyze_boulder():
             print(f"🔍 Processing object {i+1}/{len(detected_objects)}")
             try:
                 obj_data = {
-                    "class_name": getattr(obj, 'class_name', 'unknown'),
-                    "confidence": float(getattr(obj, 'confidence', 0.0)),
-                    "width_real": float(getattr(obj, 'width_real', 0.0)),
-                    "height_real": float(getattr(obj, 'height_real', 0.0)),
-                    "diameter_real": float(getattr(obj, 'diameter_real', 0.0)),
-                    "area_real": float(getattr(obj, 'area_real', 0.0)),
-                    "volume_real": float(getattr(obj, 'volume_real', 0.0)),
-                    "circularity": float(getattr(obj, 'circularity', 0.0)),
-                    "elongation": float(getattr(obj, 'elongation', 0.0)),
-                    "degradation_state": getattr(obj, 'degradation_state', 'N/A'),
-                    "estimated_depth": float(getattr(obj, 'estimated_depth', 0.0)) if getattr(obj, 'estimated_depth', None) else None
+                        "class_name": getattr(obj, 'class_name', 'unknown'),
+                        "confidence": float(getattr(obj, 'confidence', 0.0)),
+                        "width_real": float(getattr(obj, 'width_real', 0.0)),
+                        "height_real": float(getattr(obj, 'height_real', 0.0)),
+                        "diameter_real": float(getattr(obj, 'diameter_real', 0.0)),
+                        "area_real": float(getattr(obj, 'area_real', 0.0)),
+                        "volume_real": float(getattr(obj, 'volume_real', 0.0)),
+                        "circularity": float(getattr(obj, 'circularity', 0.0)),
+                        "elongation": float(getattr(obj, 'elongation', 0.0)),
+                        "degradation_state": getattr(obj, 'degradation_state', 'N/A'),
+                        "estimated_depth": float(getattr(obj, 'estimated_depth', 0.0)) if getattr(obj, 'estimated_depth', None) else None
                 }
                 
                 # Add bounding box if available
@@ -410,6 +490,7 @@ def analyze_boulder():
                     "type": "gradcam",
                     "path": f"/uploads/{gradcam_filename}"
                 })
+                results["gradcam_path"] = f"/uploads/{gradcam_filename}"
                 print(f"✅ Grad-CAM added to results with path: /uploads/{gradcam_filename}")
             else:
                 print("❌ Grad-CAM generation failed - no path returned")
@@ -429,10 +510,45 @@ def analyze_boulder():
                 "type": "visualization",
                 "path": f"/uploads/{viz_filename}"
             })
+            results["visualization_path"] = f"/uploads/{viz_filename}"
         
         # Calculate density analysis
         density_analysis = boulder_controller.calculate_density_analysis(results["detected_objects"], absolute_filepath)
         results["density_analysis"] = density_analysis
+        
+        # Save to database if user is authenticated
+        if user:
+            try:
+                # Prepare data for database
+                db_data = {
+                    'analysis_type': analysis_type,
+                    'image_filename': os.path.basename(absolute_filepath),
+                    'image_path': absolute_filepath,
+                    'processing_time': results["analysis_summary"]["processing_time"],
+                    'total_objects': results["analysis_summary"]["total_objects"],
+                    'boulder_count': results["analysis_summary"]["boulder_count"],
+                    'crater_count': results["analysis_summary"]["crater_count"],
+                    'average_confidence': results["analysis_summary"]["average_confidence"],
+                    'average_diameter': results["analysis_summary"]["average_diameter"],
+                    'average_area': results["analysis_summary"]["average_area"],
+                    'total_volume': results["analysis_summary"]["total_volume"],
+                    'average_circularity': results["analysis_summary"]["average_circularity"],
+                    'average_elongation': results["analysis_summary"]["average_elongation"],
+                    'visualization_path': results.get("visualization_path"),
+                    'gradcam_path': results.get("gradcam_path"),
+                    'detected_objects': results["detected_objects"],
+                    'density_analysis': results["density_analysis"]
+                }
+                
+                analysis_record = create_analysis_record(user.id, db_data)
+                results["analysis_id"] = analysis_record.id
+                
+                # Log successful analysis
+                log_system_event('INFO', 'analysis', f'Analysis completed successfully. ID: {analysis_record.id}', user.id, analysis_record.id)
+                
+            except Exception as e:
+                print(f"❌ Error saving to database: {e}")
+                log_system_event('ERROR', 'database', f'Error saving analysis to database: {str(e)}', user.id)
         
         # Change back to server directory
         os.chdir(os.path.dirname(__file__))
@@ -445,6 +561,11 @@ def analyze_boulder():
         print(f"❌ Error during analysis: {str(e)}")
         import traceback
         traceback.print_exc()
+        
+        # Log error
+        if user:
+            log_system_event('ERROR', 'analysis', f'Analysis failed: {str(e)}', user.id)
+        
         return jsonify({
             "success": False,
             "message": f"Error during analysis: {str(e)}",
