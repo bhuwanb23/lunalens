@@ -83,6 +83,8 @@ class BoulderDetectionController:
     def generate_gradcam(self, image_path: str, detected_objects: List[ObjectMeasurements]) -> str:
         """Generate Grad-CAM visualizations for detected objects."""
         print("🎨 Generating Grad-CAM visualizations...")
+        print(f"🔍 Image path: {image_path}")
+        print(f"🔍 Number of detected objects: {len(detected_objects)}")
         
         try:
             # Create Grad-CAM visualizations
@@ -90,16 +92,30 @@ class BoulderDetectionController:
                 image_path, detected_objects
             )
             
+            if gradcam_image is None:
+                print("❌ Grad-CAM visualization returned None")
+                return ""
+            
+            print(f"✅ Grad-CAM image created, shape: {gradcam_image.shape}")
+            
             # Save visualization
-            output_path = image_path.replace('.', '_gradcam.')
+            import os
+            base_name = os.path.splitext(image_path)[0]
+            output_path = f"{base_name}_gradcam.png"
+            print(f"🔍 Output path: {output_path}")
             import cv2
-            cv2.imwrite(output_path, gradcam_image)
+            # Convert RGB to BGR for OpenCV
+            gradcam_bgr = cv2.cvtColor(gradcam_image, cv2.COLOR_RGB2BGR)
+            success = cv2.imwrite(output_path, gradcam_bgr)
+            print(f"🔍 cv2.imwrite success: {success}")
             print(f"💾 Grad-CAM visualization saved to: {output_path}")
             
             return output_path
             
         except Exception as e:
             print(f"❌ Error generating Grad-CAM: {e}")
+            import traceback
+            traceback.print_exc()
             return ""
     
     def create_visualization(self, image_path: str, detected_objects: List[ObjectMeasurements]) -> str:
@@ -110,8 +126,11 @@ class BoulderDetectionController:
             visualization = self.detector.create_visualization(image_path, detected_objects)
             
             # Save visualization
-            output_path = image_path.replace('.', '_detected.')
+            import os
+            base_name = os.path.splitext(image_path)[0]
+            output_path = f"{base_name}_detected.png"
             import cv2
+            # The visualization is already in BGR format from the detector
             cv2.imwrite(output_path, visualization)
             print(f"💾 Detection visualization saved to: {output_path}")
             

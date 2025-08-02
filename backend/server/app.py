@@ -320,12 +320,29 @@ def analyze_boulder():
         
         if analysis_type in ['gradcam', 'full']:
             # Generate Grad-CAM
+            print(f"🔍 Generating Grad-CAM for analysis type: {analysis_type}")
             gradcam_path = boulder_controller.generate_gradcam(absolute_filepath, detected_objects)
+            print(f"🔍 Grad-CAM path returned: {gradcam_path}")
             if gradcam_path:
+                # Move/copy the Grad-CAM image to uploads folder
+                import shutil
+                uploads_dir = os.path.join(os.path.dirname(__file__), 'uploads')
+                gradcam_filename = os.path.basename(gradcam_path)
+                uploads_gradcam_path = os.path.join(uploads_dir, gradcam_filename)
+                print(f"🔍 Uploads directory: {uploads_dir}")
+                print(f"🔍 Grad-CAM filename: {gradcam_filename}")
+                print(f"🔍 Uploads Grad-CAM path: {uploads_gradcam_path}")
+                if os.path.abspath(gradcam_path) != os.path.abspath(uploads_gradcam_path):
+                    shutil.copyfile(gradcam_path, uploads_gradcam_path)
+                    print(f"✅ Grad-CAM file copied to uploads folder")
+                # Return the path as /uploads/filename for frontend
                 results["additional_files"].append({
                     "type": "gradcam",
-                    "path": gradcam_path
+                    "path": f"/uploads/{gradcam_filename}"
                 })
+                print(f"✅ Grad-CAM added to results with path: /uploads/{gradcam_filename}")
+            else:
+                print("❌ Grad-CAM generation failed - no path returned")
         
         # Always create detection visualization
         viz_path = boulder_controller.create_visualization(absolute_filepath, detected_objects)

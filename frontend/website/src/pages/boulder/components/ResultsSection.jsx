@@ -155,10 +155,13 @@ const ResultsSection = ({ analysisResults, handleProceed }) => {
                 </i>
                 Grad-CAM Visualization
               </h4>
+              {console.log('Grad-CAM image path:', analysisResults.gradcamImage)}
               <img 
                 src={`http://localhost:5000${analysisResults.gradcamImage}`}
                 alt="Grad-CAM Visualization"
                 className="w-full rounded-lg sm:rounded-xl border border-gray-600 shadow-lg"
+                onError={(e) => console.error('Grad-CAM image failed to load:', e.target.src)}
+                onLoad={() => console.log('Grad-CAM image loaded successfully')}
               />
             </div>
           </div>

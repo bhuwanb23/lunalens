@@ -121,6 +121,11 @@ const Boulder = () => {
           gradcamImage: analysisResult.additional_files?.find(file => file.type === 'gradcam')?.path
         };
         
+        // Debug logging
+        console.log('Analysis result:', analysisResult);
+        console.log('Additional files:', analysisResult.additional_files);
+        console.log('Grad-CAM image path:', results.gradcamImage);
+        
         setAnalysisResults(results);
       } else {
         setError(analysisResult.message || 'Analysis failed');
