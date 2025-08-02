@@ -29,9 +29,9 @@ const ResultsSection = ({ analysisResults, handleProceed }) => {
         </div>
 
         {/* Main Results Grid */}
-        <div className="grid lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
-          {/* Detection Visualization */}
-          <div className="lg:col-span-2">
+        <div className="flex flex-col items-center mb-8">
+          {/* Detection Visualization - Centered */}
+          <div className="w-full max-w-4xl mb-6">
             <div className="bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 border-2 border-gray-600 rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-lg">
               <h4 className="text-base sm:text-lg font-bold mb-3 sm:mb-4 text-gray-200 flex items-center">
                 <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-lg flex items-center justify-center mr-2">
@@ -43,11 +43,15 @@ const ResultsSection = ({ analysisResults, handleProceed }) => {
               </h4>
               {analysisResults.visualizationImage ? (
                 <div className="relative group">
-                  <img 
-                    src={`http://localhost:5000${analysisResults.visualizationImage}`}
-                    alt="Detection Visualization"
-                    className="w-full rounded-lg sm:rounded-xl border-2 border-gray-600 shadow-lg transition-all duration-300 transform group-hover:scale-[1.01]"
-                  />
+                  <div className="max-w-full overflow-hidden rounded-lg sm:rounded-xl border-2 border-gray-600 shadow-lg">
+                    <img 
+                      src={`http://localhost:5000${analysisResults.visualizationImage}`}
+                      alt="Detection Visualization"
+                      className="w-full h-auto max-h-96 object-contain transition-all duration-300 transform group-hover:scale-[1.02]"
+                      onError={(e) => console.error('Detection image failed to load:', e.target.src)}
+                      onLoad={() => console.log('Detection image loaded successfully')}
+                    />
+                  </div>
                   <div className="absolute top-2 right-2 bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-2 py-1 rounded text-xs font-semibold shadow-md">
                     {analysisResults.totalObjects} Objects
                   </div>
@@ -65,78 +69,80 @@ const ResultsSection = ({ analysisResults, handleProceed }) => {
             </div>
           </div>
 
-          {/* Statistics Cards */}
-          <div className="space-y-4 sm:space-y-5">
-            {/* Detection Summary */}
-            <div className="bg-gradient-to-br from-blue-600 via-indigo-700 to-blue-800 rounded-lg sm:rounded-xl p-4 sm:p-5 text-white shadow-lg transform hover:scale-105 transition-all duration-300">
-              <h4 className="text-sm sm:text-base font-bold mb-3 sm:mb-4 flex items-center">
-                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-white/20 rounded-lg flex items-center justify-center mr-2">
-                  <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 512 512">
-                    <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
-                  </svg>
-                </div>
-                Detection Summary
-              </h4>
-              <div className="space-y-2 sm:space-y-3">
-                <div className="flex justify-between items-center p-2 bg-white/10 rounded-lg">
-                  <span className="text-blue-100 font-medium text-xs sm:text-sm">Total:</span>
-                  <span className="text-lg sm:text-xl font-bold text-white">{analysisResults.totalObjects}</span>
-                </div>
-                <div className="flex justify-between items-center p-2 bg-white/10 rounded-lg">
-                  <span className="text-orange-200 font-medium text-xs sm:text-sm">Boulders:</span>
-                  <span className="text-base sm:text-lg font-bold text-orange-300">{analysisResults.boulders}</span>
-                </div>
-                <div className="flex justify-between items-center p-2 bg-white/10 rounded-lg">
-                  <span className="text-yellow-200 font-medium text-xs sm:text-sm">Craters:</span>
-                  <span className="text-base sm:text-lg font-bold text-yellow-300">{analysisResults.craters}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Analysis Metrics */}
-            <div className="bg-gradient-to-br from-purple-600 via-pink-700 to-purple-800 rounded-lg sm:rounded-xl p-4 sm:p-5 text-white shadow-lg transform hover:scale-105 transition-all duration-300">
-              <h4 className="text-sm sm:text-base font-bold mb-3 sm:mb-4 flex items-center">
-                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-white/20 rounded-lg flex items-center justify-center mr-2">
-                  <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 512 512">
-                    <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
-                  </svg>
-                </div>
-                Analysis Metrics
-              </h4>
-              <div className="space-y-2 sm:space-y-3">
-                <div className="flex justify-between items-center p-2 bg-white/10 rounded-lg">
-                  <span className="text-purple-100 font-medium text-xs sm:text-sm">Confidence:</span>
-                  <span className="text-base sm:text-lg font-bold text-purple-300">{(analysisResults.confidence * 100).toFixed(1)}%</span>
-                </div>
-                <div className="flex justify-between items-center p-2 bg-white/10 rounded-lg">
-                  <span className="text-pink-100 font-medium text-xs sm:text-sm">Avg Size:</span>
-                  <span className="text-sm sm:text-base font-bold text-pink-300">{analysisResults.averageSize.toFixed(1)}m</span>
-                </div>
-                <div className="flex justify-between items-center p-2 bg-white/10 rounded-lg">
-                  <span className="text-purple-100 font-medium text-xs sm:text-sm">Density:</span>
-                  <span className="text-xs sm:text-sm font-bold text-purple-300">{analysisResults.density.toFixed(6)} obj/m²</span>
+          {/* Statistics Cards - Flex Layout Below Image */}
+          <div className="w-full max-w-4xl">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {/* Detection Summary */}
+              <div className="bg-gradient-to-br from-blue-600 via-indigo-700 to-blue-800 rounded-lg sm:rounded-xl p-4 sm:p-5 text-white shadow-lg transform hover:scale-105 transition-all duration-300">
+                <h4 className="text-sm sm:text-base font-bold mb-3 sm:mb-4 flex items-center">
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-white/20 rounded-lg flex items-center justify-center mr-2">
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 512 512">
+                      <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
+                    </svg>
+                  </div>
+                  Detection Summary
+                </h4>
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="flex justify-between items-center p-2 bg-white/10 rounded-lg">
+                    <span className="text-blue-100 font-medium text-xs sm:text-sm">Total:</span>
+                    <span className="text-lg sm:text-xl font-bold text-white">{analysisResults.totalObjects}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-2 bg-white/10 rounded-lg">
+                    <span className="text-orange-200 font-medium text-xs sm:text-sm">Boulders:</span>
+                    <span className="text-base sm:text-lg font-bold text-orange-300">{analysisResults.boulders}</span>
+                  </div>
+                  <div className="flex justify-between items-center p-2 bg-white/10 rounded-lg">
+                    <span className="text-yellow-200 font-medium text-xs sm:text-sm">Craters:</span>
+                    <span className="text-base sm:text-lg font-bold text-yellow-300">{analysisResults.craters}</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Processing Info */}
-            <div className="bg-gradient-to-br from-green-600 via-emerald-700 to-green-800 rounded-lg sm:rounded-xl p-4 sm:p-5 text-white shadow-lg transform hover:scale-105 transition-all duration-300">
-              <h4 className="text-sm sm:text-base font-bold mb-3 sm:mb-4 flex items-center">
-                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-white/20 rounded-lg flex items-center justify-center mr-2">
-                  <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 512 512">
-                    <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
-                  </svg>
+              {/* Analysis Metrics */}
+              <div className="bg-gradient-to-br from-purple-600 via-pink-700 to-purple-800 rounded-lg sm:rounded-xl p-4 sm:p-5 text-white shadow-lg transform hover:scale-105 transition-all duration-300">
+                <h4 className="text-sm sm:text-base font-bold mb-3 sm:mb-4 flex items-center">
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-white/20 rounded-lg flex items-center justify-center mr-2">
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 512 512">
+                      <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
+                    </svg>
+                  </div>
+                  Analysis Metrics
+                </h4>
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="flex justify-between items-center p-2 bg-white/10 rounded-lg">
+                    <span className="text-purple-100 font-medium text-xs sm:text-sm">Confidence:</span>
+                    <span className="text-base sm:text-lg font-bold text-purple-300">{(analysisResults.confidence * 100).toFixed(1)}%</span>
+                  </div>
+                  <div className="flex justify-between items-center p-2 bg-white/10 rounded-lg">
+                    <span className="text-pink-100 font-medium text-xs sm:text-sm">Avg Size:</span>
+                    <span className="text-sm sm:text-base font-bold text-pink-300">{analysisResults.averageSize.toFixed(1)}m</span>
+                  </div>
+                  <div className="flex justify-between items-center p-2 bg-white/10 rounded-lg">
+                    <span className="text-purple-100 font-medium text-xs sm:text-sm">Density:</span>
+                    <span className="text-xs sm:text-sm font-bold text-purple-300">{analysisResults.density.toFixed(6)} obj/m²</span>
+                  </div>
                 </div>
-                Processing Info
-              </h4>
-              <div className="space-y-2 sm:space-y-3">
-                <div className="flex justify-between items-center p-2 bg-white/10 rounded-lg">
-                  <span className="text-green-100 font-medium text-xs sm:text-sm">Status:</span>
-                  <span className="text-base sm:text-lg font-bold text-green-300">Complete</span>
-                </div>
-                <div className="flex justify-between items-center p-2 bg-white/10 rounded-lg">
-                  <span className="text-emerald-100 font-medium text-xs sm:text-sm">Time:</span>
-                  <span className="text-sm sm:text-base font-bold text-emerald-300">{analysisResults.processingTime}s</span>
+              </div>
+
+              {/* Processing Info */}
+              <div className="bg-gradient-to-br from-green-600 via-emerald-700 to-green-800 rounded-lg sm:rounded-xl p-4 sm:p-5 text-white shadow-lg transform hover:scale-105 transition-all duration-300">
+                <h4 className="text-sm sm:text-base font-bold mb-3 sm:mb-4 flex items-center">
+                  <div className="w-5 h-5 sm:w-6 sm:h-6 bg-white/20 rounded-lg flex items-center justify-center mr-2">
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 512 512">
+                      <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
+                    </svg>
+                  </div>
+                  Processing Info
+                </h4>
+                <div className="space-y-2 sm:space-y-3">
+                  <div className="flex justify-between items-center p-2 bg-white/10 rounded-lg">
+                    <span className="text-green-100 font-medium text-xs sm:text-sm">Status:</span>
+                    <span className="text-base sm:text-lg font-bold text-green-300">Complete</span>
+                  </div>
+                  <div className="flex justify-between items-center p-2 bg-white/10 rounded-lg">
+                    <span className="text-emerald-100 font-medium text-xs sm:text-sm">Time:</span>
+                    <span className="text-sm sm:text-base font-bold text-emerald-300">{analysisResults.processingTime}s</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -147,7 +153,7 @@ const ResultsSection = ({ analysisResults, handleProceed }) => {
         {analysisResults.gradcamImage && (
           <div className="mb-6">
             <div className="bg-gray-800 border border-gray-700 rounded-lg sm:rounded-xl p-3 sm:p-4">
-              <h4 className="text-sm sm:text-base font-semibold mb-2 sm:mb-3 text-gray-200 flex items-center">
+              <h4 className="text-sm sm:text-base font-semibold mb-3 sm:mb-4 text-gray-200 flex items-center">
                 <i className="mr-2">
                   <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 512 512">
                     <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
@@ -156,13 +162,15 @@ const ResultsSection = ({ analysisResults, handleProceed }) => {
                 Grad-CAM Visualization
               </h4>
               {console.log('Grad-CAM image path:', analysisResults.gradcamImage)}
-              <img 
-                src={`http://localhost:5000${analysisResults.gradcamImage}`}
-                alt="Grad-CAM Visualization"
-                className="w-full rounded-lg sm:rounded-xl border border-gray-600 shadow-lg"
-                onError={(e) => console.error('Grad-CAM image failed to load:', e.target.src)}
-                onLoad={() => console.log('Grad-CAM image loaded successfully')}
-              />
+              <div className="max-w-full overflow-hidden rounded-lg sm:rounded-xl border border-gray-600 shadow-lg">
+                <img 
+                  src={`http://localhost:5000${analysisResults.gradcamImage}`}
+                  alt="Grad-CAM Visualization"
+                  className="w-full h-auto max-h-80 object-contain"
+                  onError={(e) => console.error('Grad-CAM image failed to load:', e.target.src)}
+                  onLoad={() => console.log('Grad-CAM image loaded successfully')}
+                />
+              </div>
             </div>
           </div>
         )}
