@@ -172,6 +172,8 @@ results/
 logs/
 *.log
 
+# uploads
+uploads/
 
 # Images (uncomment if you don't want to track test images)
 # *.jpg

@@ -340,7 +340,7 @@ def analyze_boulder():
             except Exception as e:
                 print(f"❌ Error processing object {i+1}: {e}")
                 # Add a minimal object data if processing fails
-                obj_data = {
+            obj_data = {
                     "class_name": "unknown",
                     "confidence": 0.0,
                     "width_real": 0.0,
@@ -352,8 +352,8 @@ def analyze_boulder():
                     "elongation": 0.0,
                     "degradation_state": "N/A",
                     "estimated_depth": None
-                }
-                results["detected_objects"].append(obj_data)
+            }
+            results["detected_objects"].append(obj_data)
         
         # Add comprehensive analysis summary
         total_objects = len(detected_objects)

@@ -62,7 +62,7 @@ const Analytics = () => {
             return recordDate >= weekAgo;
           case 'month':
             return recordDate >= monthAgo;
-          default:
+      default:
             return true;
         }
       });
