@@ -189,7 +189,7 @@ const ResultsSection = ({ analysisResults, handleProceed }) => {
         )}
 
         {/* Detailed Object Analysis */}
-        {analysisResults.detectedObjects && analysisResults.detectedObjects.length > 0 && (
+        {analysisResults.detectedObjects && analysisResults.detectedObjects.length > 0 ? (
           <div className="mb-6">
             <div className="bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 border-2 border-gray-600 rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-lg">
               <h4 className="text-base sm:text-lg font-bold mb-4 sm:mb-6 text-gray-200 flex items-center">
@@ -400,73 +400,105 @@ const ResultsSection = ({ analysisResults, handleProceed }) => {
               </div>
             </div>
           </div>
+        ) : (
+          <div className="mb-6">
+            <div className="bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 border-2 border-gray-600 rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-lg">
+              <h4 className="text-base sm:text-lg font-bold mb-4 sm:mb-6 text-gray-200 flex items-center">
+                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg flex items-center justify-center mr-3">
+                  <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 512 512">
+                    <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
+                  </svg>
+                </div>
+                Detailed Object Analysis
+              </h4>
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-gray-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 512 512">
+                    <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
+                  </svg>
+                </div>
+                <p className="text-gray-400 text-lg font-medium">No Valid Objects Detected</p>
+                <p className="text-gray-500 text-sm mt-2">The analysis completed but no objects with sufficient confidence were found.</p>
+              </div>
+            </div>
+          </div>
         )}
 
         {/* Comprehensive Analysis Details */}
         {analysisResults.analysisSummary && (
-          <div className="mb-6">
-            <div className="bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 border-2 border-gray-600 rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-lg">
-              <h4 className="text-base sm:text-lg font-bold mb-4 sm:mb-6 text-gray-200 flex items-center">
-                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-lg flex items-center justify-center mr-3">
-                  <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 512 512">
+          <div className="mb-8">
+            <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-2 border-gray-600 rounded-2xl p-6 sm:p-8 shadow-2xl">
+              <h4 className="text-lg sm:text-xl font-bold mb-6 sm:mb-8 text-gray-100 flex items-center">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-teal-400 via-cyan-500 to-blue-500 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 512 512">
                     <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
                   </svg>
                 </div>
                 Comprehensive Analysis Details
               </h4>
               
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Analysis Summary */}
-                <div className="space-y-4">
-                  <h5 className="text-sm font-bold text-teal-300 mb-3">Analysis Summary</h5>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
-                      <span className="text-gray-300 text-sm">Analysis Type:</span>
-                      <span className="text-teal-300 font-semibold capitalize">{analysisResults.analysisType}</span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
-                      <span className="text-gray-300 text-sm">Image File:</span>
-                      <span className="text-teal-300 font-semibold">{analysisResults.imageFilename}</span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
-                      <span className="text-gray-300 text-sm">Processing Time:</span>
-                      <span className="text-teal-300 font-semibold">{analysisResults.processingTime}s</span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
-                      <span className="text-gray-300 text-sm">Average Circularity:</span>
-                      <span className="text-teal-300 font-semibold">{(analysisResults.analysisSummary.average_circularity || 0).toFixed(3)}</span>
-                    </div>
-                    <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
-                      <span className="text-gray-300 text-sm">Average Elongation:</span>
-                      <span className="text-teal-300 font-semibold">{(analysisResults.analysisSummary.average_elongation || 0).toFixed(3)}</span>
+                <div className="space-y-6">
+                  <div className="bg-gradient-to-br from-teal-900/30 via-cyan-900/30 to-blue-900/30 rounded-xl p-6 border border-teal-500/20 shadow-lg">
+                    <h5 className="text-base font-bold text-teal-300 mb-4 flex items-center">
+                      <div className="w-3 h-3 bg-teal-400 rounded-full mr-3 animate-pulse"></div>
+                      Analysis Summary
+                    </h5>
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center p-4 bg-gray-800/50 rounded-lg border border-gray-700/50 hover:border-teal-500/30 transition-all duration-300">
+                        <span className="text-gray-300 text-sm font-medium">Analysis Type:</span>
+                        <span className="text-teal-300 font-semibold capitalize px-3 py-1 bg-teal-900/30 rounded-lg border border-teal-500/30">{analysisResults.analysisType}</span>
+                      </div>
+                      <div className="flex justify-between items-center p-4 bg-gray-800/50 rounded-lg border border-gray-700/50 hover:border-teal-500/30 transition-all duration-300">
+                        <span className="text-gray-300 text-sm font-medium">Image File:</span>
+                        <span className="text-teal-300 font-semibold text-xs">{analysisResults.imageFilename}</span>
+                      </div>
+                      <div className="flex justify-between items-center p-4 bg-gray-800/50 rounded-lg border border-gray-700/50 hover:border-teal-500/30 transition-all duration-300">
+                        <span className="text-gray-300 text-sm font-medium">Processing Time:</span>
+                        <span className="text-teal-300 font-semibold">{analysisResults.processingTime}s</span>
+                      </div>
+                      <div className="flex justify-between items-center p-4 bg-gray-800/50 rounded-lg border border-gray-700/50 hover:border-teal-500/30 transition-all duration-300">
+                        <span className="text-gray-300 text-sm font-medium">Average Circularity:</span>
+                        <span className="text-teal-300 font-semibold">{(analysisResults.analysisSummary.average_circularity || 0).toFixed(3)}</span>
+                      </div>
+                      <div className="flex justify-between items-center p-4 bg-gray-800/50 rounded-lg border border-gray-700/50 hover:border-teal-500/30 transition-all duration-300">
+                        <span className="text-gray-300 text-sm font-medium">Average Elongation:</span>
+                        <span className="text-teal-300 font-semibold">{(analysisResults.analysisSummary.average_elongation || 0).toFixed(3)}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Density Analysis */}
-                <div className="space-y-4">
-                  <h5 className="text-sm font-bold text-cyan-300 mb-3">Density Analysis</h5>
-                  <div className="space-y-3">
-                    {analysisResults.densityAnalysis && (
-                      <>
-                        <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
-                          <span className="text-gray-300 text-sm">Total Image Area:</span>
-                          <span className="text-cyan-300 font-semibold">{(analysisResults.densityAnalysis.total_area || 0).toFixed(2)} m²</span>
-                        </div>
-                        <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
-                          <span className="text-gray-300 text-sm">Crater Density:</span>
-                          <span className="text-cyan-300 font-semibold">{(analysisResults.densityAnalysis.crater_density || 0).toFixed(6)} craters/m²</span>
-                        </div>
-                        <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
-                          <span className="text-gray-300 text-sm">Boulder Density:</span>
-                          <span className="text-cyan-300 font-semibold">{(analysisResults.densityAnalysis.boulder_density || 0).toFixed(6)} boulders/m²</span>
-                        </div>
-                        <div className="flex justify-between items-center p-3 bg-gray-700/50 rounded-lg">
-                          <span className="text-gray-300 text-sm">Overall Density:</span>
-                          <span className="text-cyan-300 font-semibold">{(analysisResults.densityAnalysis.density || 0).toFixed(6)} objects/m²</span>
-                        </div>
-                      </>
-                    )}
+                <div className="space-y-6">
+                  <div className="bg-gradient-to-br from-cyan-900/30 via-blue-900/30 to-indigo-900/30 rounded-xl p-6 border border-cyan-500/20 shadow-lg">
+                    <h5 className="text-base font-bold text-cyan-300 mb-4 flex items-center">
+                      <div className="w-3 h-3 bg-cyan-400 rounded-full mr-3 animate-pulse"></div>
+                      Density Analysis
+                    </h5>
+                    <div className="space-y-4">
+                      {analysisResults.densityAnalysis && (
+                        <>
+                          <div className="flex justify-between items-center p-4 bg-gray-800/50 rounded-lg border border-gray-700/50 hover:border-cyan-500/30 transition-all duration-300">
+                            <span className="text-gray-300 text-sm font-medium">Total Image Area:</span>
+                            <span className="text-cyan-300 font-semibold">{(analysisResults.densityAnalysis.total_area || 0).toFixed(2)} m²</span>
+                          </div>
+                          <div className="flex justify-between items-center p-4 bg-gray-800/50 rounded-lg border border-gray-700/50 hover:border-cyan-500/30 transition-all duration-300">
+                            <span className="text-gray-300 text-sm font-medium">Crater Density:</span>
+                            <span className="text-cyan-300 font-semibold">{(analysisResults.densityAnalysis.crater_density || 0).toFixed(6)} craters/m²</span>
+                          </div>
+                          <div className="flex justify-between items-center p-4 bg-gray-800/50 rounded-lg border border-gray-700/50 hover:border-cyan-500/30 transition-all duration-300">
+                            <span className="text-gray-300 text-sm font-medium">Boulder Density:</span>
+                            <span className="text-cyan-300 font-semibold">{(analysisResults.densityAnalysis.boulder_density || 0).toFixed(6)} boulders/m²</span>
+                          </div>
+                          <div className="flex justify-between items-center p-4 bg-gray-800/50 rounded-lg border border-gray-700/50 hover:border-cyan-500/30 transition-all duration-300">
+                            <span className="text-gray-300 text-sm font-medium">Overall Density:</span>
+                            <span className="text-cyan-300 font-semibold">{(analysisResults.densityAnalysis.density || 0).toFixed(6)} objects/m²</span>
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -476,55 +508,65 @@ const ResultsSection = ({ analysisResults, handleProceed }) => {
 
         {/* Detailed Measurements Section */}
         {analysisResults.detectedObjects && analysisResults.detectedObjects.length > 0 && (
-          <div className="mb-6">
-            <div className="bg-gradient-to-br from-gray-800 via-gray-700 to-gray-800 border-2 border-gray-600 rounded-lg sm:rounded-xl p-4 sm:p-6 shadow-lg">
-              <h4 className="text-base sm:text-lg font-bold mb-4 sm:mb-6 text-gray-200 flex items-center">
-                <div className="w-5 h-5 sm:w-6 sm:h-6 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-lg flex items-center justify-center mr-3">
-                  <svg className="w-3 h-3 sm:w-4 sm:h-4 text-white" fill="currentColor" viewBox="0 0 512 512">
+          <div className="mb-8">
+            <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-2 border-gray-600 rounded-2xl p-6 sm:p-8 shadow-2xl">
+              <h4 className="text-lg sm:text-xl font-bold mb-6 sm:mb-8 text-gray-100 flex items-center">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-indigo-400 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center mr-4 shadow-lg">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 text-white" fill="currentColor" viewBox="0 0 512 512">
                     <path d="M256 32c12.5 0 24.1 6.4 30.8 17L503.4 394.4c5.6 8.9 8.6 19.2 8.6 29.7c0 30.9-25 55.9-55.9 55.9H55.9C25 480 0 455 0 424.1c0-10.5 3-20.8 8.6-29.7L225.2 49c6.6-10.6 18.3-17 30.8-17zm65 192L256 120.4 176.9 246.5l18.3 24.4c6.4 8.5 19.2 8.5 25.6 0l25.6-34.1c6-8.1 15.5-12.8 25.6-12.8h49z" />
                   </svg>
                 </div>
                 Detailed Measurements & Technical Data
               </h4>
               
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {analysisResults.detectedObjects.map((obj, index) => (
-                  <div key={index} className="bg-gray-700/30 rounded-lg p-4 border border-gray-600">
-                    <div className="flex items-center justify-between mb-3">
-                      <h5 className="text-sm font-bold text-indigo-300 capitalize">
-                        {obj.class_name} #{index + 1} - {obj.degradation_state !== "N/A" ? obj.degradation_state : "Standard"}
-                      </h5>
-                      <div className="flex items-center space-x-2">
-                        <div className={`w-3 h-3 rounded-full ${
+                  <div key={index} className="bg-gradient-to-br from-gray-800/50 via-gray-700/50 to-gray-800/50 rounded-xl p-6 border border-gray-600/50 hover:border-purple-500/30 transition-all duration-300 shadow-lg">
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="flex items-center space-x-4">
+                        <div className={`w-4 h-4 rounded-full ${
                           obj.class_name === 'boulder' 
-                            ? 'bg-orange-400 shadow-lg shadow-orange-400/50' 
-                            : 'bg-yellow-400 shadow-lg shadow-yellow-400/50'
+                            ? 'bg-orange-400 shadow-lg shadow-orange-400/50 animate-pulse' 
+                            : 'bg-yellow-400 shadow-lg shadow-yellow-400/50 animate-pulse'
                         }`}></div>
-                        <span className="text-xs text-gray-400">Confidence: {(obj.confidence * 100).toFixed(1)}%</span>
+                        <h5 className="text-base font-bold text-indigo-300 capitalize">
+                          {obj.class_name} #{index + 1} - {obj.degradation_state !== "N/A" ? obj.degradation_state : "Standard"}
+                        </h5>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-lg px-4 py-2 border border-green-500/30">
+                          <span className="text-xs text-green-300 font-medium">Confidence</span>
+                          <div className="text-sm font-bold text-green-200">{(obj.confidence * 100).toFixed(1)}%</div>
+                        </div>
                       </div>
                     </div>
                     
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                       {/* Bounding Box */}
                       {obj.bounding_box && (
-                        <div className="space-y-2">
-                          <h6 className="text-xs font-semibold text-purple-300">Bounding Box (Pixels)</h6>
-                          <div className="bg-gray-800/50 rounded p-2 text-xs">
-                            <div className="flex justify-between">
-                              <span className="text-gray-400">X1:</span>
-                              <span className="text-purple-300">{obj.bounding_box.x1}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-gray-400">Y1:</span>
-                              <span className="text-purple-300">{obj.bounding_box.y1}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-gray-400">X2:</span>
-                              <span className="text-purple-300">{obj.bounding_box.x2}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-gray-400">Y2:</span>
-                              <span className="text-purple-300">{obj.bounding_box.y2}</span>
+                        <div className="space-y-3">
+                          <h6 className="text-sm font-bold text-purple-300 flex items-center">
+                            <div className="w-2 h-2 bg-purple-400 rounded-full mr-2"></div>
+                            Bounding Box (Pixels)
+                          </h6>
+                          <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700/50">
+                            <div className="grid grid-cols-2 gap-3 text-xs">
+                              <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded border border-gray-600/30">
+                                <span className="text-gray-400">X1:</span>
+                                <span className="text-purple-300 font-semibold">{obj.bounding_box.x1}</span>
+                              </div>
+                              <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded border border-gray-600/30">
+                                <span className="text-gray-400">Y1:</span>
+                                <span className="text-purple-300 font-semibold">{obj.bounding_box.y1}</span>
+                              </div>
+                              <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded border border-gray-600/30">
+                                <span className="text-gray-400">X2:</span>
+                                <span className="text-purple-300 font-semibold">{obj.bounding_box.x2}</span>
+                              </div>
+                              <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded border border-gray-600/30">
+                                <span className="text-gray-400">Y2:</span>
+                                <span className="text-purple-300 font-semibold">{obj.bounding_box.y2}</span>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -532,70 +574,85 @@ const ResultsSection = ({ analysisResults, handleProceed }) => {
 
                       {/* Pixel Measurements */}
                       {obj.pixel_measurements && (
-                        <div className="space-y-2">
-                          <h6 className="text-xs font-semibold text-blue-300">Pixel Measurements</h6>
-                          <div className="bg-gray-800/50 rounded p-2 text-xs">
-                            <div className="flex justify-between">
-                              <span className="text-gray-400">Width:</span>
-                              <span className="text-blue-300">{obj.pixel_measurements.width_px}px</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-gray-400">Height:</span>
-                              <span className="text-blue-300">{obj.pixel_measurements.height_px}px</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-gray-400">Area:</span>
-                              <span className="text-blue-300">{obj.pixel_measurements.area_px}px²</span>
+                        <div className="space-y-3">
+                          <h6 className="text-sm font-bold text-blue-300 flex items-center">
+                            <div className="w-2 h-2 bg-blue-400 rounded-full mr-2"></div>
+                            Pixel Measurements
+                          </h6>
+                          <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700/50">
+                            <div className="space-y-3 text-xs">
+                              <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded border border-gray-600/30">
+                                <span className="text-gray-400">Width:</span>
+                                <span className="text-blue-300 font-semibold">{obj.pixel_measurements.width_px}px</span>
+                              </div>
+                              <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded border border-gray-600/30">
+                                <span className="text-gray-400">Height:</span>
+                                <span className="text-blue-300 font-semibold">{obj.pixel_measurements.height_px}px</span>
+                              </div>
+                              <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded border border-gray-600/30">
+                                <span className="text-gray-400">Area:</span>
+                                <span className="text-blue-300 font-semibold">{obj.pixel_measurements.area_px}px²</span>
+                              </div>
                             </div>
                           </div>
                         </div>
                       )}
 
                       {/* Real Measurements */}
-                      <div className="space-y-2">
-                        <h6 className="text-xs font-semibold text-green-300">Real Measurements</h6>
-                        <div className="bg-gray-800/50 rounded p-2 text-xs">
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">Width:</span>
-                            <span className="text-green-300">{obj.width_real.toFixed(2)}m</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">Height:</span>
-                            <span className="text-green-300">{obj.height_real.toFixed(2)}m</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">Diameter:</span>
-                            <span className="text-green-300">{obj.diameter_real.toFixed(2)}m</span>
-                      </div>
-                      <div className="flex justify-between">
-                            <span className="text-gray-400">Area:</span>
-                            <span className="text-green-300">{obj.area_real.toFixed(2)}m²</span>
-                      </div>
-                      <div className="flex justify-between">
-                            <span className="text-gray-400">Volume:</span>
-                            <span className="text-green-300">{obj.volume_real.toFixed(2)}m³</span>
+                      <div className="space-y-3">
+                        <h6 className="text-sm font-bold text-green-300 flex items-center">
+                          <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
+                          Real Measurements
+                        </h6>
+                        <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700/50">
+                          <div className="space-y-3 text-xs">
+                            <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded border border-gray-600/30">
+                              <span className="text-gray-400">Width:</span>
+                              <span className="text-green-300 font-semibold">{obj.width_real.toFixed(2)}m</span>
+                            </div>
+                            <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded border border-gray-600/30">
+                              <span className="text-gray-400">Height:</span>
+                              <span className="text-green-300 font-semibold">{obj.height_real.toFixed(2)}m</span>
+                            </div>
+                            <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded border border-gray-600/30">
+                              <span className="text-gray-400">Diameter:</span>
+                              <span className="text-green-300 font-semibold">{obj.diameter_real.toFixed(2)}m</span>
+                            </div>
+                            <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded border border-gray-600/30">
+                              <span className="text-gray-400">Area:</span>
+                              <span className="text-green-300 font-semibold">{obj.area_real.toFixed(2)}m²</span>
+                            </div>
+                            <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded border border-gray-600/30">
+                              <span className="text-gray-400">Volume:</span>
+                              <span className="text-green-300 font-semibold">{obj.volume_real.toFixed(2)}m³</span>
+                            </div>
                           </div>
                         </div>
                       </div>
 
                       {/* Shape Properties */}
-                      <div className="space-y-2">
-                        <h6 className="text-xs font-semibold text-yellow-300">Shape Properties</h6>
-                        <div className="bg-gray-800/50 rounded p-2 text-xs">
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">Circularity:</span>
-                            <span className="text-yellow-300">{obj.circularity.toFixed(3)}</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span className="text-gray-400">Elongation:</span>
-                            <span className="text-yellow-300">{obj.elongation.toFixed(3)}</span>
-                      </div>
-                      {obj.estimated_depth && (
-                        <div className="flex justify-between">
-                              <span className="text-gray-400">Depth:</span>
-                              <span className="text-yellow-300">{obj.estimated_depth.toFixed(2)}m</span>
+                      <div className="space-y-3">
+                        <h6 className="text-sm font-bold text-yellow-300 flex items-center">
+                          <div className="w-2 h-2 bg-yellow-400 rounded-full mr-2"></div>
+                          Shape Properties
+                        </h6>
+                        <div className="bg-gray-900/50 rounded-lg p-4 border border-gray-700/50">
+                          <div className="space-y-3 text-xs">
+                            <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded border border-gray-600/30">
+                              <span className="text-gray-400">Circularity:</span>
+                              <span className="text-yellow-300 font-semibold">{obj.circularity.toFixed(3)}</span>
                             </div>
-                          )}
+                            <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded border border-gray-600/30">
+                              <span className="text-gray-400">Elongation:</span>
+                              <span className="text-yellow-300 font-semibold">{obj.elongation.toFixed(3)}</span>
+                            </div>
+                            {obj.estimated_depth && (
+                              <div className="flex justify-between items-center p-2 bg-gray-800/30 rounded border border-gray-600/30">
+                                <span className="text-gray-400">Depth:</span>
+                                <span className="text-yellow-300 font-semibold">{obj.estimated_depth.toFixed(2)}m</span>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>

@@ -334,43 +334,34 @@ def analyze_boulder():
                         "area_px": int(obj.area_px)
                     }
                 
-                results["detected_objects"].append(obj_data)
-                print(f"✅ Object {i+1} processed successfully")
+                # Only add objects with meaningful data (confidence > 0 and valid measurements)
+                if obj_data["confidence"] > 0.0 and obj_data["diameter_real"] > 0.0:
+                    results["detected_objects"].append(obj_data)
+                    print(f"✅ Object {i+1} processed successfully")
+                else:
+                    print(f"⚠️ Object {i+1} skipped - no meaningful data (confidence: {obj_data['confidence']}, diameter: {obj_data['diameter_real']})")
                 
             except Exception as e:
                 print(f"❌ Error processing object {i+1}: {e}")
-                # Add a minimal object data if processing fails
-            obj_data = {
-                    "class_name": "unknown",
-                    "confidence": 0.0,
-                    "width_real": 0.0,
-                    "height_real": 0.0,
-                    "diameter_real": 0.0,
-                    "area_real": 0.0,
-                    "volume_real": 0.0,
-                    "circularity": 0.0,
-                    "elongation": 0.0,
-                    "degradation_state": "N/A",
-                    "estimated_depth": None
-            }
-            results["detected_objects"].append(obj_data)
+                # Skip this object instead of adding empty data
+                continue
         
         # Add comprehensive analysis summary
-        total_objects = len(detected_objects)
-        boulders = [obj for obj in detected_objects if getattr(obj, 'class_name', '') == 'boulder']
-        craters = [obj for obj in detected_objects if getattr(obj, 'class_name', '') == 'crater']
+        total_objects = len(results["detected_objects"])  # Use filtered results
+        boulders = [obj for obj in results["detected_objects"] if obj.get('class_name', '') == 'boulder']
+        craters = [obj for obj in results["detected_objects"] if obj.get('class_name', '') == 'crater']
         
         try:
             results["analysis_summary"] = {
                 "total_objects": total_objects,
                 "boulder_count": len(boulders),
                 "crater_count": len(craters),
-                "average_confidence": float(sum(getattr(obj, 'confidence', 0.0) for obj in detected_objects) / total_objects) if total_objects > 0 else 0,
-                "average_diameter": float(sum(getattr(obj, 'diameter_real', 0.0) for obj in detected_objects) / total_objects) if total_objects > 0 else 0,
-                "average_area": float(sum(getattr(obj, 'area_real', 0.0) for obj in detected_objects) / total_objects) if total_objects > 0 else 0,
-                "total_volume": float(sum(getattr(obj, 'volume_real', 0.0) for obj in detected_objects)),
-                "average_circularity": float(sum(getattr(obj, 'circularity', 0.0) for obj in detected_objects) / total_objects) if total_objects > 0 else 0,
-                "average_elongation": float(sum(getattr(obj, 'elongation', 0.0) for obj in detected_objects) / total_objects) if total_objects > 0 else 0,
+                "average_confidence": float(sum(obj.get('confidence', 0.0) for obj in results["detected_objects"]) / total_objects) if total_objects > 0 else 0,
+                "average_diameter": float(sum(obj.get('diameter_real', 0.0) for obj in results["detected_objects"]) / total_objects) if total_objects > 0 else 0,
+                "average_area": float(sum(obj.get('area_real', 0.0) for obj in results["detected_objects"]) / total_objects) if total_objects > 0 else 0,
+                "total_volume": float(sum(obj.get('volume_real', 0.0) for obj in results["detected_objects"])),
+                "average_circularity": float(sum(obj.get('circularity', 0.0) for obj in results["detected_objects"]) / total_objects) if total_objects > 0 else 0,
+                "average_elongation": float(sum(obj.get('elongation', 0.0) for obj in results["detected_objects"]) / total_objects) if total_objects > 0 else 0,
                 "processing_time": 2.4,  # This would be calculated from actual processing time
                 "analysis_type": analysis_type,
                 "image_filename": os.path.basename(absolute_filepath)
@@ -395,12 +386,12 @@ def analyze_boulder():
         # Perform additional analysis based on type
         if analysis_type in ['advanced', 'full']:
             # Calculate measurements
-            detected_objects = boulder_controller.calculate_measurements(detected_objects)
+            results["detected_objects"] = boulder_controller.calculate_measurements(results["detected_objects"])
         
         if analysis_type in ['gradcam', 'full']:
             # Generate Grad-CAM
             print(f"🔍 Generating Grad-CAM for analysis type: {analysis_type}")
-            gradcam_path = boulder_controller.generate_gradcam(absolute_filepath, detected_objects)
+            gradcam_path = boulder_controller.generate_gradcam(absolute_filepath, results["detected_objects"])
             print(f"🔍 Grad-CAM path returned: {gradcam_path}")
             if gradcam_path:
                 # Move/copy the Grad-CAM image to uploads folder
@@ -424,7 +415,7 @@ def analyze_boulder():
                 print("❌ Grad-CAM generation failed - no path returned")
         
         # Always create detection visualization
-        viz_path = boulder_controller.create_visualization(absolute_filepath, detected_objects)
+        viz_path = boulder_controller.create_visualization(absolute_filepath, results["detected_objects"])
         if viz_path:
             # Move/copy the visualization image to uploads folder
             import shutil
@@ -440,7 +431,7 @@ def analyze_boulder():
             })
         
         # Calculate density analysis
-        density_analysis = boulder_controller.calculate_density_analysis(detected_objects, absolute_filepath)
+        density_analysis = boulder_controller.calculate_density_analysis(results["detected_objects"], absolute_filepath)
         results["density_analysis"] = density_analysis
         
         # Change back to server directory
