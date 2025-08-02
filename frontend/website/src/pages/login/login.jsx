@@ -18,21 +18,23 @@ const Login = ({ onLoginSuccess }) => {
   } = useLoginForm(onLoginSuccess);
 
   return (
-    <div id="main-container" className="relative h-screen w-full bg-gradient-to-br from-gray-900 via-blue-900 to-black">
+    <div id="main-container" className="relative min-h-screen w-full bg-gradient-to-br from-gray-900 via-blue-900 to-black flex flex-col">
       <Background />
       
       <Header />
 
-      <div id="login-section" className="relative z-10 flex items-center justify-center h-full px-4 -mt-20">
-        <LoginCard 
-          formData={formData}
-          errors={errors}
-          isLoading={isLoading}
-          isSuccess={isSuccess}
-          serverError={serverError}
-          handleInputChange={handleInputChange}
-          handleSubmit={handleSubmit}
-        />
+      <div id="login-section" className="relative z-10 flex-1 flex items-center justify-center px-4 py-8">
+        <div className="w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl">
+          <LoginCard 
+            formData={formData}
+            errors={errors}
+            isLoading={isLoading}
+            isSuccess={isSuccess}
+            serverError={serverError}
+            handleInputChange={handleInputChange}
+            handleSubmit={handleSubmit}
+          />
+        </div>
       </div>
 
       <Footer />
