@@ -1,0 +1,29 @@
+Lunar Terrain Ruggedness Index (TRI) Analysis Report
+============================================================
+Generated: 2025-08-01 14:01:27
+
+Layer: Lunar_TRI
+Timestamp: 2025-08-01T14:01:27.953848
+Neighborhood Size: 3x3
+Image Size: 638x8192 pixels
+Risk Level: LOW
+Risk Description: Low landslide risk, generally gentle terrain
+TRI Statistics:
+  - TRI Range: 0.00 to 491.96
+  - Mean TRI: 9.95
+  - TRI Standard Deviation: 16.27
+TRI Percentiles:
+  - 25th percentile: 3.32
+  - 50th percentile: 6.71
+  - 75th percentile: 11.79
+  - 90th percentile: 20.02
+  - 95th percentile: 28.04
+  - 99th percentile: 69.61
+Terrain Distribution:
+  - Low: 1,062,978 pixels (20.3%)
+  - Moderate: 3,527,883 pixels (67.5%)
+  - High: 334,127 pixels (6.4%)
+  - Very_High: 301,508 pixels (5.8%)
+
+----------------------------------------
+

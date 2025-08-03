@@ -1,0 +1,28 @@
+Lunar Contour Analysis Report
+==================================================
+Generated: 2025-08-01 13:59:26
+
+Layer: Lunar_Contours
+Timestamp: 2025-08-01T13:59:26.563519
+Terrain Complexity: HIGH
+Statistics:
+  - Number of Contours: 12
+  - Number of Levels: 14
+  - Contour Density: 0.1211
+  - Elevation Range: 0.0 to 650.0 meters
+Elevation Distribution:
+  - 0-50m: 1 contours
+  - 50-100m: 1 contours
+  - 100-150m: 1 contours
+  - 150-200m: 1 contours
+  - 200-250m: 1 contours
+  - 250-300m: 1 contours
+  - 300-350m: 1 contours
+  - 350-400m: 1 contours
+  - 400-450m: 1 contours
+  - 450-500m: 1 contours
+  - 500-550m: 1 contours
+  - 550-600m: 1 contours
+
+------------------------------
+

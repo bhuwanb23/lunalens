@@ -1,0 +1,34 @@
+Lunar Curvature Analysis Report
+==================================================
+Generated: 2025-08-03 10:58:28
+
+Layer: Moon_DEM
+Timestamp: 2025-08-03T10:58:28.627590
+Risk Level: HIGH
+Risk Factors: High curvature variability, Complex terrain features
+Statistics:
+  - Profile Curvature Mean: -0.010725
+  - Profile Curvature Std: 3.716956
+  - Plan Curvature Mean: -0.009777
+  - Plan Curvature Std: 3.628621
+  - Gaussian Curvature Mean: -0.019519
+  - Gaussian Curvature Std: 385.109967
+  - Tangential Curvature Mean: -0.009777
+  - Tangential Curvature Std: 3.628621
+  - Mean Curvature Mean: 0.024214
+  - Mean Curvature Std: 6.684292
+Thresholds:
+  - Profile Curvature Threshold: 7.433913
+  - Plan Curvature Threshold: 7.257242
+  - Gaussian Curvature Threshold: 770.219933
+  - Tangential Curvature Threshold: 7.257242
+  - Mean Curvature Threshold: 13.368584
+
+Analysis:
+- Profile curvature affects flow acceleration/deceleration
+- Plan curvature controls flow divergence/convergence
+- Gaussian curvature describes local convexity/concavity
+- Tangential curvature useful for compound terrain interpretation
+- Mean curvature average of principal curvatures
+
+------------------------------

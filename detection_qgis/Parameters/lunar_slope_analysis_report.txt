@@ -1,0 +1,25 @@
+Lunar Slope Analysis Report
+==================================================
+Generated: 2025-08-03 10:59:40
+
+Layer: Moon_DEM
+Timestamp: 2025-08-03T10:59:40.791601
+Risk Level: LOW
+Risk Factors: Gentle slopes, Low slope variability
+Statistics:
+  - Min: 0.00
+  - Max: 11.54
+  - Mean: 5.01
+  - Std Dev: 2.00
+Thresholds:
+  - Gentle Slopes: 3.01
+  - Moderate Slopes: 5.01
+  - Steep Slopes: 7.01
+
+Analysis:
+- Slope affects landing site suitability
+- Mean slope indicates overall terrain steepness
+- Standard deviation shows slope variability
+- Risk assessment based on moon landing requirements
+
+------------------------------

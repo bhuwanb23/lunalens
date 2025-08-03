@@ -1,0 +1,26 @@
+Lunar Elevation Analysis Report
+==================================================
+Generated: 2025-08-03 10:59:20
+
+Layer: Moon_DEM
+Timestamp: 2025-08-03T10:59:20.200548
+Risk Level: HIGH
+Risk Factors: High terrain variability, Extreme elevation differences
+Statistics:
+  - Min: -3641.00
+  - Max: 205.00
+  - Mean: -1977.48
+  - Std Dev: 625.98
+  - Range: 3846.00
+Thresholds:
+  - Low Elevation: -2679.50
+  - Medium Elevation: -1718.00
+  - High Elevation: -756.50
+
+Analysis:
+- Elevation range indicates terrain complexity
+- Standard deviation shows surface roughness
+- Mean elevation provides regional context
+- Risk assessment based on terrain variability
+
+------------------------------

@@ -1,0 +1,48 @@
+🌑 LUNAR TERRAIN ANALYSIS SUMMARY REPORT
+============================================================
+Generated: 2025-08-02 21:39:12
+
+📊 ANALYSIS OVERVIEW
+-------------------------
+Total Analyses Run: 3
+Output Directory: lunar_analysis_output
+
+🔧 AVAILABLE MODULES
+-------------------------
+• qgis_setup: QGIS Environment Setup (Available)
+• tif_processor: TIF File Processing (Available)
+• slope: Slope Analysis (Available)
+• elevation_statistics: Elevation Statistics Analysis (Available)
+• lunar_aspect_calculator: Lunar Aspect Calculator (Available)
+• hillshade: Hillshade Analysis (Available)
+• counter: Contour Generation (Available)
+• curvature_statistics: Curvature Statistics Analysis (Available)
+• crater_edges: Crater Edges Detection (Available)
+• scraps_headwalls: Scarps/Headwalls Detection (Available)
+• debris_paths: Debris Flow Paths Detection (Available)
+• terrain_ruggedness: Terrain Ruggedness Index (Available)
+
+📋 ANALYSIS RESULTS
+-------------------------
+• CRATER_EDGES:
+  - Status: completed
+  - Timestamp: 2025-08-02T21:36:40.807359
+  - Output Directory: crater_walls
+
+• SCRAPS_HEADWALLS:
+  - Status: completed
+  - Timestamp: 2025-08-02T21:38:24.921260
+  - Output Directory: headwalls_scraps
+
+• DEBRIS_PATHS:
+  - Status: completed
+  - Timestamp: 2025-08-02T21:39:12.742232
+  - Output Directory: debris_path_output
+
+🎯 NEXT STEPS
+---------------
+1. Open QGIS and load the generated layers
+2. Review analysis results in respective output directories
+3. Combine results for comprehensive terrain assessment
+4. Export final results for further processing
+5. Consider temporal analysis for monitoring changes
