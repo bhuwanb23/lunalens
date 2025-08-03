@@ -1,9 +1,10 @@
 import sys
 import os
 import numpy as np
+from datetime import datetime
 
 # ✅ 1. QGIS installation path
-QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.40.9"
+QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.44.1"
 
 # ✅ 2. Set required environment variables
 os.environ["QGIS_PREFIX_PATH"] = QGIS_PREFIX_PATH
@@ -117,12 +118,20 @@ class MoonSlopeCalculator:
                 
                 # Moon-specific slope analysis
                 self.analyze_moon_slope(stats.mean)
+                
+                # Return statistics for report generation
+                return {
+                    'min': stats.minimumValue,
+                    'max': stats.maximumValue,
+                    'mean': stats.mean,
+                    'std': stats.stdDev
+                }
             
-            return True
+            return None
             
         except Exception as e:
             print(f"❌ Error calculating slope with processing: {e}")
-            return False
+            return None
     
     def calculate_slope_manual(self, input_layer_name, output_path):
         """
@@ -131,7 +140,7 @@ class MoonSlopeCalculator:
         try:
             if input_layer_name not in self.layers:
                 print(f"❌ Layer '{input_layer_name}' not found")
-                return False
+                return None
                 
             input_layer = self.layers[input_layer_name]
             
@@ -216,11 +225,17 @@ class MoonSlopeCalculator:
             
             self.layers["Moon_Slope_Manual"] = slope_degrees
             
-            return True
+            # Return statistics for report generation
+            return {
+                'min': np.min(slope_degrees),
+                'max': np.max(slope_degrees),
+                'mean': np.mean(slope_degrees),
+                'std': np.std(slope_degrees)
+            }
             
         except Exception as e:
             print(f"❌ Error calculating slope manually: {e}")
-            return False
+            return None
     
     def calculate_slope_simple(self, input_layer_name, output_path):
         """
@@ -229,7 +244,7 @@ class MoonSlopeCalculator:
         try:
             if input_layer_name not in self.layers:
                 print(f"❌ Layer '{input_layer_name}' not found")
-                return False
+                return None
                 
             input_layer = self.layers[input_layer_name]
             
@@ -280,11 +295,17 @@ class MoonSlopeCalculator:
             
             self.layers["Moon_Slope_Simple"] = slope_estimation
             
-            return True
+            # Return statistics for report generation
+            return {
+                'min': np.min(slope_estimation),
+                'max': np.max(slope_estimation),
+                'mean': np.mean(slope_estimation),
+                'std': np.std(slope_estimation)
+            }
             
         except Exception as e:
             print(f"❌ Error calculating slope with simple method: {e}")
-            return False
+            return None
     
     def analyze_moon_slope(self, mean_slope):
         """
@@ -324,6 +345,67 @@ class MoonSlopeCalculator:
             
         except Exception as e:
             print(f"❌ Error saving statistics: {e}")
+
+    def generate_slope_report(self, slope_stats, layer_name="Raster", output_dir="slope_outputs"):
+        """Generate slope analysis report similar to lunar landslide analysis report"""
+        try:
+            # Create output directory if it doesn't exist
+            if not os.path.exists(output_dir):
+                os.makedirs(output_dir)
+            
+            # Determine risk level based on slope statistics
+            mean_slope = slope_stats['mean']
+            std_slope = slope_stats['std']
+            
+            if mean_slope > 15.0 or std_slope > 10.0:
+                risk_level = "HIGH"
+                risk_factors = "Steep slopes, High slope variability"
+            elif mean_slope > 8.0 or std_slope > 5.0:
+                risk_level = "MEDIUM"
+                risk_factors = "Moderate slopes, Varied slope conditions"
+            else:
+                risk_level = "LOW"
+                risk_factors = "Gentle slopes, Low slope variability"
+            
+            # Generate report content
+            report_content = f"""Lunar Slope Analysis Report
+==================================================
+Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+
+Layer: {layer_name}
+Timestamp: {datetime.now().isoformat()}
+Risk Level: {risk_level}
+Risk Factors: {risk_factors}
+Statistics:
+  - Min: {slope_stats['min']:.2f}
+  - Max: {slope_stats['max']:.2f}
+  - Mean: {slope_stats['mean']:.2f}
+  - Std Dev: {slope_stats['std']:.2f}
+Thresholds:
+  - Gentle Slopes: {slope_stats['mean'] - slope_stats['std']:.2f}
+  - Moderate Slopes: {slope_stats['mean']:.2f}
+  - Steep Slopes: {slope_stats['mean'] + slope_stats['std']:.2f}
+
+Analysis:
+- Slope affects landing site suitability
+- Mean slope indicates overall terrain steepness
+- Standard deviation shows slope variability
+- Risk assessment based on moon landing requirements
+
+------------------------------
+"""
+            
+            # Save report
+            report_path = os.path.join(output_dir, "lunar_slope_analysis_report.txt")
+            with open(report_path, 'w') as f:
+                f.write(report_content)
+            
+            print(f"✅ Slope analysis report saved to: {report_path}")
+            return report_path
+            
+        except Exception as e:
+            print(f"❌ Error generating slope report: {e}")
+            return None
     
     def list_layers(self):
         """
@@ -351,7 +433,7 @@ def main():
     calculator = MoonSlopeCalculator()
     
     # 🔧 CONFIGURE YOUR PATHS HERE
-    tif_path = r"E:\moon extract\data\derived\20250207\ch2_tmc_ndn_20250207T1457348573_d_dtm_d18.tif"
+    tif_path = r"E:\moon extract\data\derived\20250207\PIA12927.tif"
     slope_output = r"E:\moon extract\data\derived\20250207\moon_slope.tif"
     
     print("📁 Step 1: Loading moon TIF file...")
@@ -369,29 +451,36 @@ def main():
     print("\n🌙 Step 2: Calculating moon slope...")
     
     # Try multiple methods in order of preference
-    success = False
+    slope_stats = None
     
     # Method 1: Try processing module
     if calculator.processing_available:
         print("   - Method 1: Attempting to use QGIS processing module...")
-        success = calculator.calculate_slope_with_processing("Moon_DEM", slope_output)
+        slope_stats = calculator.calculate_slope_with_processing("Moon_DEM", slope_output)
     
     # Method 2: Try manual calculation
-    if not success:
+    if slope_stats is None:
         print("   - Method 2: Using manual calculation...")
-        success = calculator.calculate_slope_manual("Moon_DEM", slope_output)
+        slope_stats = calculator.calculate_slope_manual("Moon_DEM", slope_output)
     
     # Method 3: Try simple estimation
-    if not success:
+    if slope_stats is None:
         print("   - Method 3: Using simple slope estimation...")
-        success = calculator.calculate_slope_simple("Moon_DEM", slope_output)
+        slope_stats = calculator.calculate_slope_simple("Moon_DEM", slope_output)
     
-    if not success:
+    if slope_stats is None:
         print("❌ All slope calculation methods failed")
         calculator.cleanup()
         return
     
-    print("\n📊 Step 3: Analysis completed!")
+    print("\n📊 Step 3: Generating slope analysis report...")
+    
+    # Generate and save report
+    report_path = calculator.generate_slope_report(slope_stats, "Moon_DEM")
+    if report_path:
+        print(f"📊 Slope analysis completed! Report saved to: {report_path}")
+    
+    print("\n📊 Step 4: Analysis completed!")
     
     # List all layers
     calculator.list_layers()
@@ -406,6 +495,8 @@ def main():
     else:
         print(f"   - Slope data: {slope_output.replace('.tif', '.npy')}")
     print(f"   - Statistics: {slope_output.replace('.tif', '_slope_stats.txt')}")
+    if report_path:
+        print(f"   - Analysis report: {report_path}")
 
 if __name__ == "__main__":
     main()

@@ -2,7 +2,7 @@ import sys
 import os
 
 # ✅ 1. QGIS installation path (change if needed)
-QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.40.9" 
+QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.44.1"
 
 # ✅ 2. Set required environment variables
 os.environ["QGIS_PREFIX_PATH"] = QGIS_PREFIX_PATH

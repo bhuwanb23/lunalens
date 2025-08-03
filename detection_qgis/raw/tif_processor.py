@@ -2,7 +2,7 @@ import sys
 import os
 
 # ✅ 1. QGIS installation path
-QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.40.9" 
+QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.44.1"
 
 # ✅ 2. Set required environment variables
 os.environ["QGIS_PREFIX_PATH"] = QGIS_PREFIX_PATH
@@ -290,12 +290,42 @@ class TifProcessor:
 # Example usage
 if __name__ == "__main__":
     processor = TifProcessor()
-    tif_path = r"E:\moon extract\data\derived\20250207\ch2_tmc_ndn_20250207T1457348573_d_dtm_d18.tif"
-    processor.load_tif_file(tif_path, "Moon_DEM")
-    processor.elevation_statistics("Moon_DEM")
-    processor.cleanup()
     
-    print("\n📝 To use this script:")
-    print("1. Uncomment the example lines above")
-    print("2. Replace the file paths with your actual TIF file paths")
-    print("3. Run the script again") 
+    # Available TIF files - try them in order of preference
+    tif_files = [
+        r"aspect_outputs\lunar_slope.tif",      # Best for lunar analysis
+        r"aspect_outputs\lunar_aspect.tif",     # Alternative DEM
+        r"terrain_outputs\terrain_output.tif"   # Fallback option
+    ]
+    
+    tif_path = None
+    for file_path in tif_files:
+        if os.path.exists(file_path):
+            tif_path = file_path
+            print(f"✅ TIF file found: {tif_path}")
+            break
+    
+    if tif_path:
+        print("🚀 Starting TIF processing...")
+        print(f"📊 Using TIF: {os.path.basename(tif_path)}")
+        
+        # Load and process the TIF file
+        if processor.load_tif_file(tif_path, "Moon_DEM"):
+            # Get elevation statistics
+            processor.elevation_statistics("Moon_DEM")
+            print("\n✅ TIF processing completed successfully!")
+            print("📁 Analysis results:")
+            print("   - DEM loaded and validated")
+            print("   - Elevation statistics calculated")
+            print("   - Ready for further processing")
+        else:
+            print("\n❌ Failed to load TIF file!")
+    else:
+        print("❌ No TIF files found!")
+        print("📝 Expected TIF files:")
+        for file_path in tif_files:
+            print(f"   - {file_path}")
+        print("\n💡 Please ensure TIF files exist before running analysis")
+    
+    # Clean up
+    processor.cleanup() 

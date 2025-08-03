@@ -1,0 +1,61 @@
+# Output directories
+slope_outputs/
+elevation_outputs/
+curvature_outputs/
+crater_walls/
+debris_path_output/
+headwalls_scraps/
+aspect_outputs/
+lunar_analysis_output/
+Terrian_Reggedness_output/
+terrain_outputs/
+hillshade_outputs/
+crater_outputs/
+counter_outputs/
+Geomorphological Features/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.npy
+*.tif
+*.tiff
+*.shp
+*.shx
+*.dbf
+*.prj
+*.aux.xml
+
+# QGIS temporary files
+*.qgs~
+*.qgz~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Data files
+*.csv
+*.txt
+!README.md 
