@@ -388,7 +388,11 @@ def analyze_boulder():
             "additional_files": []
         }
         
-        # Convert objects to serializable format
+        # Keep original objects for boulder detection functions, convert to dicts for response
+        original_objects = detected_objects.copy()
+        
+        # Convert objects to serializable format for response
+        processed_objects = []
         for i, obj in enumerate(detected_objects):
             print(f"🔍 Processing object {i+1}/{len(detected_objects)}")
             try:
@@ -425,7 +429,7 @@ def analyze_boulder():
                 
                 # Only add objects with meaningful data (confidence > 0 and valid measurements)
                 if obj_data["confidence"] > 0.0 and obj_data["diameter_real"] > 0.0:
-                    results["detected_objects"].append(obj_data)
+                    processed_objects.append(obj_data)
                     print(f"✅ Object {i+1} processed successfully")
                 else:
                     print(f"⚠️ Object {i+1} skipped - no meaningful data (confidence: {obj_data['confidence']}, diameter: {obj_data['diameter_real']})")
@@ -434,6 +438,8 @@ def analyze_boulder():
                 print(f"❌ Error processing object {i+1}: {e}")
                 # Skip this object instead of adding empty data
                 continue
+        
+        results["detected_objects"] = processed_objects
         
         # Add comprehensive analysis summary
         total_objects = len(results["detected_objects"])  # Use filtered results
@@ -480,7 +486,7 @@ def analyze_boulder():
         if analysis_type in ['gradcam', 'full']:
             # Generate Grad-CAM
             print(f"🔍 Generating Grad-CAM for analysis type: {analysis_type}")
-            gradcam_path = boulder_controller.generate_gradcam(absolute_filepath, results["detected_objects"])
+            gradcam_path = boulder_controller.generate_gradcam(absolute_filepath, original_objects)
             print(f"🔍 Grad-CAM path returned: {gradcam_path}")
             if gradcam_path:
                 # Move/copy the Grad-CAM image to uploads folder
@@ -488,12 +494,24 @@ def analyze_boulder():
                 uploads_dir = os.path.join(os.path.dirname(__file__), 'uploads')
                 gradcam_filename = os.path.basename(gradcam_path)
                 uploads_gradcam_path = os.path.join(uploads_dir, gradcam_filename)
-                print(f"🔍 Uploads directory: {uploads_dir}")
-                print(f"🔍 Grad-CAM filename: {gradcam_filename}")
-                print(f"🔍 Uploads Grad-CAM path: {uploads_gradcam_path}")
-                if os.path.abspath(gradcam_path) != os.path.abspath(uploads_gradcam_path):
+                
+                # Make sure the gradcam path is absolute
+                if not os.path.isabs(gradcam_path):
+                    # If it's relative, it's relative to the boulder_detection directory
+                    boulder_dir = os.path.join(os.path.dirname(__file__), '..', 'boulder_detection')
+                    gradcam_path = os.path.join(boulder_dir, gradcam_path)
+                
+                print(f"🔍 Original gradcam_path: {gradcam_path}")
+                print(f"🔍 Uploads gradcam_path: {uploads_gradcam_path}")
+                print(f"🔍 Gradcam path exists: {os.path.exists(gradcam_path)}")
+                
+                if os.path.exists(gradcam_path) and os.path.abspath(gradcam_path) != os.path.abspath(uploads_gradcam_path):
                     shutil.copyfile(gradcam_path, uploads_gradcam_path)
                     print(f"✅ Grad-CAM file copied to uploads folder")
+                elif os.path.exists(gradcam_path):
+                    print(f"✅ Grad-CAM file already in uploads folder")
+                else:
+                    print(f"❌ Grad-CAM file not found at: {gradcam_path}")
                 # Return the path as /uploads/filename for frontend
                 results["additional_files"].append({
                     "type": "gradcam",
@@ -501,28 +519,51 @@ def analyze_boulder():
                 })
                 results["gradcam_path"] = f"/uploads/{gradcam_filename}"
                 print(f"✅ Grad-CAM added to results with path: /uploads/{gradcam_filename}")
+                print(f"🔍 Grad-CAM full URL would be: http://localhost:5000{results['gradcam_path']}")
             else:
                 print("❌ Grad-CAM generation failed - no path returned")
         
         # Always create detection visualization
-        viz_path = boulder_controller.create_visualization(absolute_filepath, results["detected_objects"])
+        viz_path = boulder_controller.create_visualization(absolute_filepath, original_objects)
         if viz_path:
             # Move/copy the visualization image to uploads folder
             import shutil
             uploads_dir = os.path.join(os.path.dirname(__file__), 'uploads')
             viz_filename = os.path.basename(viz_path)
             uploads_viz_path = os.path.join(uploads_dir, viz_filename)
-            if os.path.abspath(viz_path) != os.path.abspath(uploads_viz_path):
+            
+            # Make sure the visualization path is absolute
+            if not os.path.isabs(viz_path):
+                # If it's relative, it's relative to the boulder_detection directory
+                boulder_dir = os.path.join(os.path.dirname(__file__), '..', 'boulder_detection')
+                viz_path = os.path.join(boulder_dir, viz_path)
+            
+            print(f"🔍 Original viz_path: {viz_path}")
+            print(f"🔍 Uploads viz_path: {uploads_viz_path}")
+            print(f"🔍 Viz path exists: {os.path.exists(viz_path)}")
+            
+            if os.path.exists(viz_path) and os.path.abspath(viz_path) != os.path.abspath(uploads_viz_path):
                 shutil.copyfile(viz_path, uploads_viz_path)
+                print(f"✅ Visualization file copied to uploads folder")
+            elif os.path.exists(viz_path):
+                print(f"✅ Visualization file already in uploads folder")
+            else:
+                print(f"❌ Visualization file not found at: {viz_path}")
+            
             # Return the path as /uploads/filename for frontend
             results["additional_files"].append({
                 "type": "visualization",
                 "path": f"/uploads/{viz_filename}"
             })
             results["visualization_path"] = f"/uploads/{viz_filename}"
+            print(f"🔍 Visualization path set to: {results['visualization_path']}")
+            print(f"🔍 Full URL would be: http://localhost:5000{results['visualization_path']}")
+            print(f"🔍 Additional files: {results['additional_files']}")
+        else:
+            print("❌ Visualization creation failed - no path returned")
         
         # Calculate density analysis
-        density_analysis = boulder_controller.calculate_density_analysis(results["detected_objects"], absolute_filepath)
+        density_analysis = boulder_controller.calculate_density_analysis(original_objects, absolute_filepath)
         results["density_analysis"] = density_analysis
         
         # Save to database if user is authenticated
@@ -584,7 +625,27 @@ def analyze_boulder():
 @app.route('/uploads/<filename>')
 def serve_upload(filename):
     """Serve uploaded files"""
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+    uploads_dir = os.path.join(os.path.dirname(__file__), app.config['UPLOAD_FOLDER'])
+    print(f"🔍 Serving file: {filename} from directory: {uploads_dir}")
+    print(f"🔍 File exists: {os.path.exists(os.path.join(uploads_dir, filename))}")
+    
+    # Set proper headers for images
+    response = send_from_directory(uploads_dir, filename)
+    
+    # Set CORS headers for images
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+    
+    # Set proper content type for images
+    if filename.lower().endswith('.png'):
+        response.headers['Content-Type'] = 'image/png'
+    elif filename.lower().endswith('.jpg') or filename.lower().endswith('.jpeg'):
+        response.headers['Content-Type'] = 'image/jpeg'
+    elif filename.lower().endswith('.gif'):
+        response.headers['Content-Type'] = 'image/gif'
+    
+    return response
 
 @app.route('/api/boulder/status', methods=['GET'])
 def boulder_status():
@@ -594,6 +655,45 @@ def boulder_status():
         "initialized": boulder_controller is not None,
         "models_loaded": boulder_controller is not None
     }), 200
+
+@app.route('/api/test/files', methods=['GET'])
+def test_files():
+    """Test endpoint to list available files"""
+    uploads_dir = os.path.join(os.path.dirname(__file__), app.config['UPLOAD_FOLDER'])
+    files = []
+    if os.path.exists(uploads_dir):
+        for filename in os.listdir(uploads_dir):
+            file_path = os.path.join(uploads_dir, filename)
+            if os.path.isfile(file_path):
+                files.append({
+                    "filename": filename,
+                    "path": f"/uploads/{filename}",
+                    "full_url": f"http://localhost:5000/uploads/{filename}",
+                    "size": os.path.getsize(file_path)
+                })
+    return jsonify({
+        "uploads_directory": uploads_dir,
+        "files": files
+    }), 200
+
+@app.route('/api/test/image/<filename>', methods=['GET'])
+def test_image(filename):
+    """Test endpoint to serve a specific image with debugging"""
+    uploads_dir = os.path.join(os.path.dirname(__file__), app.config['UPLOAD_FOLDER'])
+    file_path = os.path.join(uploads_dir, filename)
+    
+    print(f"🔍 Testing image: {filename}")
+    print(f"🔍 Full path: {file_path}")
+    print(f"🔍 File exists: {os.path.exists(file_path)}")
+    
+    if os.path.exists(file_path):
+        response = send_from_directory(uploads_dir, filename)
+        response.headers['Access-Control-Allow-Origin'] = '*'
+        if filename.lower().endswith('.png'):
+            response.headers['Content-Type'] = 'image/png'
+        return response
+    else:
+        return jsonify({"error": "File not found", "path": file_path}), 404
 
 if __name__ == '__main__':
     # Initialize boulder detection system
