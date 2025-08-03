@@ -1,9 +1,10 @@
 import sys
 import os
 import numpy as np
+from datetime import datetime
 
 # QGIS setup
-QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.44.1\apps\qgis"
+QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.44.1"
 os.environ["QGIS_PREFIX_PATH"] = QGIS_PREFIX_PATH
 os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = os.path.join(QGIS_PREFIX_PATH, "qt5", "plugins")
 os.environ["PATH"] += ";" + os.path.join(QGIS_PREFIX_PATH, "bin")
@@ -116,6 +117,87 @@ class CurvatureStats:
         print(f"   - Mean: {np.mean(curvs['mean']):.6f}, Std: {np.std(curvs['mean']):.6f}")
         return curvs
 
+    def generate_curvature_report(self, curv_data, layer_name="Raster", output_dir="curvature_outputs"):
+        """Generate curvature analysis report similar to lunar landslide analysis report"""
+        try:
+            # Create output directory if it doesn't exist
+            if not os.path.exists(output_dir):
+                os.makedirs(output_dir)
+            
+            # Calculate statistics for each curvature type
+            profile_mean = np.mean(curv_data['profile'])
+            profile_std = np.std(curv_data['profile'])
+            plan_mean = np.mean(curv_data['plan'])
+            plan_std = np.std(curv_data['plan'])
+            gaussian_mean = np.mean(curv_data['gaussian'])
+            gaussian_std = np.std(curv_data['gaussian'])
+            tangential_mean = np.mean(curv_data['tangential'])
+            tangential_std = np.std(curv_data['tangential'])
+            mean_curv_mean = np.mean(curv_data['mean'])
+            mean_curv_std = np.std(curv_data['mean'])
+            
+            # Determine risk level based on curvature statistics
+            max_std = max(profile_std, plan_std, gaussian_std, tangential_std, mean_curv_std)
+            
+            if max_std > 0.1:
+                risk_level = "HIGH"
+                risk_factors = "High curvature variability, Complex terrain features"
+            elif max_std > 0.05:
+                risk_level = "MEDIUM"
+                risk_factors = "Moderate curvature variability, Varied terrain features"
+            else:
+                risk_level = "LOW"
+                risk_factors = "Low curvature variability, Smooth terrain features"
+            
+            # Generate report content
+            report_content = f"""Lunar Curvature Analysis Report
+==================================================
+Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+
+Layer: {layer_name}
+Timestamp: {datetime.now().isoformat()}
+Risk Level: {risk_level}
+Risk Factors: {risk_factors}
+Statistics:
+  - Profile Curvature Mean: {profile_mean:.6f}
+  - Profile Curvature Std: {profile_std:.6f}
+  - Plan Curvature Mean: {plan_mean:.6f}
+  - Plan Curvature Std: {plan_std:.6f}
+  - Gaussian Curvature Mean: {gaussian_mean:.6f}
+  - Gaussian Curvature Std: {gaussian_std:.6f}
+  - Tangential Curvature Mean: {tangential_mean:.6f}
+  - Tangential Curvature Std: {tangential_std:.6f}
+  - Mean Curvature Mean: {mean_curv_mean:.6f}
+  - Mean Curvature Std: {mean_curv_std:.6f}
+Thresholds:
+  - Profile Curvature Threshold: {profile_std * 2:.6f}
+  - Plan Curvature Threshold: {plan_std * 2:.6f}
+  - Gaussian Curvature Threshold: {gaussian_std * 2:.6f}
+  - Tangential Curvature Threshold: {tangential_std * 2:.6f}
+  - Mean Curvature Threshold: {mean_curv_std * 2:.6f}
+
+Analysis:
+- Profile curvature affects flow acceleration/deceleration
+- Plan curvature controls flow divergence/convergence
+- Gaussian curvature describes local convexity/concavity
+- Tangential curvature useful for compound terrain interpretation
+- Mean curvature average of principal curvatures
+
+------------------------------
+"""
+            
+            # Save report
+            report_path = os.path.join(output_dir, "lunar_curvature_analysis_report.txt")
+            with open(report_path, 'w') as f:
+                f.write(report_content)
+            
+            print(f"✅ Curvature analysis report saved to: {report_path}")
+            return report_path
+            
+        except Exception as e:
+            print(f"❌ Error generating curvature report: {e}")
+            return None
+
     def cleanup(self):
         qgs.exitQgis()
         print("✅ QGIS cleanup completed")
@@ -123,8 +205,26 @@ class CurvatureStats:
 def main():
     tif_path = r"E:\moon extract\data\derived\20250207\ch2_tmc_ndn_20250207T1457348573_d_dtm_d18.tif"
     stats = CurvatureStats()
-    stats.load_tif(tif_path, "Moon_DEM")
-    stats.compute_and_print_curvatures("Moon_DEM")
+    
+    # Load TIF file
+    raster_layer = stats.load_tif(tif_path, "Moon_DEM")
+    if raster_layer is None:
+        print("❌ Failed to load TIF file")
+        stats.cleanup()
+        return
+    
+    # Calculate curvature statistics
+    curvature_stats = stats.compute_and_print_curvatures("Moon_DEM")
+    if curvature_stats is None:
+        print("❌ Failed to calculate curvature statistics")
+        stats.cleanup()
+        return
+    
+    # Generate and save report
+    report_path = stats.generate_curvature_report(curvature_stats, "Moon_DEM")
+    if report_path:
+        print(f"📊 Curvature analysis completed! Report saved to: {report_path}")
+    
     stats.cleanup()
 
 if __name__ == "__main__":

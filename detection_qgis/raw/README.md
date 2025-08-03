@@ -1,373 +1,548 @@
 # 🌙 Lunar DEM Analysis Toolkit
 
-A comprehensive toolkit for analyzing lunar Digital Elevation Models (DEMs) using QGIS and Python. This toolkit provides scripts for terrain analysis, boulder detection, slope calculation, curvature analysis, and elevation statistics specifically designed for lunar surface research and landing site assessment.
+A comprehensive, integrated toolkit for lunar terrain analysis using QGIS and Python. This system provides advanced analysis capabilities for processing lunar Digital Elevation Models (DEMs) and detecting various lunar geomorphological features.
 
----
+## 📋 System Overview
 
-## 📋 Table of Contents
+This toolkit integrates **12 specialized analysis modules** into a unified, efficient system:
 
-- [Requirements](#-requirements)
-- [Installation & Setup](#-installation--setup)
-- [Quick Start](#-quick-start)
-- [Available Analysis Methods](#-available-analysis-methods)
-- [File Structure](#-file-structure)
-- [Configuration](#-configuration)
-- [Running the Tools](#-running-the-tools)
-- [Interactive Mode](#-interactive-mode)
-- [Output Files](#-output-files)
-- [Troubleshooting](#-troubleshooting)
-- [Advanced Configuration](#-advanced-configuration)
+### 🌑 Core Analysis Modules
+- **Crater Edges/Walls Detection** - Advanced crater rim detection using slope/curvature analysis
+- **Scarps/Headwalls Detection** - Detection of lunar scarps and headwalls for landslide analysis
+- **Debris Flow Paths Detection** - Identification of potential debris flow channels
+- **Terrain Ruggedness Index (TRI)** - Calculation of terrain complexity and stability
+- **Slope Analysis** - Moon-specific slope calculations and analysis
+- **Aspect Analysis** - Terrain orientation analysis for landslide risk assessment
+- **Hillshade Processing** - Visual enhancement and landslide potential analysis
+- **Contour Generation** - Real-time DEM processing for contour line generation
+- **Curvature Statistics** - Multi-type curvature analysis (profile, plan, Gaussian, mean)
+- **Elevation Statistics** - Comprehensive elevation data analysis
+- **TIF File Processing** - Core DEM loading and processing capabilities
 
----
+### 🎯 Main Controller
+- **Lunar Main Controller** - Central orchestration system that manages all analysis modules
 
-## 🔧 Requirements
+## 🚀 Quick Start Guide
 
-### System Requirements
-- **Windows 10/11**
-- **QGIS 3.40.9** (Long Term Release) - Installation path: `C:\Program Files\QGIS 3.40.9`
-- **Python 3.9** (included with QGIS)
-- **Sufficient RAM** for large raster files
-- **Write permissions** for output folder
+### Prerequisites
+- **QGIS 3.44.1** installed at `C:\Program Files\QGIS 3.44.1`
+- **Python 3.x** with required packages
+- **Lunar DEM data** (TIF format)
 
-### QGIS Components Needed
-- QGIS Desktop application
-- Python 3.9 (included with QGIS)
-- Processing framework
-- GDAL/OGR libraries
+### Installation & Setup
+1. Ensure QGIS 3.44.1 is properly installed
+2. Place your DEM file (TIF format) in the working directory
+3. The system will automatically detect and use available DEM files
 
-### Python Dependencies (included with QGIS)
-- `numpy`: Numerical computations
-- `opencv-python`: Image processing
-- `scikit-image`: Image analysis
-- `scipy`: Scientific computing
-- `rasterio`: Geospatial raster I/O
-- `qgis`: QGIS Python bindings
-- `matplotlib`: Visualization
+### Running the Complete Analysis
 
----
+#### Option 1: Using the Main Controller (Recommended)
+```bash
+# Navigate to the analysis directory
+cd lunalens/detection_qgis/raw
 
-## 🚀 Installation & Setup
-
-### 1. Install QGIS 3.40.9
-Download and install QGIS 3.40.9 from the official website. Ensure the installation path is:
-```
-C:\Program Files\QGIS 3.40.9
+# Run the complete analysis system
+"C:\Program Files\QGIS 3.44.1\bin\python-qgis.bat" lunar_main.py
 ```
 
-### 2. Verify Installation
-Check that these paths exist:
-- `C:\Program Files\QGIS 3.40.9\apps\qgis\bin`
-- `C:\Program Files\QGIS 3.40.9\apps\Python39`
-- `C:\Program Files\QGIS 3.40.9\bin\python-qgis-ltr.bat`
-
-### 3. Test QGIS Setup
-Run the test script to verify everything is working:
-```cmd
-python test_qgis_setup.py
+#### Option 2: Using the Batch File
+```bash
+# Use the provided batch file
+run_lunar_main.bat
 ```
 
----
+#### Option 3: Individual Module Execution
+```bash
+# Run specific analysis modules
+"C:\Program Files\QGIS 3.44.1\bin\python-qgis.bat" crater_edges.py
+"C:\Program Files\QGIS 3.44.1\bin\python-qgis.bat" scraps_headwalls.py
+"C:\Program Files\QGIS 3.44.1\bin\python-qgis.bat" Debris_path.py
+```
 
-## 🎯 Quick Start
+## 🔧 System Architecture
 
-### Method 1: Using QGIS Batch File (Recommended)
+### Main Controller (`lunar_main.py`)
+The central orchestrator that:
+- **Initializes QGIS environment** with proper path configuration
+- **Detects available modules** automatically
+- **Manages analysis pipeline** execution
+- **Generates comprehensive reports** for all analyses
+- **Handles error recovery** and fallback mechanisms
 
-1. **Navigate to the raw folder**:
-   ```cmd
-   cd detection_qgis\raw
-   ```
+### Module Integration
+All 12 analysis modules are automatically detected and integrated:
+- **Required modules**: QGIS setup, TIF processor, slope analysis
+- **Optional modules**: All specialized analysis systems
+- **Dynamic loading**: Modules are loaded only when needed
+- **Error handling**: Graceful fallbacks for missing modules
 
-2. **Run all analyses**:
-   ```cmd
-   run_with_qgis_batch.bat
-   ```
+## 🌑 Analysis Modules Detailed
 
-3. **For interactive mode**:
-   ```cmd
-   run_with_qgis_batch.bat --interactive
-   ```
+### 1. Crater Edges/Walls Detection
+**File**: `Geomorphological Features/crater_edges.py`
 
-### Method 2: Using Direct Python Environment
+**Purpose**: Advanced detection of lunar crater rims and walls using multi-parameter analysis.
 
-1. **Test QGIS setup first**:
-   ```cmd
-   python test_qgis_setup.py
-   ```
+**Detection Methods**:
+- **Slope Analysis**: Identifies steep crater rims (>15°)
+- **Curvature Analysis**: Detects ring-like elevation patterns
+- **Hillshade Enhancement**: Visual terrain enhancement
+- **Aspect Analysis**: Orientation of crater walls
 
-2. **Run the main processor**:
-   ```cmd
-   python main_processor.py
-   ```
+**Parameters**:
+- Slope threshold: 15.0° (optimized for lunar terrain)
+- Curvature threshold: 0.001 (crater detection sensitivity)
+- Output: Vector shapefiles and raster analysis layers
 
-3. **For interactive mode**:
-   ```cmd
-   python main_processor.py --interactive
-   ```
+**Output Files**:
+- `crater_walls/slope.tif` - Slope analysis
+- `crater_walls/curvature.tif` - Curvature analysis
+- `crater_walls/hillshade.tif` - Visual enhancement
+- `crater_walls/aspect.tif` - Aspect analysis
+- `crater_walls/crater_walls.shp` - Vector crater boundaries
+- `crater_walls/crater_edge_analysis_report.txt` - Detailed report
 
----
+### 2. Scarps/Headwalls Detection
+**File**: `scraps_headwalls.py`
 
-## 📊 Available Analysis Methods
+**Purpose**: Detection of lunar scarps and headwalls for landslide and stability analysis.
 
-### 1. TIF File Processing
-- Load lunar DEM files
-- Validate file format and metadata
-- Display raster information
+**Detection Methods**:
+- **Slope Thresholding**: High slope areas (>30°)
+- **Curvature Analysis**: Concave/convex terrain profiles
+- **TRI Calculation**: Terrain ruggedness assessment
+- **Aspect Analysis**: Slope orientation effects
 
-### 2. Boulder Detection
-- **Edge-based detection**: Uses Canny edge detection
-- **Watershed detection**: Uses distance transform and watershed
-- **Combination**: Merges both methods and removes duplicates
-- Outputs coordinates and confidence scores
+**Parameters**:
+- Slope threshold: 30.0° (high-risk areas)
+- Curvature threshold: 0.001 (scarp detection)
+- TRI threshold: 0.5 (ruggedness assessment)
 
-### 3. Slope Analysis
-- GDAL-based slope calculation
-- Moon-specific parameters
-- Output in degrees or percentage
-- Landing suitability categorization
+**Output Files**:
+- `headwalls_scraps/slope.tif` - Slope analysis
+- `headwalls_scraps/curvature.tif` - Curvature analysis
+- `headwalls_scraps/tri.tif` - Terrain ruggedness
+- `headwalls_scraps/scarps_headwalls.shp` - Vector scarp features
+- `headwalls_scraps/scarps_headwalls_analysis_report.txt` - Analysis report
 
-### 4. Aspect Analysis
-- Terrain aspect calculation
-- Direction of steepest slope
-- Useful for solar illumination analysis
+### 3. Debris Flow Paths Detection
+**File**: `Debris_path.py`
 
-### 5. Curvature Analysis
-- **Profile curvature**: Along steepest slope direction (affects flow acceleration/deceleration)
-- **Plan curvature**: Perpendicular to slope direction (controls flow divergence/convergence)
-- **Gaussian curvature**: Product of principal curvatures (overall convexity/concavity)
-- **Mean curvature**: Average of principal curvatures (advanced geomorphology)
+**Purpose**: Identification of potential debris flow channels and paths.
 
-### 6. Elevation Statistics
-- **Elevation (Z value)**: Vertical height above lunar reference datum
-- **Minimum Elevation**: Lowest value (craters, basins)
-- **Maximum Elevation**: Highest value (ridges, peaks)
-- **Mean Elevation**: Average (regional profiling)
-- **Elevation Range**: Max - Min (terrain variability)
-- **Standard Deviation**: How varied the terrain is (ruggedness)
+**Detection Methods**:
+- **Slope Analysis**: Steep slope identification (>20°)
+- **Hillshade Interpretation**: Visual flow path detection
+- **Flow Direction Analysis**: Downhill movement patterns
 
----
+**Parameters**:
+- Slope threshold: 20.0° (debris flow initiation)
+- Visual enhancement for flow path identification
+
+**Output Files**:
+- `debris_path_output/slope.tif` - Slope analysis
+- `debris_path_output/hillshade.tif` - Visual enhancement
+- `debris_path_output/debris_flow_paths.shp` - Vector flow paths
+- Analysis reports and statistics
+
+### 4. Terrain Ruggedness Index (TRI)
+**File**: `Terrain_Ruggedness.py`
+
+**Purpose**: Calculation of terrain complexity and stability using multiple methods.
+
+**Calculation Methods**:
+- **SAGA TRI**: Native SAGA algorithm (primary)
+- **Focal Statistics**: Standard deviation approach (fallback)
+- **Range Analysis**: Elevation range calculation (fallback)
+- **Raster Calculator**: Custom TRI formula (fallback)
+
+**Parameters**:
+- Neighborhood size: 3x3 (standard)
+- Statistical functions: Standard deviation, range
+- Output resolution: Same as input DEM
+
+**Output Files**:
+- `Terrian_Reggedness_output/tri_saga.tif` - SAGA TRI calculation
+- `Terrian_Reggedness_output/tri_focal.tif` - Focal statistics TRI
+- `Terrian_Reggedness_output/tri_range.tif` - Range-based TRI
+- `Terrian_Reggedness_output/tri_calculator.tif` - Custom formula TRI
+- `Terrian_Reggedness_output/terrain_ruggedness_analysis_report.txt` - Comprehensive report
+
+### 5. Slope Analysis
+**File**: `slope.py`
+
+**Purpose**: Moon-specific slope calculations with multiple fallback methods.
+
+**Calculation Methods**:
+- **GDAL Processing**: Native QGIS slope algorithm (primary)
+- **Manual Calculation**: Custom slope algorithm (fallback)
+- **Simple Calculation**: Basic slope approximation (fallback)
+
+**Parameters**:
+- Scale factor: 1.0 (moon-specific)
+- Output format: Degrees (not percentage)
+- Edge computation: Enabled for accuracy
+
+**Output Files**:
+- `lunar_analysis_output/lunar_slope.tif` - Slope raster
+- Slope statistics and analysis reports
+
+### 6. Aspect Analysis
+**File**: `lunar_aspect_calculator.py`
+
+**Purpose**: Terrain orientation analysis for landslide risk assessment.
+
+**Analysis Features**:
+- **Aspect Calculation**: Direction of maximum slope
+- **Slope Analysis**: Steepness assessment
+- **Risk Assessment**: Landslide potential evaluation
+- **Lunar Considerations**: Solar heating effects
+
+**Parameters**:
+- Landslide threshold: 30.0° (high-risk slopes)
+- Aspect risk zones: South-facing slopes (135-225°)
+
+**Output Files**:
+- `aspect_outputs/lunar_aspect.tif` - Aspect raster
+- `aspect_outputs/lunar_slope.tif` - Slope raster
+- `aspect_outputs/aspect_analysis_report.txt` - Risk assessment
+
+### 7. Hillshade Processing
+**File**: `hillshade.py`
+
+**Purpose**: Visual enhancement and landslide potential analysis.
+
+**Processing Features**:
+- **Hillshade Generation**: 3D terrain visualization
+- **Landslide Detection**: Risk assessment using hillshade
+- **Real-time Processing**: Dynamic DEM analysis
+- **Visual Enhancement**: Terrain feature highlighting
+
+**Parameters**:
+- Azimuth: 315° (standard sun direction)
+- Altitude: 45° (sun elevation)
+- Z-factor: 1.0 (elevation exaggeration)
+
+**Output Files**:
+- `hillshade_outputs/lunar_hillshade.png` - Hillshade visualization
+- `hillshade_outputs/landslide_analysis_report.txt` - Risk assessment
+
+### 8. Contour Generation
+**File**: `counter.py`
+
+**Purpose**: Real-time DEM processing for contour line generation.
+
+**Generation Features**:
+- **Dynamic Contours**: Real-time processing
+- **Customizable Intervals**: Adjustable contour spacing
+- **Attribute Management**: Elevation value storage
+- **Visualization**: Enhanced contour display
+
+**Parameters**:
+- Interval: 50 meters (standard)
+- Attribute name: "elevation"
+- Simplification: None (for accuracy)
+
+**Output Files**:
+- `counter_outputs/contour_visualization.png` - Contour map
+- `counter_outputs/lunar_contour_analysis_report.txt` - Analysis report
+
+### 9. Curvature Statistics
+**File**: `curvature_statistics.py`
+
+**Purpose**: Multi-type curvature analysis for terrain characterization.
+
+**Curvature Types**:
+- **Profile Curvature**: Slope direction curvature
+- **Plan Curvature**: Perpendicular to slope curvature
+- **Gaussian Curvature**: Product of principal curvatures
+- **Mean Curvature**: Average of principal curvatures
+- **Tangential Curvature**: Surface curvature analysis
+
+**Analysis Features**:
+- **Statistical Analysis**: Comprehensive curvature statistics
+- **Terrain Classification**: Curvature-based terrain types
+- **Visualization**: Curvature map generation
+
+**Output Files**:
+- Curvature statistics and analysis reports
+- Terrain classification results
+
+### 10. Elevation Statistics
+**File**: `elevation_statistics.py`
+
+**Purpose**: Comprehensive elevation data analysis and statistics.
+
+**Statistical Measures**:
+- **Minimum/Maximum**: Elevation range
+- **Mean**: Average elevation
+- **Standard Deviation**: Elevation variability
+- **Range**: Total elevation difference
+
+**Analysis Features**:
+- **Data Validation**: DEM quality assessment
+- **Statistical Summary**: Comprehensive elevation statistics
+- **Terrain Classification**: Elevation-based terrain types
+
+**Output Files**:
+- Elevation statistics reports
+- Terrain classification results
+
+### 11. TIF File Processing
+**File**: `tif_processor.py`
+
+**Purpose**: Core DEM loading and processing capabilities.
+
+**Processing Features**:
+- **File Loading**: DEM file validation and loading
+- **Data Validation**: Format and quality checks
+- **Statistics Calculation**: Basic elevation statistics
+- **Error Handling**: Robust error recovery
+
+**Output Files**:
+- Processing reports and statistics
+- Data validation results
+
+### 12. QGIS Setup
+**File**: `qgis_setup.py`
+
+**Purpose**: QGIS environment initialization and configuration.
+
+**Setup Features**:
+- **Environment Configuration**: Path and variable setup
+- **Module Registration**: Algorithm provider registration
+- **Error Handling**: Setup validation and recovery
 
 ## 📁 File Structure
 
 ```
-detection_qgis/raw/
-├── main_processor.py              # Main analysis processor
-├── test_qgis_setup.py            # QGIS setup test
-├── run_main_processor.bat        # Batch file (Method 1)
-├── run_with_qgis_batch.bat       # QGIS batch method (Method 2)
-├── qgis_setup.py                 # QGIS setup module
-├── tif_processor.py              # TIF file processing
-├── slope.py                      # Slope analysis
-├── visualize_slope.py            # Slope visualization
-├── boulder_detector.py           # Boulder detection
-├── curvature_statistics.py       # Curvature analysis
-├── elevation_statistics.py       # Elevation statistics
-├── README.md                     # This comprehensive guide
-└── README_MAIN_PROCESSOR.md     # Main processor documentation
+lunalens/detection_qgis/raw/
+├── lunar_main.py                    # Main controller (34KB)
+├── qgis_setup.py                    # QGIS environment setup (2.2KB)
+├── tif_processor.py                 # TIF file processing (13KB)
+├── slope.py                         # Slope analysis (17KB)
+├── elevation_statistics.py          # Elevation statistics (2.9KB)
+├── lunar_aspect_calculator.py       # Aspect analysis (14KB)
+├── hillshade.py                     # Hillshade processing (23KB)
+├── counter.py                       # Contour generation (26KB)
+├── curvature_statistics.py          # Curvature analysis (5.8KB)
+├── Terrain_Ruggedness.py            # TRI calculation (31KB)
+├── Debris_path.py                   # Debris flow detection (19KB)
+├── scraps_headwalls.py              # Scarps/headwalls detection (34KB)
+├── README.md                        # This documentation (19KB)
+├── run_lunar_main.bat               # Main execution script (1.3KB)
+├── Geomorphological Features/       # Specialized detection
+│   └── crater_edges.py             # Crater edges detection (29KB)
+├── Output Directories (created during analysis):
+│   ├── lunar_analysis_output/       # Main analysis outputs
+│   ├── crater_walls/               # Crater detection outputs
+│   ├── headwalls_scraps/           # Scarp detection outputs
+│   ├── debris_path_output/         # Debris flow outputs
+│   ├── Terrian_Reggedness_output/  # TRI calculation outputs
+│   ├── aspect_outputs/             # Aspect analysis outputs
+│   ├── hillshade_outputs/          # Hillshade processing outputs
+│   ├── counter_outputs/            # Contour generation outputs
+│   └── terrain_outputs/            # Terrain analysis outputs
 ```
-
----
 
 ## ⚙️ Configuration
 
-### Update Paths in main_processor.py
-
-Edit the `Config` class in `main_processor.py`:
-
+### QGIS Path Configuration
+The system automatically configures QGIS paths:
 ```python
-class Config:
-    # QGIS Installation Path
-    QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.40.9"
-    
-    # Input/Output Paths (change these to your actual paths)
-    INPUT_TIF_PATH = r"E:\moon extract\data\derived\20250207\ch2_tmc_ndn_20250207T1457348573_d_dtm_d18.tif"
-    OUTPUT_FOLDER = r"E:\moon extract\data\derived\20250207\analysis_output"
-    
-    # Analysis Settings
-    BOULDER_DETECTION_MIN_AREA = 100
-    BOULDER_DETECTION_MAX_AREA = 10000
-    BOULDER_DETECTION_MIN_DISTANCE = 20
-    SLOPE_SCALE_FACTOR = 1.0
-    SLOPE_AS_PERCENT = False
-    SAMPLE_SIZE_LIMIT = 1000  # For large files
+QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.44.1"
 ```
 
----
+### DEM File Detection
+The system automatically detects available DEM files in order of preference:
+1. `aspect_outputs\lunar_slope.tif` (primary)
+2. `aspect_outputs\lunar_aspect.tif` (alternative)
+3. `terrain_outputs\terrain_output.tif` (fallback)
 
-## 🎮 Interactive Mode Features
+### Analysis Parameters
+Each module has optimized parameters for lunar terrain:
 
-When running in interactive mode (`--interactive`):
-
-1. **Load TIF file**: Load your lunar DEM
-2. **Calculate elevation statistics**: Get basic stats
-3. **Calculate slope**: Generate slope raster
-4. **Calculate aspect**: Generate aspect raster
-5. **Detect boulders**: Run boulder detection
-6. **Calculate curvature**: Compute curvature statistics
-7. **Run all analyses**: Execute all analyses
-8. **List loaded layers**: Show QGIS layers
-9. **Show results summary**: Display analysis results
-
----
-
-## 📁 Output Files
-
-### Raster Files (TIF)
-- `slope_analysis.tif`: Slope raster
-- `aspect_analysis.tif`: Aspect raster
-
-### JSON Results
-- `boulder_detection.json`: Boulder coordinates and confidence
-- `curvature_analysis.json`: Curvature statistics
-- `elevation_statistics.json`: Basic elevation stats
-
-### Text Files
-- `slope_analysis_slope_stats.txt`: Slope statistics
-- Processing logs and error reports
-
-### Visualization Files
-- `moon_slope_visualization.png`: Slope visualization with landing suitability categories
-
----
-
-## 🔍 Troubleshooting
-
-### Issue: "No module named 'qgis'"
-**Solution**: Use the QGIS batch file method:
-```cmd
-run_with_qgis_batch.bat
-```
-
-### Issue: "QGIS setup failed"
-**Solutions**:
-1. **Verify QGIS installation**:
-   ```cmd
-   python test_qgis_setup.py
-   ```
-
-2. **Check QGIS version**: Ensure QGIS 3.40.9 is installed
-
-3. **Use QGIS batch file**:
-   ```cmd
-   run_with_qgis_batch.bat
-   ```
-
-### Issue: "Processing module not available"
-**Solutions**:
-1. **Install QGIS with processing framework**
-2. **Use alternative methods** (the processor will automatically fall back)
-
-### Issue: "Input TIF file not found"
-**Solution**: Update the `INPUT_TIF_PATH` in `main_processor.py`:
+#### Crater Edges Detection
 ```python
-INPUT_TIF_PATH = r"path\to\your\actual\file.tif"
+slope_threshold = 15.0°        # Optimized for lunar terrain
+curvature_threshold = 0.001    # Crater detection sensitivity
 ```
 
-### Issue: Memory errors
-**Solution**: Reduce `SAMPLE_SIZE_LIMIT` for large files in the configuration
-
-### Issue: Permission errors
-**Solution**: Check write permissions for output folder
-
----
-
-## 🚀 Quick Start Commands
-
-### Test Setup
-```cmd
-python test_qgis_setup.py
-```
-
-### Run All Analyses
-```cmd
-run_with_qgis_batch.bat
-```
-
-### Interactive Mode
-```cmd
-run_with_qgis_batch.bat --interactive
-```
-
-### Individual Scripts
-```cmd
-# TIF Processing
-python tif_processor.py
-
-# Slope Analysis
-python slope.py
-
-# Slope Visualization
-python visualize_slope.py
-
-# Boulder Detection
-python boulder_detector.py
-
-# Curvature Analysis
-python curvature_statistics.py
-
-# Elevation Statistics
-python elevation_statistics.py
-```
-
----
-
-## 🔧 Advanced Configuration
-
-### Custom QGIS Path
-If QGIS is installed in a different location:
-
-1. **Update main_processor.py**:
-   ```python
-   QGIS_PREFIX_PATH = r"your\qgis\path"
-   ```
-
-2. **Update batch files**:
-   ```batch
-   set QGIS_PREFIX_PATH=your\qgis\path
-   ```
-
-### Custom Analysis Parameters
-Edit the `Config` class in `main_processor.py`:
-
+#### Scarps/Headwalls Detection
 ```python
-# Boulder Detection Settings
-BOULDER_DETECTION_MIN_AREA = 100
-BOULDER_DETECTION_MAX_AREA = 10000
-BOULDER_DETECTION_MIN_DISTANCE = 20
-
-# Slope Analysis Settings
-SLOPE_SCALE_FACTOR = 1.0
-SLOPE_AS_PERCENT = False
-
-# Processing Settings
-SAMPLE_SIZE_LIMIT = 1000  # For large files
+slope_threshold = 30.0°        # High-risk areas
+curvature_threshold = 0.001    # Scarp detection
+tri_threshold = 0.5           # Ruggedness assessment
 ```
 
----
+#### Debris Flow Detection
+```python
+slope_threshold = 20.0°        # Debris flow initiation
+```
+
+#### Terrain Ruggedness
+```python
+neighborhood_size = 3x3        # Standard analysis window
+statistical_function = "std"   # Standard deviation
+```
+
+## 🔧 Troubleshooting
+
+### Common Issues and Solutions
+
+#### QGIS Installation Issues
+1. **Wrong QGIS path**: Verify QGIS 3.44.1 is installed at the correct path
+2. **Processing module not available**: Some functions will use fallback methods
+3. **QGIS not found**: Install QGIS 3.44.1 or update the path in scripts
+
+#### File Path Issues
+1. **Input DEM not found**: Place DEM files in expected directories
+2. **Output folder creation**: Scripts create folders automatically
+3. **Permission errors**: Ensure write permissions for output directories
+
+#### Analysis Issues
+1. **Large files**: System handles large DEMs with optimized processing
+2. **Memory issues**: Processing is optimized for memory efficiency
+3. **Module errors**: System provides fallback methods for unavailable algorithms
+
+#### Specific Error Messages
+- `❌ Processing module not available`: Uses fallback methods automatically
+- `❌ Layer not found`: Check DEM file format and location
+- `❌ Failed to calculate`: System will try alternative methods
+- `❌ File not found`: Verify file paths and permissions
+
+### Error Recovery
+The system includes comprehensive error handling:
+- **Automatic fallbacks**: Multiple calculation methods per analysis
+- **Graceful degradation**: Continues with available modules
+- **Error reporting**: Detailed error messages and recovery suggestions
+- **Cleanup handling**: Proper QGIS cleanup with error suppression
+
+## 📈 Analysis Methods Explained
+
+### Multi-Parameter Analysis
+Each detection system uses multiple parameters:
+- **Slope**: Terrain steepness assessment
+- **Curvature**: Terrain shape analysis
+- **Aspect**: Terrain orientation
+- **Hillshade**: Visual enhancement
+- **TRI**: Terrain complexity
+
+### Fallback Mechanisms
+Robust fallback systems ensure analysis completion:
+- **Primary methods**: Native QGIS/GDAL algorithms
+- **Secondary methods**: Custom implementations
+- **Tertiary methods**: Simplified calculations
+- **Error recovery**: Graceful degradation
+
+### Lunar-Specific Optimizations
+All analyses are optimized for lunar conditions:
+- **Lower gravity**: 1.62 m/s² considerations
+- **No atmosphere**: Direct solar heating effects
+- **Regolith properties**: Lunar soil characteristics
+- **Thermal cycling**: Temperature variation effects
+
+## 🚀 Advanced Usage
+
+### Custom Analysis Pipeline
+```python
+# Initialize main controller
+controller = LunarMainController()
+
+# Run specific analyses
+success = controller.run_complete_analysis_pipeline(
+    dem_path="your_dem.tif",
+    analysis_types=['crater_edges', 'scraps_headwalls', 'debris_paths']
+)
+```
+
+### Batch Processing
+```python
+def batch_process(input_files):
+    for dem_file in input_files:
+        controller = LunarMainController()
+        success = controller.run_complete_analysis_pipeline(dem_file)
+        controller.cleanup()
+```
+
+### Module Integration
+The system integrates with:
+- **QGIS**: Native geospatial processing
+- **GDAL**: Terrain analysis algorithms
+- **NumPy**: Numerical computations
+- **Matplotlib**: Visualization
+- **PIL**: Image processing
+
+## 📝 Requirements
+
+### System Requirements
+- **QGIS 3.44.1**: Geospatial processing platform
+- **Python 3.7+**: Programming language
+- **Windows 10/11**: Operating system
+- **8GB+ RAM**: For large DEM processing
+- **Write permissions**: For output directories
+
+### Python Dependencies
+- `qgis`: QGIS Python bindings
+- `numpy`: Numerical computations
+- `matplotlib`: Visualization
+- `PIL`: Image processing
+- `processing`: QGIS processing framework
+
+## 📚 Scientific Background
+
+### Lunar Terrain Analysis
+- **Regolith properties**: Lunar soil characteristics and stability
+- **Solar heating effects**: Temperature variation impacts
+- **Micro-meteorite impacts**: Surface modification processes
+- **Thermal cycling**: Material fatigue and degradation
+- **Gravity effects**: Lower lunar gravity considerations
+
+### Detection Theory
+- **Crater morphology**: Impact crater formation and characteristics
+- **Scarp formation**: Tectonic and impact-related scarps
+- **Debris flow mechanics**: Lunar debris flow processes
+- **Terrain stability**: Slope stability in lunar environment
+- **Curvature analysis**: Terrain shape characterization
+
+## 🤝 Contributing
+
+To extend the system:
+1. **Add new analysis methods** to respective classes
+2. **Update module configurations** in lunar_main.py
+3. **Add support for temporal analysis** for monitoring changes
+4. **Integrate additional detection algorithms** for enhanced capabilities
+5. **Improve error handling** and user feedback mechanisms
 
 ## 📞 Support
 
-### Getting Help
-1. Run `test_qgis_setup.py` to diagnose issues
-2. Check error messages for specific problems
-3. Verify all paths are correct
-4. Ensure QGIS 3.40.9 is properly installed
+For issues and questions:
+1. **Check troubleshooting section** for common solutions
+2. **Verify all paths** are correctly configured
+3. **Ensure QGIS 3.44.1** is properly installed
+4. **Check file permissions** for output directories
+5. **Review analysis reports** for detailed error information
 
-### Common Issues
-1. **QGIS not found**: Check installation path
-2. **Processing module missing**: Install QGIS with processing framework
-3. **Memory errors**: Reduce `SAMPLE_SIZE_LIMIT` for large files
-4. **Permission errors**: Check write permissions for output folder
+## 🎯 System Status
 
----
+### Current Capabilities
+✅ **12 analysis modules** fully integrated and functional
+✅ **Automatic module detection** and loading
+✅ **Comprehensive error handling** with fallback mechanisms
+✅ **Real-time processing** capabilities
+✅ **Multi-format output** (raster, vector, reports)
+✅ **Lunar-optimized parameters** for all analyses
+✅ **Clean, efficient codebase** with removed redundant files
 
-## 📝 Notes
-
-- Always use the QGIS Python interpreter to ensure all QGIS modules are available
-- The scripts are robust: if QGIS processing is not available, they fall back to numpy-based or statistical methods
-- For large TIF files, the scripts automatically use manageable sample sizes for analysis
-- You can further customize the scripts for other planetary bodies or DEMs by adjusting parameters
-- The scripts are designed for scientific analysis, landing site assessment, and general geospatial research on lunar DEMs
+### Performance Optimizations
+✅ **Removed 20+ unnecessary files** for efficiency
+✅ **Eliminated Python cache files** for clean operation
+✅ **Consolidated batch files** into main controller
+✅ **Optimized module loading** and execution
+✅ **Enhanced error recovery** and cleanup handling
 
 ---
 
 **🌙 Happy Lunar Analysis!** 🚀
+
+*This toolkit provides comprehensive lunar terrain analysis and feature detection using advanced geospatial processing techniques optimized for lunar conditions.*
