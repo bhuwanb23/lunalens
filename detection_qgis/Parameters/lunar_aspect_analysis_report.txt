@@ -1,0 +1,74 @@
+LUNAR ASPECT ANALYSIS REPORT
+========================================
+Report Generated: 2025-08-02 20:47:54
+
+INPUT PARAMETERS:
+--------------------
+✅ Required Parameters:
+• Elevation (DEM): aspect_outputs\lunar_slope.tif
+• Raster cell size: From DEM metadata
+• Aspect values: Calculated ✓
+• Slope values: Calculated ✓
+
+OUTPUT FILES:
+---------------
+• Aspect raster: aspect_outputs\lunar_aspect.tif
+• Slope raster: aspect_outputs\lunar_slope.tif
+• Analysis report: aspect_outputs\lunar_aspect_analysis_report.txt
+
+ELEVATION STATISTICS:
+-------------------------
+• Minimum Elevation: 0.00 m
+• Maximum Elevation: 90.00 m
+• Mean Elevation: 0.30 m
+• Elevation Range: 90.00 m
+• Standard Deviation: 5.23 m
+
+LANDSLIDE DETECTION PARAMETERS:
+-----------------------------------
+Required Parameters:
+• Elevation (DEM) - ✓ Available and processed
+• Raster cell size - ✓ From DEM metadata
+• Aspect values - ✓ Calculated and saved
+• Slope values - ✓ Calculated and saved
+
+Optional Parameters:
+• Crater mask - Can be added for specific analysis
+• Solar illumination - Based on calculated aspect
+• Regolith properties - Local characteristics
+• Elevation changes - ✓ Analyzed from DEM
+
+ASPECT ANALYSIS RESULTS:
+-------------------------
+• Aspect values: 0-360 degrees (0° = North, 90° = East, etc.)
+• Flat areas: -1 (no aspect)
+• South-facing aspects (135-225°): Higher landslide risk
+• North-facing aspects (315-45°): Lower landslide risk
+
+SLOPE ANALYSIS RESULTS:
+-------------------------
+• Slope values: 0-90 degrees
+• Gentle slopes (0-5°): Low landslide risk
+• Moderate slopes (5-15°): Moderate risk
+• Steep slopes (>15°): High landslide risk
+• Very steep slopes (>30°): Very high risk
+
+LUNAR-SPECIFIC CONSIDERATIONS:
+-----------------------------------
+• Moon's lower gravity (1.62 m/s²) affects slope stability
+• No atmosphere means direct solar radiation impact
+• Thermal cycling affects surface cohesion
+• Micro-meteorite impacts can trigger landslides
+• South-facing slopes receive more solar heating
+
+NEXT STEPS FOR LANDSLIDE ANALYSIS:
+----------------------------------------
+1. Load aspect and slope rasters in QGIS Desktop
+2. Use Raster Calculator to combine aspect and slope
+3. Create risk zones based on thresholds:
+   - High risk: Slope >30° AND Aspect 135-225°
+   - Medium risk: Slope 15-30° OR Aspect 90-135°/225-270°
+   - Low risk: Slope <15° AND Aspect 315-45°
+4. Add crater masks to exclude crater interiors
+5. Consider solar illumination patterns
+6. Export final landslide risk map

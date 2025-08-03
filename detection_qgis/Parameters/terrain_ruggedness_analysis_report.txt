@@ -1,0 +1,71 @@
+🌑 TERRAIN RUGGEDNESS INDEX (TRI) ANALYSIS REPORT
+============================================================
+Generated: 2025-08-02 19:09:59
+
+📊 ANALYSIS PARAMETERS
+------------------------------
+Method: Multiple TRI Calculation Methods
+Tools: SAGA TRI, Focal Statistics, Raster Calculator
+Output Directory: Terrian_Reggedness_output
+
+📈 GENERATED LAYERS
+------------------------------
+• DEM: aspect_outputs\lunar_slope.tif
+• tri_saga: Terrian_Reggedness_output\tri_saga.tif
+• tri_focal: Terrian_Reggedness_output\tri_focal.tif
+• tri_calculator: Terrian_Reggedness_output\tri_calculator.tif
+
+📋 CALCULATION RESULTS
+------------------------------
+• TRI_CALCULATOR:
+  - min: 0.000000
+  - max: 8.999971
+  - mean: 7.327898
+  - std: 3.496449
+  - Neighborhood size: 3x3
+  - Method: Custom Formula
+
+• RUGGEDNESS_ANALYSIS:
+  - Ruggedness Category: VERY HIGH
+  - Description: Very high terrain ruggedness with extreme variation
+
+🎯 TRI CALCULATION METHODOLOGY
+----------------------------------------
+1. DEM Loading: Digital Elevation Model loaded for terrain analysis
+2. SAGA TRI: Primary method using SAGA Terrain Ruggedness Index
+3. Focal Statistics: Alternative method using standard deviation
+4. Focal Range: Alternative method using range (max - min)
+5. Raster Calculator: Custom formula implementation
+6. Ruggedness Analysis: Categorization of terrain ruggedness
+
+📝 TRI FORMULA EXPLANATION
+------------------------------
+TRI = sqrt(Σ(elevation_center - elevation_neighbor)²) / n
+Where:
+- elevation_center = central pixel elevation
+- elevation_neighbor = neighboring pixel elevations
+- n = number of neighboring pixels
+- Higher TRI values indicate more rugged terrain
+
+🔧 RUGGEDNESS CATEGORIES
+------------------------------
+• LOW (TRI < 0.1): Smooth terrain with minimal elevation variation
+• MODERATE (TRI 0.1-0.5): Moderate terrain variation
+• HIGH (TRI 0.5-1.0): High terrain ruggedness
+• VERY HIGH (TRI > 1.0): Extreme terrain variation
+
+📝 RECOMMENDATIONS
+--------------------
+• Use SAGA TRI for most accurate results
+• Compare multiple methods for validation
+• Adjust neighborhood size based on terrain scale
+• Consider combining with other terrain indices
+• Validate results against field observations
+
+🔧 NEXT STEPS
+---------------
+1. Open QGIS and load the generated TRI layers
+2. Compare different TRI calculation methods
+3. Use TRI for terrain classification and analysis
+4. Combine with other terrain indices for comprehensive analysis
+5. Export results for further processing

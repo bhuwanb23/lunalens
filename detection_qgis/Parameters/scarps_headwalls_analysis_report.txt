@@ -1,0 +1,87 @@
+🌑 SCARPS/HEADWALLS ANALYSIS REPORT
+==================================================
+Generated: 2025-08-02 21:38:24
+
+📊 ANALYSIS PARAMETERS
+------------------------------
+Method: Multi-Parameter Terrain Analysis
+Tools: GDAL Slope, Hillshade, Curvature, Aspect, TRI
+Output Directory: headwalls_scraps
+
+📈 GENERATED LAYERS
+------------------------------
+• DEM: aspect_outputs\lunar_slope.tif
+• slope: headwalls_scraps\slope.tif
+• hillshade: headwalls_scraps\hillshade.tif
+• curvature: headwalls_scraps\curvature.tif
+• aspect: headwalls_scraps\aspect.tif
+• tri: headwalls_scraps\tri.tif
+• Scarps_Headwalls: headwalls_scraps\scarps_headwalls.tif
+• scarps_headwalls: headwalls_scraps\scarps_headwalls.shp
+
+📋 DETECTION RESULTS
+------------------------------
+• SLOPE:
+  - min: 0.0000
+  - max: 89.9996
+  - mean: 0.2286
+  - std: 4.5305
+
+• HILLSHADE:
+
+• CURVATURE:
+  - min: 0.0000
+  - max: 89.9996
+  - mean: 0.2286
+  - std: 4.5305
+
+• ASPECT:
+  - min: 0.0000
+  - max: 359.9999
+  - mean: 189.4721
+  - std: 89.5053
+
+• TRI:
+  - min: 0.0000
+  - max: 89.9996
+  - mean: 0.2286
+  - std: 4.5305
+
+• SCARPS_HEADWALLS:
+  - scarp_pixels: 195324.0000
+  - density_percent: 0.0504
+  - slope threshold: 30.0
+  - curvature threshold: 0.001
+  - tri threshold: 0.5
+
+• SCARPS_VECTOR:
+  - Feature count: 1331731
+
+🎯 SCARP/HEADWALL DETECTION METHODOLOGY
+----------------------------------------
+1. DEM Loading: Digital Elevation Model loaded for terrain analysis
+2. Slope Calculation: Identifies steep areas (>30°) indicating cliffs/headwalls
+3. Hillshade Generation: Visual enhancement for manual verification
+4. Curvature Analysis: Detects concave/convex forms of scarps
+5. Aspect Mapping: Orientation analysis of scarp faces
+6. TRI Calculation: Terrain Ruggedness Index for rugged terrain
+7. Multi-Parameter Detection: Combined thresholding for scarp identification
+8. Vector Conversion: Raster features converted to editable polygons
+
+📝 RECOMMENDATIONS
+--------------------
+• Use hillshade layer for visual verification of detected scarps
+• Adjust slope, curvature, and TRI thresholds based on terrain characteristics
+• Manually edit the generated shapefile for precise scarp boundaries
+• Consider using additional filters for noise reduction
+• Validate results against optical imagery when available
+• High slope areas (>30°) often indicate scarps or headwalls
+• Dense contour lines often trace along scarp faces
+
+🔧 NEXT STEPS
+---------------
+1. Open QGIS and load the generated layers
+2. Use the scarps_headwalls.shp for manual digitization
+3. Apply additional filters or segmentation if needed
+4. Export final results in desired format
+5. Consider temporal analysis for landslide monitoring

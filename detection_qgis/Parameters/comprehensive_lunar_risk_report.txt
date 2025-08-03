@@ -1,0 +1,75 @@
+🌑 LUNAR TERRAIN RISK ANALYSIS REPORT
+============================================================
+Generated: 2025-08-03T18:20:43.908427
+
+📊 COMPOSITE RISK ASSESSMENT
+------------------------------
+• Overall Risk Score: 10.13/100
+• Risk Level: LOW
+• Risk Description: Safe terrain for lunar operations
+
+📋 INDIVIDUAL RISK COMPONENTS
+------------------------------
+• SLOPE:
+  - Risk Score: 19.23/100
+  - Weight: 0.30
+  - Weighted Contribution: 5.77
+
+• ASPECT:
+  - Risk Score: 0.00/100
+  - Weight: 0.15
+  - Weighted Contribution: 0.00
+
+• CONTOUR DENSITY:
+  - Risk Score: 1.21/100
+  - Weight: 0.10
+  - Weighted Contribution: 0.12
+
+• ELEVATION:
+  - Risk Score: 0.00/100
+  - Weight: 0.05
+  - Weighted Contribution: 0.00
+
+• ROUGHNESS:
+  - Risk Score: 34.96/100
+  - Weight: 0.10
+  - Weighted Contribution: 3.50
+
+• PROFILE GRADIENT:
+  - Risk Score: 7.43/100
+  - Weight: 0.10
+  - Weighted Contribution: 0.74
+
+• HILLSHADE:
+  - Risk Score: 0.00/100
+  - Weight: 0.15
+  - Weighted Contribution: 0.00
+
+• CRATER RATIO:
+  - Risk Score: 0.00/100
+  - Weight: 0.05
+  - Weighted Contribution: 0.00
+
+📈 ANALYSIS SUMMARY
+------------------------------
+• Total Reports Processed: 8
+• Available Components: slope, aspect, contour_density, elevation, roughness, profile_gradient, hillshade, crater_ratio
+• Missing Components: hillshade, crater_ratio
+
+🎯 RISK MITIGATION RECOMMENDATIONS
+----------------------------------------
+• Terrain is generally safe for lunar operations
+• Standard safety protocols sufficient
+
+🔧 TECHNICAL DETAILS
+------------------------------
+• Risk Calculation Method: Weighted composite scoring
+• Maximum Individual Risk: 34.96
+• Minimum Individual Risk: 0.00
+• Risk Score Range: 0-100 (0 = Safe, 100 = Extreme Risk)
+
+📝 FORMULA USED
+------------------------------
+Composite Risk = Σ(Component_Risk × Component_Weight)
+Where weights sum to 1.0 and individual risks are normalized to 0-100 scale.
+

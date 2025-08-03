@@ -1,0 +1,181 @@
+🌑 LUNAR TERRAIN RISK ANALYSIS RESULTS
+============================================================
+Generated: 2025-08-03T18:20:43.908427
+
+📊 COMPOSITE RISK ASSESSMENT
+------------------------------
+• Overall Risk Score: 10.13/100
+• Risk Level: LOW
+• Risk Description: Safe terrain for lunar operations
+
+📋 INDIVIDUAL RISK COMPONENTS
+------------------------------
+• SLOPE:
+  - Risk Score: 19.23/100
+  - Weight: 0.30
+  - Weighted Contribution: 5.77
+
+• ASPECT:
+  - Risk Score: 0.00/100
+  - Weight: 0.15
+  - Weighted Contribution: 0.00
+
+• CONTOUR DENSITY:
+  - Risk Score: 1.21/100
+  - Weight: 0.10
+  - Weighted Contribution: 0.12
+
+• ELEVATION:
+  - Risk Score: 0.00/100
+  - Weight: 0.05
+  - Weighted Contribution: 0.00
+
+• ROUGHNESS:
+  - Risk Score: 34.96/100
+  - Weight: 0.10
+  - Weighted Contribution: 3.50
+
+• PROFILE GRADIENT:
+  - Risk Score: 7.43/100
+  - Weight: 0.10
+  - Weighted Contribution: 0.74
+
+• HILLSHADE:
+  - Risk Score: 0.00/100
+  - Weight: 0.15
+  - Weighted Contribution: 0.00
+
+• CRATER RATIO:
+  - Risk Score: 0.00/100
+  - Weight: 0.05
+  - Weighted Contribution: 0.00
+
+📈 ANALYSIS SUMMARY
+------------------------------
+• Total Reports Processed: 8
+• Available Components: slope, aspect, contour_density, elevation, roughness, profile_gradient, hillshade, crater_ratio
+• Missing Components: hillshade, crater_ratio
+
+📊 DETAILED REPORT DATA
+------------------------------
+
+🔍 SLOPE ANALYSIS:
+  - Timestamp: 2025-08-03 10:59:40
+  - Layer Name: Moon_DEM
+  - Risk Level: LOW
+  - Risk Factors: Gentle slopes, Low slope variability
+  - Key Statistics:
+    * MIN: 0.0
+    * MAX: 11.54
+    * MEAN: 5.01
+    * STD: 2.0
+    * STD_DEV: 2.0
+
+
+🔍 ASPECT ANALYSIS:
+  - Timestamp: 2025-08-02 20:47:54
+  - Layer Name: None
+  - Risk Level: None
+  - Key Statistics:
+
+
+🔍 CURVATURE ANALYSIS:
+  - Timestamp: 2025-08-03 10:58:28
+  - Layer Name: Moon_DEM
+  - Risk Level: HIGH
+  - Risk Factors: High curvature variability, Complex terrain features
+  - Key Statistics:
+
+
+🔍 ELEVATION ANALYSIS:
+  - Timestamp: 2025-08-03 10:59:20
+  - Layer Name: Moon_DEM
+  - Risk Level: HIGH
+  - Risk Factors: High terrain variability, Extreme elevation differences
+  - Key Statistics:
+    * MIN: -3641.0
+    * MAX: 205.0
+    * MEAN: -1977.48
+    * STD: 625.98
+    * STD_DEV: 625.98
+
+
+🔍 CONTOUR ANALYSIS:
+  - Timestamp: 2025-08-01 13:59:26
+  - Layer Name: Lunar_Contours
+  - Risk Level: None
+  - Key Statistics:
+
+
+🔍 ROUGHNESS ANALYSIS:
+  - Timestamp: 2025-08-02 19:09:59
+  - Layer Name: None
+  - Risk Level: None
+  - Key Statistics:
+    * MAX: 8.999971
+    * MEAN: 7.327898
+    * STD: 3.496449
+
+
+🔍 LANDSLIDE ANALYSIS:
+  - Timestamp: 2025-08-02 20:48:03
+  - Layer Name: Lunar_Hillshade
+  - Risk Level: LOW
+  - Risk Factors: Low terrain variability, Deep shadow areas
+  - Key Statistics:
+    * MIN: 0.0
+    * MAX: 180.0
+    * MEAN: 179.18
+    * STD: 12.08
+    * STD_DEV: 12.08
+
+
+🔍 SCARPS HEADWALLS ANALYSIS:
+  - Timestamp: 2025-08-02 21:38:24
+  - Layer Name: None
+  - Risk Level: None
+  - Key Statistics:
+    * MIN: 0.0
+    * MAX: 89.9996
+    * MEAN: 0.2286
+    * STD: 4.5305
+
+🎯 RISK MITIGATION RECOMMENDATIONS
+----------------------------------------
+• Terrain is generally safe for lunar operations
+• Standard safety protocols sufficient
+
+🔧 TECHNICAL DETAILS
+------------------------------
+• Risk Calculation Method: Weighted composite scoring
+• Maximum Individual Risk: 34.96
+• Minimum Individual Risk: 0.00
+• Risk Score Range: 0-100 (0 = Safe, 100 = Extreme Risk)
+
+📝 FORMULA USED
+------------------------------
+Composite Risk = Σ(Component_Risk × Component_Weight)
+Where weights sum to 1.0 and individual risks are normalized to 0-100 scale.
+
+📊 WEIGHTS USED
+------------------------------
+• Slope: 0.30 (30%)
+• Aspect: 0.15 (15%)
+• Hillshade: 0.15 (15%)
+• Contour Density: 0.10 (10%)
+• Profile Gradient: 0.10 (10%)
+• Crater Ratio: 0.05 (5%)
+• Roughness: 0.10 (10%)
+• Elevation: 0.05 (5%)
+
+🎯 RISK LEVELS
+------------------------------
+• LOW (0-20): Safe terrain for lunar operations
+• MODERATE (20-40): Moderate terrain challenges
+• HIGH (40-60): High risk terrain - caution required
+• VERY HIGH (60-80): Very high risk - extreme caution
+• EXTREME (80-100): Extreme risk - avoid if possible
+
+---
+Generated from JSON data: lunar_risk_analysis_results.json
+Converted: 2025-08-03 18:41:33
