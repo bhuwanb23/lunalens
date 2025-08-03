@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { LOGIN_CONSTANTS } from '../constants';
 
-export const useLoginForm = () => {
+export const useLoginForm = (onLoginSuccess) => {
   const [formData, setFormData] = useState({
     missionId: '',
     accessCode: '',
@@ -87,6 +87,10 @@ export const useLoginForm = () => {
       if (response.ok && data.success) {
         setIsSuccess(true);
         setErrors({});
+        // Call the success callback with the token
+        if (onLoginSuccess && data.token) {
+          onLoginSuccess(data.token);
+        }
       } else {
         setIsSuccess(false);
         setServerError(data.message || 'Login failed.');

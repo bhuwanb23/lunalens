@@ -1,0 +1,252 @@
+/* Boulder Detection Page - Essential Animations Only */
+
+/* Font family - same as analytics page */
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Custom fade-in animation */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out;
+}
+
+/* Custom success pulse animation */
+@keyframes successPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+  }
+}
+
+.success-pulse {
+  animation: successPulse 1.5s infinite;
+}
+
+/* Custom text gradient animation */
+@keyframes textGradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.bg-clip-text {
+  background-size: 200% 200%;
+  animation: textGradient 3s ease infinite;
+}
+
+/* Custom loading animation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Custom bounce animation with delays */
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -15px, 0);
+  }
+  70% {
+    transform: translate3d(0, -7px, 0);
+  }
+  90% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 0.8s infinite;
+}
+
+/* Custom pulse animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Custom slide in animation */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-in-up {
+  animation: slideInUp 0.4s ease-out;
+}
+
+/* Custom scale animation */
+@keyframes scale {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-scale {
+  animation: scale 0.2s ease-in-out;
+}
+
+/* Custom twinkle animation for decorative elements */
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-twinkle {
+  animation: twinkle 2s infinite;
+}
+
+/* Custom floating animation */
+@keyframes floating {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-floating {
+  animation: floating 2s ease-in-out infinite;
+}
+
+/* Custom gradient shift animation */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient-shift {
+  background-size: 200% 200%;
+  animation: gradientShift 2s ease infinite;
+}
+
+/* Custom icon glow animation */
+@keyframes iconGlow {
+  from {
+    box-shadow: 0 0 10px rgba(251, 146, 60, 0.2);
+  }
+  to {
+    box-shadow: 0 0 15px rgba(251, 146, 60, 0.4);
+  }
+}
+
+.animate-icon-glow {
+  animation: iconGlow 0.8s ease-in-out infinite alternate;
+}
+
+/* Custom success scale animation */
+@keyframes successScale {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-success-scale {
+  animation: successScale 0.3s ease-out;
+}
+
+/* Custom count up animation */
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-count-up {
+  animation: countUp 0.6s ease-out;
+}
+
+/* Custom fade in up animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+/* Custom loading pulse animation */
+@keyframes loadingPulse {
+  0%, 100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
