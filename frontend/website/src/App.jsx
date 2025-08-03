@@ -4,6 +4,7 @@ import Login from './pages/login';
 import Dashboard from './pages/dashboard/dashboard';
 import Analytics from './pages/analytics/analytics';
 import Boulder from './pages/boulder/boulder';
+import LandslideDetection from './pages/landslide/landslide';
 import Header from './components/Header';
 import './App.css';
 
@@ -88,6 +89,16 @@ function App() {
               isAuthenticated ? 
               <AuthenticatedLayout onLogout={handleLogout}>
                 <Boulder />
+              </AuthenticatedLayout> : 
+              <Navigate to="/login" replace />
+            } 
+          />
+          <Route 
+            path="/landslide" 
+            element={
+              isAuthenticated ? 
+              <AuthenticatedLayout onLogout={handleLogout}>
+                <LandslideDetection />
               </AuthenticatedLayout> : 
               <Navigate to="/login" replace />
             } 

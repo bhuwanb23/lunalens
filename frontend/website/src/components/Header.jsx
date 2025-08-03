@@ -59,6 +59,16 @@ const Header = ({ onLogout }) => {
             >
               Boulder Detection
             </span>
+            <span
+              className={`transition-all duration-300 cursor-pointer font-medium ${
+                isActive('/landslide') 
+                  ? 'text-red-300 border-b-2 border-red-300' 
+                  : 'text-gray-400 hover:text-red-300 hover:scale-105'
+              }`}
+              onClick={() => navigate('/landslide')}
+            >
+              Landslide Detection
+            </span>
           </nav>
           
           {/* User Section */}
