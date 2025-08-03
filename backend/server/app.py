@@ -18,11 +18,14 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'boulder_detection
 
 # Import boulder detection modules
 try:
-    from detector import BoulderDetector
-    from gradcam import GradCAMVisualizer
-    from measurements import PhysicalCalculator, ObjectMeasurements
+    # Add the boulder_detection directory to the path
+    boulder_detection_path = os.path.join(os.path.dirname(__file__), '..', 'boulder_detection')
+    if boulder_detection_path not in sys.path:
+        sys.path.insert(0, boulder_detection_path)
+    
     from main import BoulderDetectionController
     BOULDER_DETECTION_AVAILABLE = True
+    print("✅ Boulder detection modules imported successfully")
 except ImportError as e:
     print(f"Warning: Boulder detection modules not available: {e}")
     BOULDER_DETECTION_AVAILABLE = False
@@ -59,6 +62,7 @@ def init_boulder_detection():
             # Change to boulder_detection directory
             boulder_dir = os.path.join(os.path.dirname(__file__), '..', 'boulder_detection')
             print(f"📁 Boulder directory: {boulder_dir}")
+            original_dir = os.getcwd()
             os.chdir(boulder_dir)
             print(f"📁 Current directory after change: {os.getcwd()}")
             
@@ -68,7 +72,7 @@ def init_boulder_detection():
             print("✅ Boulder detection system initialized successfully!")
             
             # Change back to server directory
-            os.chdir(os.path.dirname(__file__))
+            os.chdir(original_dir)
             print(f"📁 Back to server directory: {os.getcwd()}")
             
         except Exception as e:
@@ -76,6 +80,11 @@ def init_boulder_detection():
             import traceback
             traceback.print_exc()
             boulder_controller = None
+            # Change back to server directory in case of error
+            try:
+                os.chdir(original_dir)
+            except:
+                pass
     else:
         print("⚠️ Boulder detection modules not available")
 

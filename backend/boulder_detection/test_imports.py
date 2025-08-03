@@ -25,7 +25,7 @@ def test_imports():
         
         # Try importing the modules
         try:
-            from models import ModelLoader, YoloCAMWrapper
+            from ml_models import ModelLoader, YoloCAMWrapper
             print("✓ Models imports successful")
         except ImportError as e:
             print(f"⚠ Models imports failed (expected if PyTorch not installed): {e}")

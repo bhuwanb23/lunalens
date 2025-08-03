@@ -1,5 +1,5 @@
 """
-Models module for boulder and crater detection.
+ML Models module for boulder and crater detection.
 Handles loading and setup of YOLO and ViT models.
 """
 

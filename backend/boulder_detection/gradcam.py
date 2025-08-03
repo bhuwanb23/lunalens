@@ -10,7 +10,15 @@ from pytorch_grad_cam import GradCAM
 from pytorch_grad_cam.utils.image import show_cam_on_image, preprocess_image
 from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
 from typing import Optional, Tuple
-from models import YoloCAMWrapper
+import os
+import sys
+
+# Add current directory to path for local imports
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if current_dir not in sys.path:
+    sys.path.insert(0, current_dir)
+
+from ml_models import YoloCAMWrapper
 
 
 class GradCAMVisualizer:
