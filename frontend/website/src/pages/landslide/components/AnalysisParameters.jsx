@@ -68,7 +68,7 @@ const AnalysisParameters = ({ parameters, onParameterChange, isAnalyzing }) => {
               />
               
               {/* Slider thumb styling */}
-              <style jsx>{`
+              <style>{`
                 input[type="range"]::-webkit-slider-thumb {
                   appearance: none;
                   height: 20px;

@@ -196,13 +196,13 @@ const LandslideDetection = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100">
-      <div className="container mx-auto px-4 py-8">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Hero Section */}
         <HeroSection />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
+        <div className="block gap-6 mt-8" style={{ width: '-webkit-fill-available' }}>
           {/* Left Column - Upload and Parameters */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className="w-full lg:w-1/3 space-y-6" style={{ width: '-webkit-fill-available' }}>
             {/* Image Upload */}
             <ImageUpload 
               onImageUpload={handleImageUpload}
@@ -224,7 +224,7 @@ const LandslideDetection = () => {
           </div>
 
           {/* Right Column - Preview and Results */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="w-full lg:w-2/3 space-y-6" style={{ width: '-webkit-fill-available' }}>
             {/* Image Preview */}
             {image && (
               <ImagePreview
