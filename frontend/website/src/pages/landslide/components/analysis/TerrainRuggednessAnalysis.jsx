@@ -1,0 +1,218 @@
+import React from 'react';
+
+const TerrainRuggednessAnalysis = ({ data }) => {
+  // Default data based on terrain_ruggedness_analysis_report.txt and lunar_tri_analysis_report.txt
+  const triData = data || {
+    riskLevel: 'MODERATE',
+    riskFactors: ['Moderate terrain complexity'],
+    statistics: {
+      min: 0.000000,
+      max: 8.999971,
+      mean: 7.327898,
+      std: 3.496449,
+      neighborhoodSize: '3x3'
+    },
+    percentiles: {
+      p25: 3.32,
+      p50: 6.71,
+      p75: 11.79,
+      p90: 20.02,
+      p95: 28.04,
+      p99: 69.61
+    },
+    terrainDistribution: {
+      low: { pixels: 1062978, percentage: 20.3 },
+      moderate: { pixels: 3527883, percentage: 67.5 },
+      high: { pixels: 334127, percentage: 6.4 },
+      veryHigh: { pixels: 301508, percentage: 5.8 }
+    },
+    categories: {
+      'LOW': { threshold: 0.1, description: 'Smooth terrain with minimal elevation variation' },
+      'MODERATE': { threshold: 0.5, description: 'Moderate terrain variation' },
+      'HIGH': { threshold: 1.0, description: 'High terrain ruggedness' },
+      'VERY HIGH': { threshold: null, description: 'Extreme terrain variation' }
+    }
+  };
+
+  const getRiskColor = (level) => {
+    const colors = {
+      'LOW': 'text-green-400',
+      'MODERATE': 'text-yellow-400',
+      'HIGH': 'text-orange-400',
+      'VERY HIGH': 'text-red-400'
+    };
+    return colors[level] || 'text-gray-400';
+  };
+
+  const getRiskBgColor = (level) => {
+    const colors = {
+      'LOW': 'bg-green-500',
+      'MODERATE': 'bg-yellow-500',
+      'HIGH': 'bg-orange-500',
+      'VERY HIGH': 'bg-red-500'
+    };
+    return colors[level] || 'bg-gray-500';
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
+        <div className="flex items-center justify-between mb-3">
+          <h4 className="text-lg font-bold text-gray-200 flex items-center">
+            <span className="mr-2">🌊</span>
+            Terrain Ruggedness Index (TRI)
+          </h4>
+          <div className={`px-3 py-1 rounded-full ${getRiskBgColor(triData.riskLevel)} text-white text-xs font-medium`}>
+            {triData.riskLevel} RISK
+          </div>
+        </div>
+        <p className="text-gray-400 text-sm">
+          Terrain Ruggedness Index measures surface roughness and terrain complexity
+        </p>
+      </div>
+
+      {/* Statistics Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600 text-center">
+          <div className="text-2xl font-bold text-blue-400">{triData.statistics.min.toFixed(6)}</div>
+          <div className="text-sm text-gray-400">Minimum</div>
+        </div>
+        <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600 text-center">
+          <div className="text-2xl font-bold text-orange-400">{triData.statistics.max.toFixed(6)}</div>
+          <div className="text-sm text-gray-400">Maximum</div>
+        </div>
+        <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600 text-center">
+          <div className="text-2xl font-bold text-green-400">{triData.statistics.mean.toFixed(6)}</div>
+          <div className="text-sm text-gray-400">Mean</div>
+        </div>
+        <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600 text-center">
+          <div className="text-2xl font-bold text-purple-400">{triData.statistics.std.toFixed(6)}</div>
+          <div className="text-sm text-gray-400">Std Dev</div>
+        </div>
+      </div>
+
+      {/* Percentiles */}
+      <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
+        <h5 className="text-md font-bold text-gray-200 mb-3">TRI Percentiles</h5>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="text-center">
+            <div className="text-lg font-bold text-blue-400">{triData.percentiles.p25}</div>
+            <div className="text-sm text-gray-400">25th Percentile</div>
+          </div>
+          <div className="text-center">
+            <div className="text-lg font-bold text-green-400">{triData.percentiles.p50}</div>
+            <div className="text-sm text-gray-400">50th Percentile (Median)</div>
+          </div>
+          <div className="text-center">
+            <div className="text-lg font-bold text-orange-400">{triData.percentiles.p75}</div>
+            <div className="text-sm text-gray-400">75th Percentile</div>
+          </div>
+          <div className="text-center">
+            <div className="text-lg font-bold text-yellow-400">{triData.percentiles.p90}</div>
+            <div className="text-sm text-gray-400">90th Percentile</div>
+          </div>
+          <div className="text-center">
+            <div className="text-lg font-bold text-red-400">{triData.percentiles.p95}</div>
+            <div className="text-sm text-gray-400">95th Percentile</div>
+          </div>
+          <div className="text-center">
+            <div className="text-lg font-bold text-purple-400">{triData.percentiles.p99}</div>
+            <div className="text-sm text-gray-400">99th Percentile</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Terrain Distribution */}
+      <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
+        <h5 className="text-md font-bold text-gray-200 mb-4">Terrain Distribution</h5>
+        <div className="space-y-3">
+          {Object.entries(triData.terrainDistribution).map(([level, data]) => (
+            <div key={level} className="flex items-center justify-between p-3 bg-gray-600/30 rounded-lg">
+              <div className="flex items-center">
+                <div className={`w-3 h-3 rounded-full mr-3 ${
+                  level === 'low' ? 'bg-green-400' :
+                  level === 'moderate' ? 'bg-yellow-400' :
+                  level === 'high' ? 'bg-orange-400' : 'bg-red-400'
+                }`}></div>
+                <span className="text-gray-300 capitalize">{level.replace(/([A-Z])/g, ' $1')}</span>
+              </div>
+              <div className="text-right">
+                <div className="text-sm font-medium text-gray-200">{data.pixels.toLocaleString()} pixels</div>
+                <div className="text-xs text-gray-400">{data.percentage}%</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* TRI Categories */}
+      <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
+        <h5 className="text-md font-bold text-gray-200 mb-3">TRI Categories</h5>
+        <div className="space-y-3">
+          {Object.entries(triData.categories).map(([category, info]) => (
+            <div key={category} className="flex items-center justify-between p-3 bg-gray-600/30 rounded-lg">
+              <div>
+                <div className="font-medium text-gray-200">{category}</div>
+                <div className="text-sm text-gray-400">{info.description}</div>
+              </div>
+              <div className={`px-3 py-1 rounded text-xs font-medium ${getRiskBgColor(category)} text-white`}>
+                {info.threshold ? `TRI < ${info.threshold}` : 'TRI > 1.0'}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* TRI Formula */}
+      <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl p-4 border border-blue-500/20">
+        <h5 className="text-md font-bold text-blue-400 mb-3 flex items-center">
+          <span className="mr-2">📐</span>
+          TRI Formula
+        </h5>
+        <div className="text-sm text-gray-300 space-y-2">
+          <p className="font-mono bg-gray-800/50 p-2 rounded">
+            TRI = √(Σ(elevation_center - elevation_neighbor)²) / n
+          </p>
+          <p>Where:</p>
+          <ul className="list-disc list-inside space-y-1 ml-4">
+            <li>elevation_center = central pixel elevation</li>
+            <li>elevation_neighbor = neighboring pixel elevations</li>
+            <li>n = number of neighboring pixels</li>
+            <li>Higher TRI values indicate more rugged terrain</li>
+          </ul>
+        </div>
+      </div>
+
+      {/* Risk Factors */}
+      <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 rounded-xl p-4 border border-yellow-500/20">
+        <h5 className="text-md font-bold text-yellow-400 mb-3 flex items-center">
+          <span className="mr-2">⚠️</span>
+          Risk Factors
+        </h5>
+        <ul className="text-gray-300 space-y-1">
+          {triData.riskFactors.map((factor, index) => (
+            <li key={index} className="flex items-center">
+              <span className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>
+              {factor}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Analysis Notes */}
+      <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
+        <h5 className="text-md font-bold text-gray-200 mb-3">Analysis Notes</h5>
+        <div className="text-sm text-gray-400 space-y-2">
+          <p>• TRI calculated using {triData.statistics.neighborhoodSize} neighborhood</p>
+          <p>• Mean TRI of {triData.statistics.mean.toFixed(6)} indicates moderate terrain complexity</p>
+          <p>• {triData.terrainDistribution.moderate.percentage}% of terrain is moderately rugged</p>
+          <p>• {triData.terrainDistribution.low.percentage}% of terrain is smooth</p>
+          <p>• TRI values range from {triData.statistics.min.toFixed(6)} to {triData.statistics.max.toFixed(6)}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default TerrainRuggednessAnalysis; 
