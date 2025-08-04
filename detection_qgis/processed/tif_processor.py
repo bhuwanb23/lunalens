@@ -2,7 +2,7 @@ import sys
 import os
 
 # ✅ 1. QGIS installation path
-QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.44.1"
+QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.40.9"
 
 # ✅ 2. Set required environment variables
 os.environ["QGIS_PREFIX_PATH"] = QGIS_PREFIX_PATH
@@ -15,11 +15,17 @@ QGIS_PYTHON_PATH = os.path.join(QGIS_PREFIX_PATH, "python")
 if QGIS_PYTHON_PATH not in sys.path:
     sys.path.insert(0, QGIS_PYTHON_PATH)
 
-# ✅ 4. Initialize QGIS Application
+# ✅ 4. Initialize QGIS Application (only if not already initialized)
 from qgis.core import QgsApplication
-qgs = QgsApplication([], False)
-qgs.setPrefixPath(QGIS_PREFIX_PATH, True)
-qgs.initQgis()
+try:
+    # Check if QGIS is already initialized
+    QgsApplication.instance()
+    print("✅ QGIS already initialized")
+except:
+    qgs = QgsApplication([], False)
+    qgs.setPrefixPath(QGIS_PREFIX_PATH, True)
+    qgs.initQgis()
+    print("✅ QGIS initialized")
 
 # ✅ 5. Import QGIS modules
 from qgis.core import (

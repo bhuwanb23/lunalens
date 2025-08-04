@@ -4,10 +4,10 @@ import numpy as np
 from datetime import datetime
 
 # ✅ 1. QGIS installation path (update if needed)
-QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.44.1"
+QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.40.9"
 
 # Add processing module path
-PROCESSING_PATH = os.path.join(QGIS_PREFIX_PATH, "apps", "qgis", "python", "plugins")
+PROCESSING_PATH = os.path.join(QGIS_PREFIX_PATH, "apps", "qgis-ltr", "python", "plugins")
 
 # ✅ 2. Set required environment variables
 os.environ["QGIS_PREFIX_PATH"] = QGIS_PREFIX_PATH
@@ -16,19 +16,30 @@ os.environ["PATH"] += ";" + os.path.join(QGIS_PREFIX_PATH, "bin")
 os.environ["PATH"] += ";" + os.path.join(QGIS_PREFIX_PATH, "lib")
 
 # ✅ 3. Add QGIS Python path to sys.path
-QGIS_PYTHON_PATH = os.path.join(QGIS_PREFIX_PATH, "python")
+QGIS_PYTHON_PATH = os.path.join(QGIS_PREFIX_PATH, "apps", "Python312")
 if QGIS_PYTHON_PATH not in sys.path:
     sys.path.insert(0, QGIS_PYTHON_PATH)
+
+# Add QGIS Python path
+QGIS_QGIS_PYTHON_PATH = os.path.join(QGIS_PREFIX_PATH, "apps", "qgis-ltr", "python")
+if QGIS_QGIS_PYTHON_PATH not in sys.path:
+    sys.path.insert(0, QGIS_QGIS_PYTHON_PATH)
 
 # Add processing module path
 if PROCESSING_PATH not in sys.path:
     sys.path.insert(0, PROCESSING_PATH)
 
-# ✅ 4. Initialize QGIS Application
+# ✅ 4. Initialize QGIS Application (only if not already initialized)
 from qgis.core import QgsApplication
-qgs = QgsApplication([], False)
-qgs.setPrefixPath(QGIS_PREFIX_PATH, True)
-qgs.initQgis()
+try:
+    # Check if QGIS is already initialized
+    QgsApplication.instance()
+    print("✅ QGIS already initialized")
+except:
+    qgs = QgsApplication([], False)
+    qgs.setPrefixPath(QGIS_PREFIX_PATH, True)
+    qgs.initQgis()
+    print("✅ QGIS initialized")
 
 # ✅ 5. Import QGIS modules
 from qgis.core import (
@@ -52,14 +63,26 @@ try:
 except ImportError:
     try:
         # Try alternative import path
-        sys.path.append(os.path.join(QGIS_PREFIX_PATH, "apps", "qgis", "python", "plugins", "processing"))
+        sys.path.append(os.path.join(QGIS_PREFIX_PATH, "apps", "qgis-ltr", "python", "plugins", "processing"))
         import processing
         PROCESSING_AVAILABLE = True
         print("✅ Processing module available (alternative path)")
     except ImportError:
-        PROCESSING_AVAILABLE = False
-        print("⚠️  Processing module not available - some functions will be limited")
-        print("   This may affect TRI calculations")
+        try:
+            # Try another alternative path
+            processing_path = os.path.join(QGIS_PREFIX_PATH, "apps", "qgis-ltr", "python", "plugins")
+            if processing_path not in sys.path:
+                sys.path.insert(0, processing_path)
+            import processing
+            PROCESSING_AVAILABLE = True
+            print("✅ Processing module available (third path)")
+        except ImportError:
+            PROCESSING_AVAILABLE = False
+            print("⚠️  Processing module not available - some functions will be limited")
+            print("   This may affect TRI calculations")
+            print("   Available paths checked:")
+            print(f"   - {os.path.join(QGIS_PREFIX_PATH, 'apps', 'qgis-ltr', 'python', 'plugins')}")
+            print(f"   - {os.path.join(QGIS_PREFIX_PATH, 'apps', 'qgis-ltr', 'python', 'plugins', 'processing')}")
 
 # ✅ 6. Register native QGIS algorithms
 from qgis.analysis import QgsNativeAlgorithms

@@ -2,20 +2,31 @@ import sys
 import os
 
 # QGIS setup
-QGIS_PREFIX_PATH = r""
+QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.40.9"
 os.environ["QGIS_PREFIX_PATH"] = QGIS_PREFIX_PATH
 os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = os.path.join(QGIS_PREFIX_PATH, "qt5", "plugins")
 os.environ["PATH"] += ";" + os.path.join(QGIS_PREFIX_PATH, "bin")
 os.environ["PATH"] += ";" + os.path.join(QGIS_PREFIX_PATH, "lib")
-QGIS_PYTHON_PATH = os.path.join(QGIS_PREFIX_PATH, "python")
+QGIS_PYTHON_PATH = os.path.join(QGIS_PREFIX_PATH, "apps", "Python312")
 if QGIS_PYTHON_PATH not in sys.path:
     sys.path.insert(0, QGIS_PYTHON_PATH)
 
+# Add QGIS Python path
+QGIS_QGIS_PYTHON_PATH = os.path.join(QGIS_PREFIX_PATH, "apps", "qgis-ltr", "python")
+if QGIS_QGIS_PYTHON_PATH not in sys.path:
+    sys.path.insert(0, QGIS_QGIS_PYTHON_PATH)
+
 from qgis.core import QgsApplication, QgsRasterLayer, QgsProject
 
-qgs = QgsApplication([], False)
-qgs.setPrefixPath(QGIS_PREFIX_PATH, True)
-qgs.initQgis()
+# Initialize QGIS only if not already initialized
+try:
+    QgsApplication.instance()
+    print("✅ QGIS already initialized")
+except:
+    qgs = QgsApplication([], False)
+    qgs.setPrefixPath(QGIS_PREFIX_PATH, True)
+    qgs.initQgis()
+    print("✅ QGIS initialized")
 
 class ElevationStats:
     def __init__(self):

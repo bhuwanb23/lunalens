@@ -8,7 +8,7 @@ import importlib.util
 QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.40.9"
 
 # Add processing module path
-PROCESSING_PATH = os.path.join(QGIS_PREFIX_PATH, "apps", "qgis", "python", "plugins")
+PROCESSING_PATH = os.path.join(QGIS_PREFIX_PATH, "apps", "qgis-ltr", "python", "plugins")
 
 # ✅ 2. Set required environment variables
 os.environ["QGIS_PREFIX_PATH"] = QGIS_PREFIX_PATH
@@ -53,7 +53,7 @@ try:
 except ImportError:
     try:
         # Try alternative import path
-        sys.path.append(os.path.join(QGIS_PREFIX_PATH, "apps", "qgis", "python", "plugins", "processing"))
+        sys.path.append(os.path.join(QGIS_PREFIX_PATH, "apps", "qgis-ltr", "python", "plugins", "processing"))
         import processing
         PROCESSING_AVAILABLE = True
         print("✅ Processing module available (alternative path)")
@@ -150,7 +150,7 @@ class LunarMainController:
                 'required': False
             },
             'crater_edges': {
-                'file': 'Geomorphological Features/crater_edges.py',
+                'file': 'crater_edges.py',
                 'description': 'Crater Edges Detection',
                 'required': False
             },
@@ -175,13 +175,60 @@ class LunarMainController:
         for module_name, config in module_configs.items():
             file_path = config['file']
             if os.path.exists(file_path):
-                self.available_modules[module_name] = {
-                    'file': file_path,
-                    'description': config['description'],
-                    'required': config['required'],
-                    'status': 'Available'
-                }
-                print(f"   ✅ {module_name}: {config['description']}")
+                # Try to import the module to ensure it's actually usable
+                try:
+                    if module_name == 'crater_edges':
+                        import crater_edges
+                        print(f"   ✅ {module_name}: {config['description']}")
+                    elif module_name == 'scraps_headwalls':
+                        import scraps_headwalls
+                        print(f"   ✅ {module_name}: {config['description']}")
+                    elif module_name == 'debris_paths':
+                        import Debris_path
+                        print(f"   ✅ {module_name}: {config['description']}")
+                    elif module_name == 'terrain_ruggedness':
+                        import Terrain_Ruggedness
+                        print(f"   ✅ {module_name}: {config['description']}")
+                    elif module_name == 'elevation_statistics':
+                        import elevation_statistics
+                        print(f"   ✅ {module_name}: {config['description']}")
+                    elif module_name == 'curvature_statistics':
+                        import curvature_statistics
+                        print(f"   ✅ {module_name}: {config['description']}")
+                    elif module_name == 'slope':
+                        import slope
+                        print(f"   ✅ {module_name}: {config['description']}")
+                    elif module_name == 'hillshade':
+                        import hillshade
+                        print(f"   ✅ {module_name}: {config['description']}")
+                    elif module_name == 'counter':
+                        import counter
+                        print(f"   ✅ {module_name}: {config['description']}")
+                    elif module_name == 'lunar_aspect_calculator':
+                        import lunar_aspect_calculator
+                        print(f"   ✅ {module_name}: {config['description']}")
+                    elif module_name == 'tif_processor':
+                        import tif_processor
+                        print(f"   ✅ {module_name}: {config['description']}")
+                    else:
+                        print(f"   ✅ {module_name}: {config['description']}")
+                    
+                    self.available_modules[module_name] = {
+                        'file': file_path,
+                        'description': config['description'],
+                        'required': config['required'],
+                        'status': 'Available'
+                    }
+                except ImportError as e:
+                    if config['required']:
+                        print(f"   ❌ {module_name}: {config['description']} (REQUIRED - IMPORT FAILED: {e})")
+                    else:
+                        print(f"   ⚠️  {module_name}: {config['description']} (Optional - Import Failed: {e})")
+                except Exception as e:
+                    if config['required']:
+                        print(f"   ❌ {module_name}: {config['description']} (REQUIRED - ERROR: {e})")
+                    else:
+                        print(f"   ⚠️  {module_name}: {config['description']} (Optional - Error: {e})")
             else:
                 if config['required']:
                     print(f"   ❌ {module_name}: {config['description']} (REQUIRED - NOT FOUND)")
@@ -189,6 +236,13 @@ class LunarMainController:
                     print(f"   ⚠️  {module_name}: {config['description']} (Optional - Not Found)")
         
         print(f"📊 Total modules available: {len(self.available_modules)}")
+        print(f"🎯 Expected modules: 11")
+        print(f"📈 Success rate: {len(self.available_modules)}/11 ({len(self.available_modules)/11*100:.1f}%)")
+        
+        if len(self.available_modules) < 11:
+            print("\n⚠️  Some modules are missing or failed to import.")
+            print("   This may affect the analysis pipeline.")
+            print("   Run test_all_modules.py to diagnose import issues.")
     
     def load_dem(self, dem_path, layer_name="DEM"):
         """
@@ -356,7 +410,6 @@ class LunarMainController:
             print("-" * 40)
             
             # Import and run crater edges detector
-            sys.path.append('Geomorphological Features')
             from crater_edges import CraterEdgesDetector
             
             detector = CraterEdgesDetector()
@@ -399,7 +452,6 @@ class LunarMainController:
             print("-" * 45)
             
             # Import and run scarps headwalls detector
-            sys.path.append('Geomorphological Features')
             from scraps_headwalls import ScarpsHeadwallsDetector
             
             detector = ScarpsHeadwallsDetector()
@@ -886,28 +938,18 @@ if __name__ == "__main__":
     # List available analyses
     controller.list_available_analyses()
     
-    # Available DEM files - try them in order of preference
-    dem_files = [
-        r"aspect_outputs\lunar_slope.tif",      # Best for lunar analysis
-        r"aspect_outputs\lunar_aspect.tif",     # Alternative DEM
-        r"terrain_outputs\terrain_output.tif"   # Fallback option
-    ]
+    # Use the specific TIF file path provided by the user
+    dem_path = r"F:\ch2_tmc_ndn_20250207T1457348573_d_dtm_d18.tif"
     
-    dem_path = None
-    for file_path in dem_files:
-        if os.path.exists(file_path):
-            dem_path = file_path
-            print(f"\n✅ DEM file found: {dem_path}")
-            break
-    
-    if dem_path:
+    # Check if the file exists
+    if os.path.exists(dem_path):
+        print(f"\n✅ DEM file found: {dem_path}")
         print("🚀 Starting comprehensive lunar analysis...")
         print(f"📊 Using DEM: {os.path.basename(dem_path)}")
         
-        # Run only the new modules for testing
-        print("🧪 Testing new module integration...")
-        new_modules = ['crater_edges', 'scraps_headwalls', 'debris_paths']
-        success = controller.run_complete_analysis_pipeline(dem_path, analysis_types=new_modules)
+        # Run complete analysis pipeline with all available modules
+        print("🔬 Running complete lunar analysis pipeline...")
+        success = controller.run_complete_analysis_pipeline(dem_path)
         
         if success:
             print("\n✅ Comprehensive lunar analysis completed successfully!")
@@ -921,11 +963,8 @@ if __name__ == "__main__":
         else:
             print("\n❌ Comprehensive lunar analysis failed!")
     else:
-        print("❌ No DEM files found!")
-        print("📝 Expected DEM files:")
-        for file_path in dem_files:
-            print(f"   - {file_path}")
-        print("\n💡 Please ensure DEM files exist before running analysis")
+        print(f"❌ DEM file not found: {dem_path}")
+        print("💡 Please ensure the TIF file exists at the specified path")
     
     # Clean up
     try:

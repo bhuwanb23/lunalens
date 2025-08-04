@@ -3,20 +3,31 @@ import os
 import numpy as np
 
 # QGIS setup
-QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.44.1"
+QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.40.9"
 os.environ["QGIS_PREFIX_PATH"] = QGIS_PREFIX_PATH
 os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = os.path.join(QGIS_PREFIX_PATH, "qt5", "plugins")
 os.environ["PATH"] += ";" + os.path.join(QGIS_PREFIX_PATH, "bin")
 os.environ["PATH"] += ";" + os.path.join(QGIS_PREFIX_PATH, "lib")
-QGIS_PYTHON_PATH = os.path.join(QGIS_PREFIX_PATH, "python")
+QGIS_PYTHON_PATH = os.path.join(QGIS_PREFIX_PATH, "apps", "Python312")
 if QGIS_PYTHON_PATH not in sys.path:
     sys.path.insert(0, QGIS_PYTHON_PATH)
 
+# Add QGIS Python path
+QGIS_QGIS_PYTHON_PATH = os.path.join(QGIS_PREFIX_PATH, "apps", "qgis-ltr", "python")
+if QGIS_QGIS_PYTHON_PATH not in sys.path:
+    sys.path.insert(0, QGIS_QGIS_PYTHON_PATH)
+
 from qgis.core import QgsApplication, QgsRasterLayer, QgsProject
 
-qgs = QgsApplication([], False)
-qgs.setPrefixPath(QGIS_PREFIX_PATH, True)
-qgs.initQgis()
+# Initialize QGIS only if not already initialized
+try:
+    QgsApplication.instance()
+    print("✅ QGIS already initialized")
+except:
+    qgs = QgsApplication([], False)
+    qgs.setPrefixPath(QGIS_PREFIX_PATH, True)
+    qgs.initQgis()
+    print("✅ QGIS initialized")
 
 def compute_curvatures(elevation, cellsize=1.0):
     # First and second derivatives
@@ -87,19 +98,35 @@ class CurvatureStats:
         block_height = block.height()
         raw_data = np.array(block.data(), copy=False)
 
+        # Handle different data shapes more robustly
         if raw_data.size == block_width * block_height:
             data = raw_data.reshape((block_height, block_width))
         elif raw_data.ndim == 2 and raw_data.shape == (block_height, block_width):
             data = raw_data
+        elif raw_data.ndim == 2 and raw_data.shape == (block_width, block_height):
+            # Sometimes the data is transposed
+            data = raw_data.T
         else:
-            print(f"❌ Data shape mismatch: got {raw_data.shape}, expected ({block_height}, {block_width})")
+            print(f"⚠️  Data shape mismatch: got {raw_data.shape}, expected ({block_height}, {block_width})")
             print(f"   - raw_data.size: {raw_data.size}")
             print(f"   - block_width: {block_width}, block_height: {block_height}")
-            # Fallback: use as much as possible, or skip
-            min_size = min(raw_data.size, block_width * block_height)
-            data = np.zeros((block_height, block_width), dtype=raw_data.dtype)
-            data.flat[:min_size] = raw_data.flat[:min_size]
-            print("   - Used fallback zero-padded array.")
+            # Try to reshape as much as possible
+            try:
+                if raw_data.size >= block_width * block_height:
+                    data = raw_data[:block_width * block_height].reshape((block_height, block_width))
+                else:
+                    # Pad with zeros if data is smaller
+                    data = np.zeros((block_height, block_width), dtype=raw_data.dtype)
+                    data.flat[:raw_data.size] = raw_data.flat
+                    print("   - Used zero-padded array.")
+            except Exception as e:
+                print(f"   - Reshape failed: {e}")
+                # Last resort: create a small sample
+                sample_size = min(100, min(block_width, block_height))
+                data = np.zeros((sample_size, sample_size), dtype=raw_data.dtype)
+                if raw_data.size > 0:
+                    data.flat[:min(raw_data.size, sample_size * sample_size)] = raw_data.flat[:min(raw_data.size, sample_size * sample_size)]
+                print(f"   - Created {sample_size}x{sample_size} sample array.")
 
         elevation = data.astype(float)
         curvs = compute_curvatures(elevation)
