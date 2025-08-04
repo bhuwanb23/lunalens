@@ -17,9 +17,9 @@ const AnalysisParameters = ({ parameters, onParameterChange, isAnalyzing }) => {
   };
 
   return (
-    <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-      <div className="mb-6">
-        <h3 className="text-xl font-semibold text-gray-100 mb-2">
+    <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700 shadow-lg">
+      <div className="mb-5">
+        <h3 className="text-xl font-bold text-gray-100 mb-3">
           Analysis Parameters
         </h3>
         <p className="text-gray-400 text-sm">
@@ -27,7 +27,7 @@ const AnalysisParameters = ({ parameters, onParameterChange, isAnalyzing }) => {
         </p>
       </div>
 
-      <div className="space-y-6">
+              <div className="space-y-6">
         {Object.entries(LANDSLIDE_CONSTANTS.ANALYSIS_PARAMETERS).map(([key, param]) => (
           <div key={key} className="space-y-3">
             <div className="flex justify-between items-center">
@@ -102,7 +102,7 @@ const AnalysisParameters = ({ parameters, onParameterChange, isAnalyzing }) => {
       </div>
 
       {/* Quick Presets */}
-      <div className="mt-6 pt-6 border-t border-gray-700">
+      <div className="mt-5 pt-5 border-t border-gray-700">
         <h4 className="text-sm font-medium text-gray-200 mb-3">Quick Presets</h4>
         <div className="grid grid-cols-2 gap-3">
           <button
@@ -158,7 +158,7 @@ const AnalysisParameters = ({ parameters, onParameterChange, isAnalyzing }) => {
 
       {/* Analysis Status */}
       {isAnalyzing && (
-        <div className="mt-6 p-4 bg-orange-500/10 border border-orange-500/20 rounded-lg">
+        <div className="mt-5 p-4 bg-orange-500/10 border border-orange-500/20 rounded-lg">
           <div className="flex items-center space-x-3">
             <div className="w-4 h-4 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
             <div>

@@ -55,18 +55,18 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
   };
 
   return (
-    <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-      <div className="text-center mb-6">
-        <h3 className="text-xl font-semibold text-gray-100 mb-2">
-          Upload Lunar Surface Image
+    <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700 shadow-lg">
+      <div className="text-center mb-5">
+        <h3 className="text-xl font-bold text-gray-100 mb-3">
+          Upload Lunar DEM
         </h3>
         <p className="text-gray-400 text-sm">
-          Upload a high-resolution image of the lunar surface for landslide analysis
+          Upload a Digital Elevation Model (DEM) of the lunar surface for terrain analysis
         </p>
       </div>
 
       <div
-        className={`relative border-2 border-dashed rounded-lg p-8 transition-all duration-300 ${
+        className={`relative border-2 border-dashed rounded-lg p-6 transition-all duration-300 ${
           isDragOver
             ? 'border-red-400 bg-red-500/10'
             : 'border-gray-600 hover:border-red-500/50 bg-gray-700/50'
@@ -86,8 +86,8 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
         <div className="text-center">
           {/* Upload Icon */}
           <div className="mb-4">
-            <div className="w-16 h-16 mx-auto bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center">
-              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-14 h-14 mx-auto bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center">
+              <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
             </div>
@@ -95,8 +95,8 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
 
           {/* Upload Text */}
           <div className="mb-4">
-            <p className="text-lg font-medium text-gray-200 mb-2">
-              {isUploading ? 'Uploading...' : 'Drag & Drop your image here'}
+            <p className="text-base font-medium text-gray-200 mb-2">
+              {isUploading ? 'Uploading...' : 'Drag & Drop your DEM here'}
             </p>
             <p className="text-sm text-gray-400">
               or click to browse files
@@ -107,7 +107,7 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
           <div className="mb-4">
             <p className="text-xs text-gray-500 mb-2">Supported formats:</p>
             <div className="flex justify-center space-x-2">
-              {['JPEG', 'PNG', 'TIFF'].map((format) => (
+              {['GeoTIFF', 'ASC', 'TIF'].map((format) => (
                 <span key={format} className="px-2 py-1 bg-gray-600 rounded text-xs text-gray-300">
                   {format}
                 </span>
@@ -155,13 +155,13 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
       </div>
 
       {/* Tips */}
-      <div className="mt-6 p-4 bg-gray-700/50 rounded-lg">
+      <div className="mt-5 p-4 bg-gray-700/50 rounded-lg">
         <h4 className="text-sm font-medium text-gray-200 mb-2">💡 Tips for better analysis:</h4>
         <ul className="text-xs text-gray-400 space-y-1">
-          <li>• Use high-resolution images (minimum 1024x1024 pixels)</li>
-          <li>• Ensure good lighting and contrast in the image</li>
-          <li>• Include clear surface features and terrain variations</li>
-          <li>• Avoid heavily shadowed or overexposed areas</li>
+          <li>• Use high-resolution DEM files (GeoTIFF, TIF, or ASC format)</li>
+          <li>• Ensure proper coordinate system (Lunar coordinate system)</li>
+          <li>• Include complete terrain coverage for accurate analysis</li>
+          <li>• Minimum resolution: 30m/pixel for detailed analysis</li>
         </ul>
       </div>
     </div>

@@ -3,9 +3,9 @@ import { ANALYSIS_STEPS } from '../constants/constants';
 
 const ProgressSteps = ({ currentStep, isAnalyzing }) => {
   return (
-    <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-      <div className="mb-6">
-        <h3 className="text-xl font-semibold text-gray-100 mb-2">
+    <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700 shadow-lg">
+      <div className="mb-5">
+        <h3 className="text-xl font-bold text-gray-100 mb-3">
           Analysis Progress
         </h3>
         <p className="text-gray-400 text-sm">
@@ -13,7 +13,7 @@ const ProgressSteps = ({ currentStep, isAnalyzing }) => {
         </p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {ANALYSIS_STEPS.map((step, index) => {
           const isCompleted = index < currentStep;
           const isCurrent = index === currentStep;
@@ -89,7 +89,7 @@ const ProgressSteps = ({ currentStep, isAnalyzing }) => {
       </div>
 
       {/* Overall Progress */}
-      <div className="mt-6 pt-6 border-t border-gray-700">
+      <div className="mt-5 pt-5 border-t border-gray-700">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm text-gray-300">Overall Progress</span>
           <span className="text-sm font-medium text-gray-200">

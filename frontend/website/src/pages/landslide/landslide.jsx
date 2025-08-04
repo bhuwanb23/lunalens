@@ -15,9 +15,13 @@ const LandslideDetection = () => {
   const [results, setResults] = useState(null);
   const [parameters, setParameters] = useState({
     SLOPE_THRESHOLD: LANDSLIDE_CONSTANTS.ANALYSIS_PARAMETERS.SLOPE_THRESHOLD.default,
-    ELEVATION_CHANGE: LANDSLIDE_CONSTANTS.ANALYSIS_PARAMETERS.ELEVATION_CHANGE.default,
-    SURFACE_ROUGHNESS: LANDSLIDE_CONSTANTS.ANALYSIS_PARAMETERS.SURFACE_ROUGHNESS.default,
-    COHERENCE_THRESHOLD: LANDSLIDE_CONSTANTS.ANALYSIS_PARAMETERS.COHERENCE_THRESHOLD.default,
+    ASPECT_THRESHOLD: LANDSLIDE_CONSTANTS.ANALYSIS_PARAMETERS.ASPECT_THRESHOLD.default,
+    ELEVATION_RANGE: LANDSLIDE_CONSTANTS.ANALYSIS_PARAMETERS.ELEVATION_RANGE.default,
+    TERRAIN_RUGGEDNESS: LANDSLIDE_CONSTANTS.ANALYSIS_PARAMETERS.TERRAIN_RUGGEDNESS.default,
+    CONTOUR_DENSITY: LANDSLIDE_CONSTANTS.ANALYSIS_PARAMETERS.CONTOUR_DENSITY.default,
+    PROFILE_GRADIENT: LANDSLIDE_CONSTANTS.ANALYSIS_PARAMETERS.PROFILE_GRADIENT.default,
+    CRATER_RATIO: LANDSLIDE_CONSTANTS.ANALYSIS_PARAMETERS.CRATER_RATIO.default,
+    HILLSHADE_THRESHOLD: LANDSLIDE_CONSTANTS.ANALYSIS_PARAMETERS.HILLSHADE_THRESHOLD.default,
   });
 
   const handleImageUpload = async (file) => {
@@ -78,22 +82,22 @@ const LandslideDetection = () => {
       recall,
       affectedArea: (Math.random() * 50 + 10).toFixed(1),
       slopeRange: {
-        min: Math.floor(Math.random() * 20 + 10),
-        max: Math.floor(Math.random() * 30 + 40)
+        min: Math.floor(Math.random() * 5 + 0),
+        max: Math.floor(Math.random() * 15 + 10)
       },
       elevationChange: Math.floor(Math.random() * 100 + 20),
       detectedFeatures: [
-        { name: 'Slope Instability', count: Math.floor(Math.random() * 10 + 5), icon: '⛰️', x: 20, y: 30 },
-        { name: 'Surface Cracks', count: Math.floor(Math.random() * 15 + 8), icon: '🔍', x: 60, y: 45 },
-        { name: 'Debris Flow', count: Math.floor(Math.random() * 8 + 3), icon: '🌊', x: 80, y: 70 },
-        { name: 'Rock Falls', count: Math.floor(Math.random() * 12 + 6), icon: '🪨', x: 40, y: 80 }
+        { name: 'Steep Slopes', count: Math.floor(Math.random() * 10 + 5), icon: '⛰️', x: 20, y: 30 },
+        { name: 'South-facing Aspects', count: Math.floor(Math.random() * 15 + 8), icon: '🌞', x: 60, y: 45 },
+        { name: 'High TRI Areas', count: Math.floor(Math.random() * 8 + 3), icon: '🗻', x: 80, y: 70 },
+        { name: 'Crater Impacts', count: Math.floor(Math.random() * 12 + 6), icon: '💥', x: 40, y: 80 }
       ],
       riskZones: [
         { x: 15, y: 25, width: 20, height: 15, risk: 'high' },
         { x: 60, y: 40, width: 25, height: 20, risk: 'medium' },
         { x: 80, y: 65, width: 15, height: 10, risk: 'low' }
       ],
-      summary: `Analysis of the lunar surface image reveals ${riskScore > 0.7 ? 'significant' : riskScore > 0.4 ? 'moderate' : 'minimal'} landslide risk indicators. The detected features suggest ${riskScore > 0.7 ? 'high' : riskScore > 0.4 ? 'moderate' : 'low'} probability of surface instability in the analyzed region.`,
+      summary: `Analysis of the lunar DEM reveals ${riskScore > 0.7 ? 'significant' : riskScore > 0.4 ? 'moderate' : 'minimal'} landslide risk indicators. The terrain analysis suggests ${riskScore > 0.7 ? 'high' : riskScore > 0.4 ? 'moderate' : 'low'} probability of surface instability based on slope, aspect, and terrain ruggedness parameters.`,
       recommendations: [
         'Conduct detailed ground truth verification of detected features',
         'Monitor the identified high-risk zones for temporal changes',
@@ -164,7 +168,15 @@ const LandslideDetection = () => {
       ['Affected Area', data.results.affectedArea, 'km²'],
       ['Elevation Change', data.results.elevationChange, 'm'],
       ['Slope Range Min', data.results.slopeRange.min, '°'],
-      ['Slope Range Max', data.results.slopeRange.max, '°']
+      ['Slope Range Max', data.results.slopeRange.max, '°'],
+      ['Slope Threshold', data.parameters.SLOPE_THRESHOLD, '°'],
+      ['Aspect Threshold', data.parameters.ASPECT_THRESHOLD, '°'],
+      ['Elevation Range', data.parameters.ELEVATION_RANGE, 'm'],
+      ['Terrain Ruggedness', data.parameters.TERRAIN_RUGGEDNESS, 'TRI'],
+      ['Contour Density', data.parameters.CONTOUR_DENSITY, 'contours/km²'],
+      ['Profile Gradient', data.parameters.PROFILE_GRADIENT, 'm/km'],
+      ['Crater Ratio', data.parameters.CRATER_RATIO, 'ratio'],
+      ['Hillshade Threshold', data.parameters.HILLSHADE_THRESHOLD, 'index']
     ];
 
     return [headers, ...rows].map(row => row.join(',')).join('\n');
@@ -200,67 +212,96 @@ const LandslideDetection = () => {
         {/* Hero Section */}
         <HeroSection />
 
-        <div className="block gap-6 mt-8" style={{ width: '-webkit-fill-available' }}>
-          {/* Left Column - Upload and Parameters */}
-          <div className="w-full lg:w-1/3 space-y-6" style={{ width: '-webkit-fill-available' }}>
-            {/* Image Upload */}
-            <ImageUpload 
-              onImageUpload={handleImageUpload}
-              isUploading={isUploading}
-            />
+        {/* Main Content Layout */}
+        <div className="flex flex-col xl:flex-row gap-8 mt-8">
+          {/* Left Column - Controls and Parameters */}
+          <div className="xl:w-[420px] flex-shrink-0">
+            <div className="space-y-6">
+              {/* Image Upload */}
+              <ImageUpload 
+                onImageUpload={handleImageUpload}
+                isUploading={isUploading}
+              />
 
-            {/* Analysis Parameters */}
-            <AnalysisParameters
-              parameters={parameters}
-              onParameterChange={handleParameterChange}
-              isAnalyzing={isAnalyzing}
-            />
+              {/* Analysis Parameters */}
+              <AnalysisParameters
+                parameters={parameters}
+                onParameterChange={handleParameterChange}
+                isAnalyzing={isAnalyzing}
+              />
 
-            {/* Progress Steps */}
-            <ProgressSteps
-              currentStep={currentStep}
-              isAnalyzing={isAnalyzing}
-            />
+              {/* Progress Steps */}
+              <ProgressSteps
+                currentStep={currentStep}
+                isAnalyzing={isAnalyzing}
+              />
+            </div>
           </div>
 
           {/* Right Column - Preview and Results */}
-          <div className="w-full lg:w-2/3 space-y-6" style={{ width: '-webkit-fill-available' }}>
-            {/* Image Preview */}
-            {image && (
-              <ImagePreview
-                image={image}
-                results={results}
-                isAnalyzing={isAnalyzing}
-              />
-            )}
+          <div className="flex-1 min-w-0">
+            <div className="space-y-6">
+              {/* Image Preview */}
+              {image && (
+                <ImagePreview
+                  image={image}
+                  results={results}
+                  isAnalyzing={isAnalyzing}
+                />
+              )}
 
-            {/* Analysis Results */}
-            {results && (
-              <AnalysisResults
-                results={results}
-                onExport={handleExport}
-              />
-            )}
+              {/* Analysis Results */}
+              {results && (
+                <AnalysisResults
+                  results={results}
+                  onExport={handleExport}
+                />
+              )}
 
-            {/* Start Analysis Button */}
-            {image && !isAnalyzing && !results && (
-              <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-                <div className="text-center">
-                  <h3 className="text-xl font-semibold text-gray-100 mb-4">
-                    Ready to Analyze
-                  </h3>
-                  <p className="text-gray-400 mb-6">
-                    Click the button below to start the landslide detection analysis
-                  </p>
-                  <button
-                    onClick={startAnalysis}
-                    className="px-8 py-4 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-semibold rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-red-500/25 transform hover:scale-105"
-                  >
-                    Start Analysis
-                  </button>
+              {/* Start Analysis Button */}
+              {image && !isAnalyzing && !results && (
+                <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-8 border border-gray-700 shadow-lg">
+                  <div className="text-center">
+                    <div className="w-20 h-20 mx-auto bg-gradient-to-br from-red-500/20 to-orange-500/20 rounded-full flex items-center justify-center mb-6">
+                      <svg className="w-10 h-10 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-100 mb-4">
+                      Ready to Analyze
+                    </h3>
+                    <p className="text-gray-400 mb-8 text-lg">
+                      Click the button below to start the lunar landslide detection analysis
+                    </p>
+                    <button
+                      onClick={startAnalysis}
+                      className="px-10 py-4 bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-red-500/25 transform hover:scale-105 text-lg"
+                    >
+                      Start Analysis
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+
+              {/* Placeholder for right column when no content */}
+              {!image && (
+                <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-8 border border-gray-700 shadow-lg">
+                  <div className="text-center">
+                    <div className="w-24 h-24 mx-auto bg-gradient-to-br from-gray-700 to-gray-600 rounded-full flex items-center justify-center mb-6">
+                      <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-100 mb-4">
+                      Upload a Lunar DEM
+                    </h3>
+                    <p className="text-gray-400 text-lg">
+                      Upload a Digital Elevation Model to begin lunar landslide analysis
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -39,9 +39,9 @@ const AnalysisResults = ({ results, onExport }) => {
   };
 
   return (
-    <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-      <div className="mb-6">
-        <h3 className="text-xl font-semibold text-gray-100 mb-2">
+    <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700 shadow-lg">
+      <div className="mb-5">
+        <h3 className="text-xl font-bold text-gray-100 mb-3">
           Analysis Results
         </h3>
         <p className="text-gray-400 text-sm">
@@ -50,15 +50,15 @@ const AnalysisResults = ({ results, onExport }) => {
       </div>
 
       {/* Risk Assessment */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h4 className="text-lg font-medium text-gray-200">Risk Assessment</h4>
+      <div className="mb-5">
+        <div className="flex items-center justify-between mb-3">
+          <h4 className="text-base font-medium text-gray-200">Risk Assessment</h4>
           <div className={`px-3 py-1 rounded-full ${getRiskColor(riskCategory.color)} text-white text-sm font-medium`}>
             {riskCategory.label}
           </div>
         </div>
 
-        <div className="bg-gray-700 rounded-lg p-4 mb-4">
+        <div className="bg-gray-700 rounded-lg p-4 mb-3">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm text-gray-300">Risk Score</span>
             <span className={`text-lg font-bold ${getRiskTextColor(riskCategory.color)}`}>
@@ -76,7 +76,7 @@ const AnalysisResults = ({ results, onExport }) => {
       </div>
 
       {/* Detection Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
         <div className="bg-gray-700 rounded-lg p-4">
           <h5 className="text-sm font-medium text-gray-300 mb-2">Detection Metrics</h5>
           <div className="space-y-2">
@@ -127,9 +127,9 @@ const AnalysisResults = ({ results, onExport }) => {
       </div>
 
       {/* Detected Features */}
-      <div className="mb-6">
+      <div className="mb-5">
         <h5 className="text-sm font-medium text-gray-300 mb-3">Detected Features</h5>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           {results.detectedFeatures.map((feature, index) => (
             <div key={index} className="bg-gray-700 rounded-lg p-3 text-center">
               <div className="text-lg mb-1">{feature.icon}</div>
@@ -141,7 +141,7 @@ const AnalysisResults = ({ results, onExport }) => {
       </div>
 
       {/* Analysis Summary */}
-      <div className="mb-6">
+      <div className="mb-5">
         <h5 className="text-sm font-medium text-gray-300 mb-3">Analysis Summary</h5>
         <div className="bg-gray-700 rounded-lg p-4">
           <p className="text-sm text-gray-300 leading-relaxed">
@@ -152,7 +152,7 @@ const AnalysisResults = ({ results, onExport }) => {
 
       {/* Recommendations */}
       {results.recommendations && results.recommendations.length > 0 && (
-        <div className="mb-6">
+        <div className="mb-5">
           <h5 className="text-sm font-medium text-gray-300 mb-3">Recommendations</h5>
           <div className="space-y-2">
             {results.recommendations.map((recommendation, index) => (
@@ -166,9 +166,9 @@ const AnalysisResults = ({ results, onExport }) => {
       )}
 
       {/* Export Options */}
-      <div className="border-t border-gray-700 pt-6">
+      <div className="border-t border-gray-700 pt-5">
         <h5 className="text-sm font-medium text-gray-300 mb-3">Export Results</h5>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 gap-3">
           {LANDSLIDE_CONSTANTS.EXPORT_FORMATS.map((format) => (
             <button
               key={format.value}

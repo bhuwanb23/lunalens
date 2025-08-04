@@ -19,11 +19,11 @@ const ImagePreview = ({ image, results, isAnalyzing }) => {
   };
 
   return (
-    <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+    <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700 shadow-lg">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xl font-semibold text-gray-100">
-          Image Preview
-        </h3>
+                  <h3 className="text-xl font-bold text-gray-100">
+            DEM Preview
+          </h3>
         <div className="flex items-center space-x-2">
           {/* Zoom Controls */}
           <div className="flex items-center space-x-1">
@@ -170,7 +170,7 @@ const ImagePreview = ({ image, results, isAnalyzing }) => {
       {results && showOverlay && (
         <div className="mt-4 p-3 bg-gray-700 rounded-lg">
           <h5 className="text-sm font-medium text-gray-200 mb-2">Legend</h5>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+          <div className="grid grid-cols-2 gap-2 text-xs">
             <div className="flex items-center space-x-2">
               <div className="w-3 h-3 bg-red-500 rounded"></div>
               <span className="text-gray-300">High Risk</span>
