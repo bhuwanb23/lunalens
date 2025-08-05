@@ -79,30 +79,30 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
     }
   };
 
-  return (
-    <div className="relative rounded-2xl p-6 border-2 border-transparent bg-gradient-to-br from-gray-800/90 to-gray-900/90 shadow-2xl overflow-hidden group">
+      return (
+        <div className="relative rounded-xl sm:rounded-2xl p-4 sm:p-6 border-2 border-transparent bg-gradient-to-br from-gray-800/90 to-gray-900/90 shadow-2xl overflow-hidden group">
       {/* Subtle animated background pattern */}
       <div className="absolute inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_60%_40%,rgba(255,255,255,0.04)_0%,transparent_70%)] animate-pulse" />
       <div className="absolute inset-0 pointer-events-none z-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.02)_25%,transparent_100%)]" />
       {/* Glowing border on hover */}
       <div className="absolute inset-0 rounded-2xl border-2 border-gradient-to-br from-red-500/40 to-orange-400/30 opacity-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none" />
 
-      <div className="relative z-10">
-        <div className="text-center mb-6">
-          <h3 className="text-2xl font-extrabold text-gray-100 mb-2 tracking-tight drop-shadow-lg">
-            <span className="inline-block align-middle mr-2">
-              <svg className="w-7 h-7 text-orange-400 inline-block align-middle animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v4a1 1 0 001 1h3m10 0h3a1 1 0 001-1V7a2 2 0 00-2-2H5a2 2 0 00-2 2zm0 0V5a2 2 0 00-2-2H7a2 2 0 00-2 2v2" />
-              </svg>
-            </span>
-            Add Lunar DEM Path
-          </h3>
-          <p className="text-gray-400 text-base max-w-xl mx-auto">
-            Enter the file path to your Digital Elevation Model (DEM) for terrain analysis
-          </p>
-        </div>
+              <div className="relative z-10">
+            <div className="text-center mb-4 sm:mb-6">
+                <h3 className="text-lg sm:text-xl lg:text-2xl font-extrabold text-gray-100 mb-2 tracking-tight drop-shadow-lg">
+                    <span className="inline-block align-middle mr-2">
+                        <svg className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-orange-400 inline-block align-middle animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v4a1 1 0 001 1h3m10 0h3a1 1 0 001-1V7a2 2 0 00-2-2H5a2 2 0 00-2 2zm0 0V5a2 2 0 00-2-2H7a2 2 0 00-2 2v2" />
+                        </svg>
+                    </span>
+                    Add Lunar DEM Path
+                </h3>
+                <p className="text-gray-400 text-sm sm:text-base max-w-lg sm:max-w-xl mx-auto">
+                    Enter the file path to your Digital Elevation Model (DEM) for terrain analysis
+                </p>
+            </div>
 
-        <div className="space-y-5">
+        <div className="space-y-4 sm:space-y-5">
           {/* Hidden file input for browse functionality */}
           <input
             ref={fileInputRef}
@@ -112,45 +112,45 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
             className="hidden"
           />
 
-          {/* File Path Input */}
-          <div className="space-y-2">
-            <label htmlFor="file-path-input" className="block text-sm font-semibold text-gray-200 mb-1">
-              DEM File Path
-            </label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-orange-400">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v4a1 1 0 001 1h3m10 0h3a1 1 0 001-1V7a2 2 0 00-2-2H5a2 2 0 00-2 2zm0 0V5a2 2 0 00-2-2H7a2 2 0 00-2 2v2" />
-                </svg>
-              </span>
-              <input
-                id="file-path-input"
-                type="text"
-                value={filePath}
-                onChange={handlePathChange}
-                placeholder="C:\\path\\to\\your\\lunar_dem.tif or /path/to/your/lunar_dem.tif"
-                className={`w-full pl-10 pr-4 py-3 bg-gray-700 border-2 rounded-lg text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 ${pathError ? 'border-red-500' : 'border-gray-600'
-                  } shadow-inner`}
-                disabled={isUploading || isValidating}
-                autoComplete="off"
-              />
-              {isValidating && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                  <div className="w-5 h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+                      {/* File Path Input */}
+            <div className="space-y-2">
+                <label htmlFor="file-path-input" className="block text-sm font-semibold text-gray-200 mb-1">
+                    DEM File Path
+                </label>
+                <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-orange-400">
+                        <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v4a1 1 0 001 1h3m10 0h3a1 1 0 001-1V7a2 2 0 00-2-2H5a2 2 0 00-2 2zm0 0V5a2 2 0 00-2-2H7a2 2 0 00-2 2v2" />
+                        </svg>
+                    </span>
+                    <input
+                        id="file-path-input"
+                        type="text"
+                        value={filePath}
+                        onChange={handlePathChange}
+                        placeholder="C:\\path\\to\\your\\lunar_dem.tif or /path/to/your/lunar_dem.tif"
+                        className={`w-full pl-8 sm:pl-10 pr-3 sm:pr-4 py-2 sm:py-3 bg-gray-700 border-2 rounded-lg text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 text-sm sm:text-base ${pathError ? 'border-red-500' : 'border-gray-600'
+                            } shadow-inner`}
+                        disabled={isUploading || isValidating}
+                        autoComplete="off"
+                    />
+                    {isValidating && (
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                            <div className="w-4 h-4 sm:w-5 sm:h-5 border-2 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
+                        </div>
+                    )}
                 </div>
-              )}
             </div>
-          </div>
 
-          {/* Supported Formats */}
-          <div className="bg-gray-700/60 rounded-lg p-4 flex flex-wrap items-center gap-2 shadow">
-            <span className="text-sm font-semibold text-gray-200 mr-2">Supported formats:</span>
-            {['GeoTIFF (.tif, .tiff)', 'ASC (.asc)', 'DEM (.dem)'].map((format) => (
-              <span key={format} className="px-3 py-1 bg-gradient-to-r from-orange-500/60 to-red-500/60 rounded text-xs text-white font-semibold shadow">
-                {format}
-              </span>
-            ))}
-          </div>
+                      {/* Supported Formats */}
+            <div className="bg-gray-700/60 rounded-lg p-3 sm:p-4 flex flex-wrap items-center gap-2 shadow">
+                <span className="text-xs sm:text-sm font-semibold text-gray-200 mr-2">Supported formats:</span>
+                {['GeoTIFF (.tif, .tiff)', 'ASC (.asc)', 'DEM (.dem)'].map((format) => (
+                    <span key={format} className="px-2 sm:px-3 py-1 bg-gradient-to-r from-orange-500/60 to-red-500/60 rounded text-xs text-white font-semibold shadow">
+                        {format}
+                    </span>
+                ))}
+            </div>
 
           {/* Action Buttons */}
           <div className="flex gap-3">

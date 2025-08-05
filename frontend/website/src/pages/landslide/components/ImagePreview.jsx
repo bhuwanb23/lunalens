@@ -40,6 +40,12 @@ const ImagePreview = ({ image, results, isAnalyzing }) => {
         }
     };
 
+    // Check if the image is a TIF/TIFF file
+    const isTiffFile = () => {
+        const fileName = image?.name || image?.path || '';
+        return fileName.toLowerCase().includes('.tif') || fileName.toLowerCase().includes('.tiff');
+    };
+
     // Cleanup object URL on unmount
     React.useEffect(() => {
         return () => {
@@ -123,11 +129,60 @@ const ImagePreview = ({ image, results, isAnalyzing }) => {
                             minHeight: '300px',
                         }}
                     >
-                        <img
-                            src={getImageSrc()}
-                            alt="Lunar surface for landslide analysis"
-                            className="w-full h-auto drop-shadow-2xl border-4 border-gray-800 rounded-xl transition-all duration-500"
-                        />
+                        {isTiffFile() ? (
+                            // TIF/TIFF file preview - show file info instead of image
+                            <div className="w-full h-64 bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl border-4 border-gray-800 flex items-center justify-center relative overflow-hidden">
+                                {/* Background pattern */}
+                                <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.02)_25%,rgba(255,255,255,0.02)_50%,transparent_50%,transparent_75%,rgba(255,255,255,0.02)_75%)] bg-[length:20px_20px]"></div>
+                                
+                                <div className="relative z-10 text-center p-6">
+                                    <div className="w-16 h-16 mx-auto bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center mb-4 shadow-lg">
+                                        <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                    </div>
+                                    <h4 className="text-lg font-bold text-gray-100 mb-2">DEM File Preview</h4>
+                                    <p className="text-sm text-gray-300 mb-4">TIF/TIFF files cannot be previewed in browser</p>
+                                    
+                                    {/* File Information */}
+                                    <div className="bg-gray-700/50 rounded-lg p-4 backdrop-blur-sm">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                                            <div>
+                                                <span className="text-gray-400">File:</span>
+                                                <p className="text-gray-200 font-mono truncate">{image?.name || 'lunar_dem.tif'}</p>
+                                            </div>
+                                            <div>
+                                                <span className="text-gray-400">Size:</span>
+                                                <p className="text-gray-200">{image?.size ? `${(image.size / (1024 * 1024)).toFixed(1)} MB` : 'Unknown'}</p>
+                                            </div>
+                                            <div>
+                                                <span className="text-gray-400">Type:</span>
+                                                <p className="text-gray-200">GeoTIFF / DEM</p>
+                                            </div>
+                                            <div>
+                                                <span className="text-gray-400">Format:</span>
+                                                <p className="text-gray-200">Digital Elevation Model</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                                        <p className="text-xs text-blue-300">
+                                            <svg className="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z" />
+                                            </svg>
+                                            This file will be processed for terrain analysis
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <img
+                                src={getImageSrc()}
+                                alt="Lunar surface for landslide analysis"
+                                className="w-full h-auto drop-shadow-2xl border-4 border-gray-800 rounded-xl transition-all duration-500"
+                            />
+                        )}
                         {/* Analysis Overlay */}
                         {results && showOverlay && (
                             <div className="absolute inset-0 pointer-events-none transition-all duration-500">
@@ -190,8 +245,8 @@ const ImagePreview = ({ image, results, isAnalyzing }) => {
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 backdrop-blur-md rounded-b-xl">
                     <div className="text-white text-sm">
                         <div className="flex justify-between items-center">
-                            <span>Image Size: {image.size > 1024 * 1024 ? `${(image.size / (1024 * 1024)).toFixed(1)} MB` : `${(image.size / 1024).toFixed(1)} KB`}</span>
-                            <span>Type: {image.type.split('/')[1].toUpperCase()}</span>
+                            <span>File Size: {image.size > 1024 * 1024 ? `${(image.size / (1024 * 1024)).toFixed(1)} MB` : `${(image.size / 1024).toFixed(1)} KB`}</span>
+                            <span>Type: {isTiffFile() ? 'GeoTIFF/DEM' : (image.type ? image.type.split('/')[1].toUpperCase() : 'Unknown')}</span>
                         </div>
                         {results && (
                             <div className="mt-2 text-xs text-gray-300">

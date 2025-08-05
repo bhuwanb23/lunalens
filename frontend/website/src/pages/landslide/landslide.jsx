@@ -236,17 +236,17 @@ const LandslideDetection = () => {
             </div>
 
             {/* Main Content */}
-            <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
+            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
                 {/* Hero Section */}
                 <HeroSection />
 
                 {/* Main Content Layout */}
-                <div className="flex flex-col xl:flex-row gap-8 mt-8 relative">
+                <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8 mt-4 sm:mt-6 lg:mt-8 relative">
                     {/* Animated connection line between columns */}
-                    <div className="hidden xl:block absolute left-[420px] top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-blue-500/30 to-transparent"></div>
+                    <div className="hidden lg:block absolute left-[calc(50%-1px)] top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-blue-500/30 to-transparent"></div>
                     
                     {/* Left Column - Controls and Configuration */}
-                    <div className="xl:w-[420px] flex-shrink-0 relative">
+                    <div className="lg:w-[400px] xl:w-[420px] flex-shrink-0 relative w-full">
                         <div className="space-y-6">
                             {/* Image Upload */}
                             <ImageUpload
@@ -283,8 +283,8 @@ const LandslideDetection = () => {
                     </div>
 
                     {/* Right Column - Preview and Results */}
-                    <div className="flex-1 min-w-0 relative">
-                        <div className="space-y-6">
+                    <div className="flex-1 min-w-0 relative w-full">
+                        <div className="space-y-4 sm:space-y-6">
                             {/* Image Preview */}
                             {image && (
                                 <div className="relative group">
@@ -306,30 +306,30 @@ const LandslideDetection = () => {
                             {/* Placeholder for right column when no content */}
                             {!image && (
                                 <div className="relative group">
-                                    <div className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 rounded-2xl p-8 border-2 border-gray-700/50 shadow-2xl backdrop-blur-sm relative overflow-hidden">
+                                    <div className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 rounded-2xl p-4 sm:p-6 lg:p-8 border-2 border-gray-700/50 shadow-2xl backdrop-blur-sm relative overflow-hidden">
                                         {/* Animated background pattern */}
                                         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/3 to-orange-500/5 animate-pulse"></div>
                                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(255,255,255,0.05)_0%,transparent_70%)]"></div>
                                         
                                         <div className="relative z-10 text-center">
-                                            <div className="w-24 h-24 mx-auto bg-gradient-to-br from-gray-700 to-gray-600 rounded-full flex items-center justify-center mb-6 shadow-lg group-hover:shadow-xl transition-all duration-500 group-hover:scale-110">
-                                                <svg className="w-12 h-12 text-gray-400 group-hover:text-blue-400 transition-colors duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 mx-auto bg-gradient-to-br from-gray-700 to-gray-600 rounded-full flex items-center justify-center mb-4 sm:mb-6 shadow-lg group-hover:shadow-xl transition-all duration-500 group-hover:scale-110">
+                                                <svg className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-gray-400 group-hover:text-blue-400 transition-colors duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                                                 </svg>
                                             </div>
-                                            <h3 className="text-2xl font-bold text-gray-100 mb-4 group-hover:text-blue-200 transition-colors duration-500">
+                                            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-100 mb-2 sm:mb-4 group-hover:text-blue-200 transition-colors duration-500">
                                                 Upload a Lunar DEM
                                             </h3>
-                                            <p className="text-gray-400 text-lg group-hover:text-gray-300 transition-colors duration-500">
+                                            <p className="text-sm sm:text-base lg:text-lg text-gray-400 group-hover:text-gray-300 transition-colors duration-500">
                                                 Upload a Digital Elevation Model to begin lunar terrain analysis
                                             </p>
                                         </div>
                                         
                                         {/* Corner decorations */}
-                                        <div className="absolute top-4 left-4 w-6 h-6 border-l-2 border-t-2 border-blue-500/30 rounded-tl-lg"></div>
-                                        <div className="absolute top-4 right-4 w-6 h-6 border-r-2 border-t-2 border-purple-500/30 rounded-tr-lg"></div>
-                                        <div className="absolute bottom-4 left-4 w-6 h-6 border-l-2 border-b-2 border-blue-500/30 rounded-bl-lg"></div>
-                                        <div className="absolute bottom-4 right-4 w-6 h-6 border-r-2 border-b-2 border-purple-500/30 rounded-br-lg"></div>
+                                        <div className="absolute top-2 sm:top-4 left-2 sm:left-4 w-4 h-4 sm:w-6 sm:h-6 border-l-2 border-t-2 border-blue-500/30 rounded-tl-lg"></div>
+                                        <div className="absolute top-2 sm:top-4 right-2 sm:right-4 w-4 h-4 sm:w-6 sm:h-6 border-r-2 border-t-2 border-purple-500/30 rounded-tr-lg"></div>
+                                        <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 w-4 h-4 sm:w-6 sm:h-6 border-l-2 border-b-2 border-blue-500/30 rounded-bl-lg"></div>
+                                        <div className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 w-4 h-4 sm:w-6 sm:h-6 border-r-2 border-b-2 border-purple-500/30 rounded-br-lg"></div>
                                     </div>
                                     
                                     {/* Hover glow effect */}

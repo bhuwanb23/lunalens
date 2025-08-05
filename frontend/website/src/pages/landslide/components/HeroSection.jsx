@@ -2,7 +2,7 @@ import React from 'react';
 
 const HeroSection = () => {
     return (
-        <section className="relative min-h-[280px] sm:min-h-[320px] lg:min-h-[360px] xl:min-h-[400px] flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 mt-8 mb-12 rounded-3xl border border-gray-700/30 shadow-2xl py-8 sm:py-10 lg:py-12">
+        <section className="relative min-h-[200px] sm:min-h-[240px] md:min-h-[280px] lg:min-h-[320px] xl:min-h-[360px] flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 mt-4 sm:mt-6 lg:mt-8 mb-6 sm:mb-8 lg:mb-12 rounded-2xl sm:rounded-3xl border border-gray-700/30 shadow-2xl py-4 sm:py-6 lg:py-8 xl:py-12">
             {/* Subtle animated background */}
             <div className="absolute inset-0 z-0 pointer-events-none">
                 {/* Radial gradients for depth */}
@@ -21,15 +21,15 @@ const HeroSection = () => {
             </div>
 
             {/* Main content container with proper spacing */}
-            <div className="relative z-10 text-center px-6 sm:px-8 lg:px-12 max-w-4xl mx-auto">
+            <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 xl:px-12 max-w-3xl sm:max-w-4xl mx-auto">
                 {/* Icon section with better spacing */}
-                <div className="mb-4 sm:mb-6 lg:mb-8">
-                    <div className="relative mx-auto w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 bg-gradient-to-br from-blue-500 via-purple-600 to-blue-700 rounded-2xl flex items-center justify-center shadow-2xl hover:shadow-blue-500/40 transition-all duration-500 transform hover:scale-105">
+                <div className="mb-3 sm:mb-4 lg:mb-6 xl:mb-8">
+                    <div className="relative mx-auto w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 lg:w-18 lg:h-18 xl:w-20 xl:h-20 bg-gradient-to-br from-blue-500 via-purple-600 to-blue-700 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-2xl hover:shadow-blue-500/40 transition-all duration-500 transform hover:scale-105">
                         {/* Inner glow */}
                         <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-2xl"></div>
 
                         {/* Icon */}
-                        <svg className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 lg:w-9 lg:h-9 xl:w-10 xl:h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                         </svg>
 
@@ -39,23 +39,23 @@ const HeroSection = () => {
                 </div>
 
                 {/* Title with improved typography and spacing */}
-                <h1 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-extrabold mb-3 sm:mb-4 lg:mb-6 bg-gradient-to-r from-gray-100 via-blue-200 to-purple-300 bg-clip-text text-transparent leading-tight tracking-tight">
+                <h1 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-extrabold mb-2 sm:mb-3 lg:mb-4 xl:mb-6 bg-gradient-to-r from-gray-100 via-blue-200 to-purple-300 bg-clip-text text-transparent leading-tight tracking-tight">
                     Lunar Terrain Analysis
                 </h1>
 
                 {/* Subtitle with better readability */}
-                <p className="text-xs sm:text-sm lg:text-base xl:text-lg text-gray-300 max-w-2xl sm:max-w-3xl lg:max-w-4xl mx-auto leading-relaxed font-light mb-4 sm:mb-6 lg:mb-8 px-4">
+                <p className="text-xs sm:text-sm md:text-base lg:text-lg xl:text-lg text-gray-300 max-w-xl sm:max-w-2xl lg:max-w-3xl xl:max-w-4xl mx-auto leading-relaxed font-light mb-3 sm:mb-4 lg:mb-6 xl:mb-8 px-2 sm:px-4">
                     Advanced lunar landslide risk assessment using terrain parameters and geomorphological analysis
                 </p>
 
                 {/* Status indicator with better positioning */}
-                <div className="flex items-center justify-center space-x-2 mb-4 sm:mb-6 lg:mb-8">
-                    <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
+                <div className="flex items-center justify-center space-x-2 mb-3 sm:mb-4 lg:mb-6 xl:mb-8">
+                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full animate-pulse shadow-lg shadow-green-400/50"></div>
                     <span className="text-xs sm:text-sm text-green-400 font-medium">Lunar Analysis Ready</span>
                 </div>
 
                 {/* CTA Button with enhanced styling */}
-                <button className="px-6 py-2 sm:px-8 sm:py-3 lg:px-10 lg:py-4 rounded-xl font-bold text-sm sm:text-base lg:text-lg bg-gradient-to-r from-blue-500 via-purple-600 to-orange-500 text-white shadow-xl hover:shadow-2xl hover:shadow-blue-500/40 hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-400/50 transform hover:-translate-y-1">
+                <button className="px-4 sm:px-6 py-1.5 sm:py-2 lg:px-8 lg:py-3 xl:px-10 xl:py-4 rounded-lg sm:rounded-xl font-bold text-xs sm:text-sm md:text-base lg:text-lg bg-gradient-to-r from-blue-500 via-purple-600 to-orange-500 text-white shadow-xl hover:shadow-2xl hover:shadow-blue-500/40 hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-400/50 transform hover:-translate-y-1">
                     Start New Analysis
                 </button>
             </div>
