@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { LANDSLIDE_CONSTANTS } from '../constants/constants';
 
 const ImageUpload = ({ onImageUpload, isUploading }) => {
   const [filePath, setFilePath] = useState('');
   const [pathError, setPathError] = useState('');
   const [isValidating, setIsValidating] = useState(false);
+  const fileInputRef = useRef(null);
 
   const handlePathChange = (e) => {
     const path = e.target.value;
@@ -21,9 +22,19 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
     if (!hasValidExtension) {
       return 'Please enter a valid DEM file path (.tif, .tiff, .asc, .geotiff, .dem)';
     }
-    if (!path.includes('/') && !path.includes('\\')) {
-      return 'Please enter a valid file path';
+    
+    // Check if we're in a web browser (no full path available)
+    const isWebBrowser = !window.electronAPI && !window.require;
+    if (isWebBrowser && !path.includes('/') && !path.includes('\\')) {
+      // In web browser, we might only have filename, which is okay for demo/testing
+      return null;
     }
+    
+    // For desktop apps or manual path entry, require full path
+    if (!isWebBrowser && !path.includes('/') && !path.includes('\\')) {
+      return 'Please enter a valid file path with directory structure';
+    }
+    
     return null;
   };
 
@@ -41,7 +52,31 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
   };
 
   const handleBrowseClick = () => {
-    document.getElementById('file-path-input')?.focus();
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // In web browsers, we can't get the full path due to security restrictions
+      // We'll use the file name and show a message to the user
+      const fileName = file.name;
+      
+      // Check if we're in an Electron environment (desktop app)
+      if (window.electronAPI || window.require) {
+        // Desktop app - we can get the full path
+        const path = file.path || fileName;
+        setFilePath(path);
+      } else {
+        // Web browser - we can only get the filename
+        // Show a helpful message and use the filename
+        setFilePath(fileName);
+        // You might want to show a notification that only filename is available in web browsers
+        console.log('Web browser detected - only filename available. For full path support, use the desktop application.');
+      }
+      
+      setPathError('');
+    }
   };
 
   return (
@@ -68,6 +103,15 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
         </div>
 
         <div className="space-y-5">
+          {/* Hidden file input for browse functionality */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".tif,.tiff,.asc,.dem,.geotiff"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+
           {/* File Path Input */}
           <div className="space-y-2">
             <label htmlFor="file-path-input" className="block text-sm font-semibold text-gray-200 mb-1">
@@ -85,9 +129,8 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
                 value={filePath}
                 onChange={handlePathChange}
                 placeholder="C:\\path\\to\\your\\lunar_dem.tif or /path/to/your/lunar_dem.tif"
-                className={`w-full pl-10 pr-4 py-3 bg-gray-700 border-2 rounded-lg text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 ${
-                  pathError ? 'border-red-500' : 'border-gray-600'
-                } shadow-inner`}
+                className={`w-full pl-10 pr-4 py-3 bg-gray-700 border-2 rounded-lg text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-300 ${pathError ? 'border-red-500' : 'border-gray-600'
+                  } shadow-inner`}
                 disabled={isUploading || isValidating}
                 autoComplete="off"
               />
@@ -114,11 +157,10 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
             <button
               onClick={handlePathSubmit}
               disabled={isUploading || isValidating || !filePath.trim()}
-              className={`flex-1 px-6 py-3 rounded-lg font-bold transition-all duration-300 shadow-lg shadow-orange-500/10 border-2 border-transparent ${
-                isUploading || isValidating || !filePath.trim()
+              className={`flex-1 px-6 py-3 rounded-lg font-bold transition-all duration-300 shadow-lg shadow-orange-500/10 border-2 border-transparent ${isUploading || isValidating || !filePath.trim()
                   ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
                   : 'bg-gradient-to-r from-orange-500 via-red-500 to-yellow-400 hover:from-orange-600 hover:to-yellow-500 text-white hover:shadow-xl hover:scale-105 border-orange-400/40'
-              }`}
+                }`}
             >
               {isValidating ? (
                 <div className="flex items-center justify-center space-x-2">
@@ -138,11 +180,10 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
             <button
               onClick={handleBrowseClick}
               disabled={isUploading || isValidating}
-              className={`px-4 py-3 rounded-lg font-semibold transition-all duration-300 border-2 border-gray-600 shadow hover:shadow-lg ${
-                isUploading || isValidating
+              className={`px-4 py-3 rounded-lg font-semibold transition-all duration-300 border-2 border-gray-600 shadow hover:shadow-lg ${isUploading || isValidating
                   ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
                   : 'bg-gray-700 hover:bg-gray-600 text-gray-200 hover:text-white border-orange-400/40'
-              }`}
+                }`}
             >
               <span className="inline-flex items-center">
                 <svg className="w-4 h-4 mr-1 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -193,20 +234,32 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
           </ul>
         </div>
 
-        {/* Example Paths */}
-        <div className="mt-5 p-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-lg shadow">
-          <h4 className="text-sm font-bold text-blue-200 mb-2 flex items-center">
-            <svg className="w-4 h-4 mr-2 text-blue-300 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2a4 4 0 014-4h4m0 0V7a4 4 0 00-4-4H7a4 4 0 00-4 4v10a4 4 0 004 4h4" />
-            </svg>
-            Example file paths:
-          </h4>
-          <div className="text-xs text-blue-100 space-y-1 pl-2">
-            <p>Windows: <code className="bg-gray-800 px-1 rounded">C:\Users\YourName\Documents\lunar_dem.tif</code></p>
-            <p>Mac/Linux: <code className="bg-gray-800 px-1 rounded">/home/username/documents/lunar_dem.tif</code></p>
-            <p>Network: <code className="bg-gray-800 px-1 rounded">\\server\share\lunar_data\dem.tif</code></p>
-          </div>
-        </div>
+                   {/* Example Paths */}
+           <div className="mt-5 p-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-lg shadow">
+             <h4 className="text-sm font-bold text-blue-200 mb-2 flex items-center">
+               <svg className="w-4 h-4 mr-2 text-blue-300 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2a4 4 0 014-4h4m0 0V7a4 4 0 00-4-4H7a4 4 0 00-4 4v10a4 4 0 004 4h4" />
+               </svg>
+               Example file paths:
+             </h4>
+             <div className="text-xs text-blue-100 space-y-1 pl-2">
+               <p>Windows: <code className="bg-gray-800 px-1 rounded">C:\Users\YourName\Documents\lunar_dem.tif</code></p>
+               <p>Mac/Linux: <code className="bg-gray-800 px-1 rounded">/home/username/documents/lunar_dem.tif</code></p>
+               <p>Network: <code className="bg-gray-800 px-1 rounded">\\server\share\lunar_data\dem.tif</code></p>
+             </div>
+             
+             {/* Browser limitation notice */}
+             {!window.electronAPI && !window.require && (
+               <div className="mt-3 p-2 bg-yellow-500/20 border border-yellow-500/30 rounded text-xs text-yellow-200">
+                 <p className="flex items-center">
+                   <svg className="w-3 h-3 mr-1 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                   </svg>
+                   <strong>Note:</strong> In web browsers, only filename is available. For full path support, use the desktop application.
+                 </p>
+               </div>
+             )}
+           </div>
       </div>
     </div>
   );
