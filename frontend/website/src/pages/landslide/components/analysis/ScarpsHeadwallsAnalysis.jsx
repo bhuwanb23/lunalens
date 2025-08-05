@@ -38,6 +38,12 @@ const ScarpsHeadwallsAnalysis = ({ data }) => {
         mean: 0.2286,
         std: 4.5305
       }
+    },
+    detectionResults: {
+      totalPixels: 5227296,
+      scarpPixels: 195324,
+      densityPercent: 0.0504,
+      featureCount: 1331731
     }
   };
 
@@ -176,7 +182,7 @@ const ScarpsHeadwallsAnalysis = ({ data }) => {
         </h5>
         <div className="text-sm text-gray-300 space-y-2">
           <p>1. <strong>DEM Loading:</strong> Digital Elevation Model loaded for terrain analysis</p>
-          <p>2. <strong>Slope Calculation:</strong> Identifies steep areas (>30°) indicating cliffs/headwalls</p>
+                      <p>2. <strong>Slope Calculation:</strong> Identifies steep areas (&gt;30°) indicating cliffs/headwalls</p>
           <p>3. <strong>Hillshade Generation:</strong> Visual enhancement for manual verification</p>
           <p>4. <strong>Curvature Analysis:</strong> Detects concave/convex forms of scarps</p>
           <p>5. <strong>Aspect Mapping:</strong> Orientation analysis of scarp faces</p>
@@ -211,7 +217,7 @@ const ScarpsHeadwallsAnalysis = ({ data }) => {
           <p>• Manually edit the generated shapefile for precise scarp boundaries</p>
           <p>• Consider using additional filters for noise reduction</p>
           <p>• Validate results against optical imagery when available</p>
-          <p>• High slope areas (>30°) often indicate scarps or headwalls</p>
+                      <p>• High slope areas (&gt;30°) often indicate scarps or headwalls</p>
           <p>• Dense contour lines often trace along scarp faces</p>
         </div>
       </div>
@@ -223,7 +229,7 @@ const ScarpsHeadwallsAnalysis = ({ data }) => {
           <p>• {scarpsData.statistics.scarpPixels.toLocaleString()} scarp pixels detected</p>
           <p>• Scarp density of {scarpsData.statistics.densityPercent}% indicates limited features</p>
           <p>• {scarpsData.statistics.featureCount.toLocaleString()} vector features generated</p>
-          <p>• Detection based on slope > {scarpsData.statistics.slopeThreshold}°</p>
+                      <p>• Detection based on slope &gt; {scarpsData.statistics.slopeThreshold}°</p>
           <p>• Curvature threshold of {scarpsData.statistics.curvatureThreshold} for feature detection</p>
           <p>• TRI threshold of {scarpsData.statistics.triThreshold} for ruggedness assessment</p>
         </div>

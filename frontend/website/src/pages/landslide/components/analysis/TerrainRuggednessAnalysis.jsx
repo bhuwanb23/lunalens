@@ -157,7 +157,7 @@ const TerrainRuggednessAnalysis = ({ data }) => {
                 <div className="text-sm text-gray-400">{info.description}</div>
               </div>
               <div className={`px-3 py-1 rounded text-xs font-medium ${getRiskBgColor(category)} text-white`}>
-                {info.threshold ? `TRI < ${info.threshold}` : 'TRI > 1.0'}
+                                 {info.threshold ? `TRI &lt; ${info.threshold}` : 'TRI &gt; 1.0'}
               </div>
             </div>
           ))}

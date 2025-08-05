@@ -124,11 +124,11 @@ const AspectAnalysis = ({ data }) => {
             <span className="text-yellow-400 text-sm font-medium">Moderate Risk</span>
           </div>
           <div className="flex items-center justify-between p-3 bg-gray-600/30 rounded-lg">
-            <span className="text-gray-300">Steep Slopes (>15°)</span>
+            <span className="text-gray-300">Steep Slopes (&gt;15°)</span>
             <span className="text-orange-400 text-sm font-medium">High Risk</span>
           </div>
           <div className="flex items-center justify-between p-3 bg-gray-600/30 rounded-lg">
-            <span className="text-gray-300">Very Steep Slopes (>30°)</span>
+            <span className="text-gray-300">Very Steep Slopes (&gt;30°)</span>
             <span className="text-red-400 text-sm font-medium">Very High Risk</span>
           </div>
         </div>

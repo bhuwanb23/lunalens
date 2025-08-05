@@ -16,6 +16,11 @@ const ElevationAnalysis = ({ data }) => {
       lowElevation: -2679.50,
       mediumElevation: -1718.00,
       highElevation: -756.50
+    },
+    elevationDistribution: {
+      low: { pixels: 1000000, percentage: 20.0 },
+      medium: { pixels: 3000000, percentage: 60.0 },
+      high: { pixels: 1000000, percentage: 20.0 }
     }
   };
 
