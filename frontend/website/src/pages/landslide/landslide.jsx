@@ -173,18 +173,18 @@ const sampleAnalysisData = {
 };
 
 const LandslideDetection = () => {
-    const [image, setImage] = useState(null);
-    const [isUploading, setIsUploading] = useState(false);
-    const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [image, setImage] = useState(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [showResults, setShowResults] = useState(false);
 
     const handleImageUpload = async (fileData) => {
-        setIsUploading(true);
+    setIsUploading(true);
         setShowResults(false);
 
-        // Simulate upload delay
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
+    // Simulate upload delay
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
         // Create a mock file object for ImagePreview
         const mockFile = {
             name: fileData.path.split(/[\\/]/).pop(),
@@ -194,20 +194,20 @@ const LandslideDetection = () => {
         };
 
         setImage(mockFile);
-        setIsUploading(false);
-    };
+    setIsUploading(false);
+  };
 
-    const startAnalysis = async () => {
-        if (!image) return;
+  const startAnalysis = async () => {
+    if (!image) return;
 
-        setIsAnalyzing(true);
+    setIsAnalyzing(true);
 
-        // Simulate analysis processing
-        await new Promise(resolve => setTimeout(resolve, 3000));
+    // Simulate analysis processing
+    await new Promise(resolve => setTimeout(resolve, 3000));
 
         setShowResults(true);
-        setIsAnalyzing(false);
-    };
+    setIsAnalyzing(false);
+  };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100 relative overflow-hidden">
@@ -237,22 +237,22 @@ const LandslideDetection = () => {
 
             {/* Main Content */}
             <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
-                {/* Hero Section */}
-                <HeroSection />
+        {/* Hero Section */}
+        <HeroSection />
 
-                {/* Main Content Layout */}
+        {/* Main Content Layout */}
                 <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8 mt-4 sm:mt-6 lg:mt-8 relative">
                     {/* Animated connection line between columns */}
                     <div className="hidden lg:block absolute left-[calc(50%-1px)] top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-blue-500/30 to-transparent"></div>
                     
-                    {/* Left Column - Controls and Configuration */}
+          {/* Left Column - Controls and Configuration */}
                     <div className="lg:w-[400px] xl:w-[420px] flex-shrink-0 relative w-full">
-                        <div className="space-y-6">
-                            {/* Image Upload */}
-                            <ImageUpload
-                                onImageUpload={handleImageUpload}
-                                isUploading={isUploading}
-                            />
+            <div className="space-y-6">
+              {/* Image Upload */}
+              <ImageUpload 
+                onImageUpload={handleImageUpload}
+                isUploading={isUploading}
+              />
                             
                             {/* Analysis Button */}
                             {image && (
@@ -269,14 +269,14 @@ const LandslideDetection = () => {
                                         <div className="flex items-center justify-center space-x-2">
                                             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                                             <span>Analyzing...</span>
-                                        </div>
+            </div>
                                     ) : (
                                         <span>Start Analysis</span>
                                     )}
                                 </button>
                             )}
-                        </div>
-                        
+          </div>
+
                         {/* Floating accent elements */}
                         <div className="absolute -top-4 -left-4 w-8 h-8 border-l-2 border-t-2 border-blue-500/30 rounded-tl-lg"></div>
                         <div className="absolute -bottom-4 -right-4 w-8 h-8 border-r-2 border-b-2 border-purple-500/30 rounded-br-lg"></div>
@@ -285,13 +285,13 @@ const LandslideDetection = () => {
                     {/* Right Column - Preview and Results */}
                     <div className="flex-1 min-w-0 relative w-full">
                         <div className="space-y-4 sm:space-y-6">
-                            {/* Image Preview */}
-                            {image && (
+              {/* Image Preview */}
+              {image && (
                                 <div className="relative group">
-                                    <ImagePreview
-                                        image={image}
-                                        isAnalyzing={isAnalyzing}
-                                    />
+                <ImagePreview
+                  image={image}
+                  isAnalyzing={isAnalyzing}
+                />
                                     {/* Hover glow effect */}
                                     <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/0 via-purple-500/0 to-orange-500/0 group-hover:from-blue-500/10 group-hover:via-purple-500/10 group-hover:to-orange-500/10 transition-all duration-500 pointer-events-none"></div>
                                 </div>
@@ -301,10 +301,10 @@ const LandslideDetection = () => {
                             <AnalysisResults
                                 isVisible={showResults}
                                 analysisData={sampleAnalysisData}
-                            />
+              />
 
-                            {/* Placeholder for right column when no content */}
-                            {!image && (
+              {/* Placeholder for right column when no content */}
+              {!image && (
                                 <div className="relative group">
                                     <div className="bg-gradient-to-br from-gray-800/90 to-gray-900/90 rounded-2xl p-4 sm:p-6 lg:p-8 border-2 border-gray-700/50 shadow-2xl backdrop-blur-sm relative overflow-hidden">
                                         {/* Animated background pattern */}
@@ -314,16 +314,16 @@ const LandslideDetection = () => {
                                         <div className="relative z-10 text-center">
                                             <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 mx-auto bg-gradient-to-br from-gray-700 to-gray-600 rounded-full flex items-center justify-center mb-4 sm:mb-6 shadow-lg group-hover:shadow-xl transition-all duration-500 group-hover:scale-110">
                                                 <svg className="w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-gray-400 group-hover:text-blue-400 transition-colors duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                                                </svg>
-                                            </div>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
+                    </div>
                                             <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-100 mb-2 sm:mb-4 group-hover:text-blue-200 transition-colors duration-500">
-                                                Upload a Lunar DEM
-                                            </h3>
+                      Upload a Lunar DEM
+                    </h3>
                                             <p className="text-sm sm:text-base lg:text-lg text-gray-400 group-hover:text-gray-300 transition-colors duration-500">
-                                                Upload a Digital Elevation Model to begin lunar terrain analysis
-                                            </p>
-                                        </div>
+                      Upload a Digital Elevation Model to begin lunar terrain analysis
+                    </p>
+                  </div>
                                         
                                         {/* Corner decorations */}
                                         <div className="absolute top-2 sm:top-4 left-2 sm:left-4 w-4 h-4 sm:w-6 sm:h-6 border-l-2 border-t-2 border-blue-500/30 rounded-tl-lg"></div>
@@ -334,18 +334,18 @@ const LandslideDetection = () => {
                                     
                                     {/* Hover glow effect */}
                                     <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500/0 via-purple-500/0 to-orange-500/0 group-hover:from-blue-500/10 group-hover:via-purple-500/10 group-hover:to-orange-500/10 transition-all duration-500 pointer-events-none"></div>
-                                </div>
-                            )}
-                        </div>
+                </div>
+              )}
+            </div>
                         
                         {/* Floating accent elements */}
                         <div className="absolute -top-4 -right-4 w-8 h-8 border-r-2 border-t-2 border-purple-500/30 rounded-tr-lg"></div>
                         <div className="absolute -bottom-4 -left-4 w-8 h-8 border-l-2 border-b-2 border-blue-500/30 rounded-bl-lg"></div>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default LandslideDetection;

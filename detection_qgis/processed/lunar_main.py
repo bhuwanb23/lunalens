@@ -1,6 +1,7 @@
 import sys
 import os
 import numpy as np
+import json
 from datetime import datetime
 import importlib.util
 
@@ -123,8 +124,103 @@ class LunarMainController:
             os.makedirs(output_dir)
             print(f"📁 Created main output directory: {output_dir}")
         
+        # Create result_json directory
+        self.result_json_dir = os.path.join(output_dir, "result_json")
+        if not os.path.exists(self.result_json_dir):
+            os.makedirs(self.result_json_dir)
+            print(f"📁 Created JSON results directory: {self.result_json_dir}")
+        
         # Initialize available analysis modules
         self.initialize_modules()
+    
+    def save_json_result(self, analysis_name, data, filename=None):
+        """
+        Save analysis results as JSON file
+        
+        Args:
+            analysis_name (str): Name of the analysis
+            data (dict): Data to save as JSON
+            filename (str): Optional custom filename
+            
+        Returns:
+            str: Path to saved JSON file
+        """
+        try:
+            if filename is None:
+                filename = f"{analysis_name}_results.json"
+            
+            json_path = os.path.join(self.result_json_dir, filename)
+            
+            # Convert numpy types to native Python types for JSON serialization
+            def convert_numpy_types(obj):
+                if isinstance(obj, np.integer):
+                    return int(obj)
+                elif isinstance(obj, np.floating):
+                    return float(obj)
+                elif isinstance(obj, np.ndarray):
+                    return obj.tolist()
+                elif isinstance(obj, dict):
+                    return {key: convert_numpy_types(value) for key, value in obj.items()}
+                elif isinstance(obj, list):
+                    return [convert_numpy_types(item) for item in obj]
+                else:
+                    return obj
+            
+            # Convert data for JSON serialization
+            json_data = convert_numpy_types(data)
+            
+            # Add metadata
+            json_data['metadata'] = {
+                'analysis_name': analysis_name,
+                'timestamp': datetime.now().isoformat(),
+                'output_directory': self.result_json_dir
+            }
+            
+            with open(json_path, 'w', encoding='utf-8') as f:
+                json.dump(json_data, f, indent=2, ensure_ascii=False)
+            
+            print(f"✅ JSON results saved: {json_path}")
+            return json_path
+            
+        except Exception as e:
+            print(f"❌ Error saving JSON results for {analysis_name}: {e}")
+            return None
+    
+    def save_comprehensive_json_summary(self):
+        """
+        Save a comprehensive JSON summary of all analysis results
+        
+        Returns:
+            str: Path to saved comprehensive JSON file
+        """
+        try:
+            comprehensive_data = {
+                'analysis_summary': {
+                    'total_analyses': len(self.analysis_results),
+                    'completed_analyses': len([r for r in self.analysis_results.values() if r.get('status') == 'completed']),
+                    'available_modules': len(self.available_modules),
+                    'output_directory': self.output_dir,
+                    'json_results_directory': self.result_json_dir
+                },
+                'analysis_results': self.analysis_results,
+                'available_modules': self.available_modules,
+                'metadata': {
+                    'timestamp': datetime.now().isoformat(),
+                    'analysis_type': 'comprehensive_summary'
+                }
+            }
+            
+            json_path = os.path.join(self.result_json_dir, "comprehensive_analysis_summary.json")
+            
+            with open(json_path, 'w', encoding='utf-8') as f:
+                json.dump(comprehensive_data, f, indent=2, ensure_ascii=False)
+            
+            print(f"✅ Comprehensive JSON summary saved: {json_path}")
+            return json_path
+            
+        except Exception as e:
+            print(f"❌ Error saving comprehensive JSON summary: {e}")
+            return None
     
     def initialize_modules(self):
         """
@@ -352,6 +448,15 @@ class LunarMainController:
                 'timestamp': datetime.now().isoformat()
             }
             
+            # Save JSON results
+            json_data = {
+                'dem_path': dem_path,
+                'analysis_type': 'tif_processor',
+                'status': 'completed',
+                'timestamp': datetime.now().isoformat()
+            }
+            self.save_json_result('tif_processor', json_data)
+            
             print("✅ TIF processor analysis completed")
             return True
             
@@ -406,6 +511,16 @@ class LunarMainController:
                     'output_path': slope_output,
                     'timestamp': datetime.now().isoformat()
                 }
+                
+                # Save JSON results
+                json_data = {
+                    'output_path': slope_output,
+                    'analysis_type': 'slope',
+                    'status': 'completed',
+                    'timestamp': datetime.now().isoformat()
+                }
+                self.save_json_result('slope', json_data)
+                
                 print("✅ Slope analysis completed")
                 return True
             else:
@@ -448,6 +563,16 @@ class LunarMainController:
                     'output_dir': 'crater_walls',
                     'timestamp': datetime.now().isoformat()
                 }
+                
+                # Save JSON results
+                json_data = {
+                    'output_dir': 'crater_walls',
+                    'analysis_type': 'crater_edges',
+                    'status': 'completed',
+                    'timestamp': datetime.now().isoformat()
+                }
+                self.save_json_result('crater_edges', json_data)
+                
                 print("✅ Crater edges detection completed")
                 return True
             else:
@@ -490,6 +615,16 @@ class LunarMainController:
                     'output_dir': 'headwalls_scraps',
                     'timestamp': datetime.now().isoformat()
                 }
+                
+                # Save JSON results
+                json_data = {
+                    'output_dir': 'headwalls_scraps',
+                    'analysis_type': 'scraps_headwalls',
+                    'status': 'completed',
+                    'timestamp': datetime.now().isoformat()
+                }
+                self.save_json_result('scraps_headwalls', json_data)
+                
                 print("✅ Scarps/headwalls detection completed")
                 return True
             else:
@@ -532,6 +667,16 @@ class LunarMainController:
                     'output_dir': 'debris_path_output',
                     'timestamp': datetime.now().isoformat()
                 }
+                
+                # Save JSON results
+                json_data = {
+                    'output_dir': 'debris_path_output',
+                    'analysis_type': 'debris_paths',
+                    'status': 'completed',
+                    'timestamp': datetime.now().isoformat()
+                }
+                self.save_json_result('debris_paths', json_data)
+                
                 print("✅ Debris flow paths detection completed")
                 return True
             else:
@@ -579,6 +724,17 @@ class LunarMainController:
                     'stats': elevation_stats,
                     'timestamp': datetime.now().isoformat()
                 }
+                
+                # Save JSON results
+                json_data = {
+                    'dem_path': dem_path,
+                    'analysis_type': 'elevation_statistics',
+                    'status': 'completed',
+                    'stats': elevation_stats,
+                    'timestamp': datetime.now().isoformat()
+                }
+                self.save_json_result('elevation_statistics', json_data)
+                
                 print("✅ Elevation statistics analysis completed")
                 return True
             else:
@@ -619,6 +775,16 @@ class LunarMainController:
                     'output_dir': 'aspect_outputs',
                     'timestamp': datetime.now().isoformat()
                 }
+                
+                # Save JSON results
+                json_data = {
+                    'output_dir': 'aspect_outputs',
+                    'analysis_type': 'lunar_aspect_calculator',
+                    'status': 'completed',
+                    'timestamp': datetime.now().isoformat()
+                }
+                self.save_json_result('lunar_aspect_calculator', json_data)
+                
                 print("✅ Lunar aspect calculator analysis completed")
                 return True
             else:
@@ -661,6 +827,16 @@ class LunarMainController:
                     'output_dir': 'hillshade_outputs',
                     'timestamp': datetime.now().isoformat()
                 }
+                
+                # Save JSON results
+                json_data = {
+                    'output_dir': 'hillshade_outputs',
+                    'analysis_type': 'hillshade',
+                    'status': 'completed',
+                    'timestamp': datetime.now().isoformat()
+                }
+                self.save_json_result('hillshade', json_data)
+                
                 print("✅ Hillshade analysis completed")
                 return True
             else:
@@ -710,6 +886,16 @@ class LunarMainController:
                     'output_dir': 'counter_outputs',
                     'timestamp': datetime.now().isoformat()
                 }
+                
+                # Save JSON results
+                json_data = {
+                    'output_dir': 'counter_outputs',
+                    'analysis_type': 'counter',
+                    'status': 'completed',
+                    'timestamp': datetime.now().isoformat()
+                }
+                self.save_json_result('counter', json_data)
+                
                 print("✅ Contour generation analysis completed")
                 return True
             else:
@@ -757,6 +943,18 @@ class LunarMainController:
                     'curvature_types': list(curvature_stats.keys()),
                     'timestamp': datetime.now().isoformat()
                 }
+                
+                # Save JSON results
+                json_data = {
+                    'dem_path': dem_path,
+                    'analysis_type': 'curvature_statistics',
+                    'status': 'completed',
+                    'curvature_types': list(curvature_stats.keys()),
+                    'curvature_stats': curvature_stats,
+                    'timestamp': datetime.now().isoformat()
+                }
+                self.save_json_result('curvature_statistics', json_data)
+                
                 print("✅ Curvature statistics analysis completed")
                 return True
             else:
@@ -799,6 +997,16 @@ class LunarMainController:
                     'output_dir': 'Terrian_Reggedness_output',
                     'timestamp': datetime.now().isoformat()
                 }
+                
+                # Save JSON results
+                json_data = {
+                    'output_dir': 'Terrian_Reggedness_output',
+                    'analysis_type': 'terrain_ruggedness',
+                    'status': 'completed',
+                    'timestamp': datetime.now().isoformat()
+                }
+                self.save_json_result('terrain_ruggedness', json_data)
+                
                 print("✅ Terrain ruggedness index analysis completed")
                 return True
             else:
@@ -919,6 +1127,10 @@ class LunarMainController:
                 f.write("5. Consider temporal analysis for monitoring changes\n")
             
             print(f"✅ Summary report generated: {report_path}")
+            
+            # Also save comprehensive JSON summary
+            self.save_comprehensive_json_summary()
+            
             return report_path
             
         except Exception as e:
@@ -963,8 +1175,135 @@ if __name__ == "__main__":
     # List available analyses
     controller.list_available_analyses()
     
-    # Use the specific TIF file path provided by the user
-    dem_path = r"F:\ch2_tmc_ndn_20250207T1457348573_d_dtm_d18.tif"
+    def validate_dem_file(file_path):
+        """
+        Validate if the file is a valid DEM file
+        """
+        if not os.path.exists(file_path):
+            return False, "File does not exist"
+        
+        # Check file extension
+        valid_extensions = ['.tif', '.tiff', '.asc', '.dem', '.geotiff']
+        file_ext = os.path.splitext(file_path)[1].lower()
+        
+        if file_ext not in valid_extensions:
+            return False, f"Invalid file extension. Supported: {', '.join(valid_extensions)}"
+        
+        # Check file size (should be reasonable for a DEM)
+        file_size = os.path.getsize(file_path)
+        if file_size < 1024:  # Less than 1KB
+            return False, "File too small to be a valid DEM"
+        
+        return True, "Valid DEM file"
+    
+    def get_dem_file_path():
+        """
+        Interactive function to get DEM file path from user
+        """
+        print("\n" + "="*60)
+        print("🌑 LUNAR TERRAIN ANALYSIS - DEM FILE SELECTION")
+        print("="*60)
+        print("📋 Supported formats: .tif, .tiff, .asc, .dem, .geotiff")
+        print("="*60)
+        
+        # Default path
+        default_path = r"F:\ch2_tmc_ndn_20250207T1457348573_d_dtm_d18.tif"
+        
+        while True:
+            print(f"\n📁 Current DEM file path: {default_path}")
+            
+            # Validate the file
+            is_valid, message = validate_dem_file(default_path)
+            
+            if is_valid:
+                print(f"✅ {message}")
+                print(f"📊 File size: {os.path.getsize(default_path) / (1024*1024):.2f} MB")
+                return default_path
+            
+            print(f"❌ {message}")
+            print("\nOptions:")
+            print("1. Enter a new file path")
+            print("2. Browse for file (if supported)")
+            print("3. Exit program")
+            print("4. Show help")
+            
+            choice = input("\nEnter your choice (1/2/3/4): ").strip()
+            
+            if choice == "1":
+                new_path = input("Enter the full path to your DEM file: ").strip()
+                if new_path:
+                    # Remove quotes if user added them
+                    new_path = new_path.strip('"\'')
+                    default_path = new_path
+                    print(f"📁 Updated path: {default_path}")
+                else:
+                    print("⚠️  No path entered. Using current path.")
+            
+            elif choice == "2":
+                try:
+                    import tkinter as tk
+                    from tkinter import filedialog
+                    
+                    # Create a hidden root window
+                    root = tk.Tk()
+                    root.withdraw()  # Hide the main window
+                    
+                    # Open file dialog
+                    file_path = filedialog.askopenfilename(
+                        title="Select DEM File",
+                        filetypes=[
+                            ("DEM Files", "*.tif *.tiff *.asc *.dem *.geotiff"),
+                            ("All Files", "*.*")
+                        ]
+                    )
+                    
+                    if file_path:
+                        default_path = file_path
+                        print(f"📁 Selected file: {default_path}")
+                    else:
+                        print("⚠️  No file selected.")
+                    
+                    root.destroy()
+                    
+                except ImportError:
+                    print("⚠️  File browser not available (tkinter not installed).")
+                    print("💡 Please enter the file path manually (option 1).")
+                except Exception as e:
+                    print(f"⚠️  Error opening file browser: {e}")
+                    print("💡 Please enter the file path manually (option 1).")
+            
+            elif choice == "3":
+                print("\n👋 Exiting program. Goodbye!")
+                return None
+            
+            elif choice == "4":
+                print("\n" + "="*50)
+                print("📖 HELP - DEM FILE SELECTION")
+                print("="*50)
+                print("🌑 This program analyzes lunar terrain using DEM files.")
+                print("\n📋 Supported file formats:")
+                print("   • .tif / .tiff - GeoTIFF format (recommended)")
+                print("   • .asc - ASCII Grid format")
+                print("   • .dem - Digital Elevation Model format")
+                print("   • .geotiff - GeoTIFF format")
+                print("\n💡 Tips:")
+                print("   • Use absolute paths (e.g., C:\\path\\to\\file.tif)")
+                print("   • Make sure the file is a valid DEM with elevation data")
+                print("   • File should be reasonably large (typically > 1MB)")
+                print("   • The program will validate the file before processing")
+                print("="*50)
+            
+            else:
+                print("⚠️  Invalid choice. Please enter 1, 2, 3, or 4.")
+                print("💡 Tip: You can also press Enter to use option 1 (enter path manually)")
+    
+    # Get DEM file path interactively
+    dem_path = get_dem_file_path()
+    
+    if dem_path is None:
+        # User chose to exit
+        print("✅ Program terminated by user.")
+        sys.exit(0)
     
     # Check if the file exists
     if os.path.exists(dem_path):
