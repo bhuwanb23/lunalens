@@ -65,3 +65,6 @@ json_results/
 symbology-style.db
 # Database files
 *.db
+# Ignore all JSON files in processed and subdirectories
+*.json
+**/*.json
