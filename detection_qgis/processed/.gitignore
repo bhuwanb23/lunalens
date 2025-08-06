@@ -59,3 +59,9 @@ Thumbs.db
 *.csv
 *.txt
 !README.md 
+
+# Data files
+json_results/
+symbology-style.db
+# Database files
+*.db

@@ -28,6 +28,7 @@ import os
 import traceback
 import time
 import numpy as np
+import json
 from datetime import datetime
 
 try:
@@ -52,6 +53,31 @@ except ImportError:
     MATPLOTLIB_AVAILABLE = False
     print("⚠️  Matplotlib not available. Visualization will be limited.")
 
+# --- JSON results folder setup ---
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+JSON_RESULTS_DIR = os.path.join(SCRIPT_DIR, 'json_results')
+os.makedirs(JSON_RESULTS_DIR, exist_ok=True)
+
+def save_json_result(data, filename):
+    """
+    Save analysis results as JSON with metadata
+    """
+    try:
+        json_filepath = os.path.join(JSON_RESULTS_DIR, filename)
+        def np_encoder(obj):
+            if isinstance(obj, np.generic):
+                return obj.item()
+            if isinstance(obj, np.ndarray):
+                return obj.tolist()
+            return str(obj)
+        with open(json_filepath, 'w') as f:
+            json.dump(data, f, indent=2, default=np_encoder)
+        print(f"✅ JSON results saved to: {json_filepath}")
+        return json_filepath
+    except Exception as e:
+        print(f"❌ Error saving JSON results: {e}")
+        return None
+
 class LunarContourGenerator:
     """
     🌙 Lunar Contour Generator for Real-Time DEM Processing
@@ -64,6 +90,7 @@ class LunarContourGenerator:
             
         self.layers = {}
         self.contour_results = {}
+        self.json_results = {}
         print("✅ LunarContourGenerator initialized successfully")
     
     def load_tif_file(self, tif_path, layer_name="Raster", max_size=8192):
@@ -285,6 +312,23 @@ class LunarContourGenerator:
                 
                 self.layers["Lunar_Contours"] = contour_info
                 
+                # --- Save JSON for contour generation ---
+                contour_json = {
+                    'analysis_type': 'contour_generation',
+                    'timestamp': str(datetime.now()),
+                    'input_layer': input_layer_name,
+                    'output_file': output_path,
+                    'interval': interval,
+                    'attribute_name': attribute_name,
+                    'offset': offset,
+                    'simplification_tolerance': simplification_tolerance,
+                    'contour_levels': contour_levels.tolist(),
+                    'num_contours': len(contour_data),
+                    'stats': contour_info['stats']
+                }
+                save_json_result(contour_json, 'contour_generation_results.json')
+                self.json_results['contour_generation'] = contour_json
+                
                 print(f"   - Contour levels: {len(contour_levels)}")
                 print(f"   - Contour lines: {len(contour_data)}")
                 print(f"   - Elevation range: {min_elev:.1f} to {max_elev:.1f} meters")
@@ -373,6 +417,21 @@ class LunarContourGenerator:
             }
             
             self.contour_results[contour_layer_name] = analysis_result
+            
+            # --- Save JSON for contour analysis ---
+            analysis_json = {
+                'analysis_type': 'contour_analysis',
+                'timestamp': str(datetime.now()),
+                'layer_name': contour_layer_name,
+                'num_contours': analysis_result['num_contours'],
+                'num_levels': analysis_result['num_levels'],
+                'elevation_range': analysis_result['elevation_range'],
+                'contour_density': analysis_result['contour_density'],
+                'terrain_complexity': analysis_result['terrain_complexity'],
+                'elevation_distribution': analysis_result['elevation_distribution']
+            }
+            save_json_result(analysis_json, 'contour_analysis_results.json')
+            self.json_results['contour_analysis'] = analysis_json
             
             print(f"\n📊 Analysis Summary:")
             print(f"   - Terrain Complexity: {terrain_complexity}")
@@ -524,6 +583,17 @@ class LunarContourGenerator:
                     if MATPLOTLIB_AVAILABLE:
                         viz_file = os.path.join(output_dir, "contour_visualization.png")
                         self.visualize_contours("Lunar_Contours", viz_file)
+                    
+                    # --- Save summary JSON ---
+                    summary_json = {
+                        'analysis_type': 'contour_pipeline_summary',
+                        'timestamp': str(datetime.now()),
+                        'input_file': tif_path,
+                        'output_dir': output_dir,
+                        'results': self.json_results,
+                        'contour_results': self.contour_results
+                    }
+                    save_json_result(summary_json, 'contour_pipeline_summary.json')
                     
                     print(f"\n✅ Real-time contour processing completed successfully!")
                     print(f"   - Contours saved to: {contour_output}")

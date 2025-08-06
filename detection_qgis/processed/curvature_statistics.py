@@ -1,6 +1,8 @@
 import sys
 import os
 import numpy as np
+import json
+from datetime import datetime
 
 # QGIS setup
 QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.40.9"
@@ -67,10 +69,36 @@ def compute_curvatures(elevation, cellsize=1.0):
         'mean': mean_curv
     }
 
+# --- JSON results folder setup ---
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+JSON_RESULTS_DIR = os.path.join(SCRIPT_DIR, 'json_results')
+os.makedirs(JSON_RESULTS_DIR, exist_ok=True)
+
+def save_json_result(data, filename):
+    """
+    Save analysis results as JSON with metadata
+    """
+    try:
+        json_filepath = os.path.join(JSON_RESULTS_DIR, filename)
+        def np_encoder(obj):
+            if isinstance(obj, np.generic):
+                return obj.item()
+            if isinstance(obj, np.ndarray):
+                return obj.tolist()
+            return str(obj)
+        with open(json_filepath, 'w') as f:
+            json.dump(data, f, indent=2, default=np_encoder)
+        print(f"✅ JSON results saved to: {json_filepath}")
+        return json_filepath
+    except Exception as e:
+        print(f"❌ Error saving JSON results: {e}")
+        return None
+
 class CurvatureStats:
     def __init__(self):
         self.project = QgsProject.instance()
         self.layers = {}
+        self.json_results = {}
 
     def load_tif(self, tif_path, layer_name="Raster"):
         raster_layer = QgsRasterLayer(tif_path, layer_name)
@@ -141,6 +169,26 @@ class CurvatureStats:
         print(f"   - Mean: {np.mean(curvs['tangential']):.6f}, Std: {np.std(curvs['tangential']):.6f}")
         print("5. Mean Curvature: Average of maximum and minimum curvatures. Useful in advanced geomorphology or simulation modeling.")
         print(f"   - Mean: {np.mean(curvs['mean']):.6f}, Std: {np.std(curvs['mean']):.6f}")
+        # --- Save JSON for curvature statistics ---
+        curv_json = {
+            'analysis_type': 'curvature_statistics',
+            'timestamp': str(datetime.now()),
+            'layer_name': layer_name,
+            'input_file': layer.source(),
+            'sample_shape': data.shape,
+            'profile_mean': float(np.mean(curvs['profile'])),
+            'profile_std': float(np.std(curvs['profile'])),
+            'plan_mean': float(np.mean(curvs['plan'])),
+            'plan_std': float(np.std(curvs['plan'])),
+            'gaussian_mean': float(np.mean(curvs['gaussian'])),
+            'gaussian_std': float(np.std(curvs['gaussian'])),
+            'tangential_mean': float(np.mean(curvs['tangential'])),
+            'tangential_std': float(np.std(curvs['tangential'])),
+            'mean_mean': float(np.mean(curvs['mean'])),
+            'mean_std': float(np.std(curvs['mean'])),
+        }
+        save_json_result(curv_json, 'curvature_statistics_results.json')
+        self.json_results['curvature_statistics'] = curv_json
         return curvs
 
     def cleanup(self):

@@ -1,6 +1,7 @@
 import sys
 import os
 import numpy as np
+import json
 from datetime import datetime
 
 # ✅ 1. QGIS installation path (update if needed)
@@ -99,6 +100,31 @@ except Exception as e:
 
 print("✅ QGIS setup completed successfully!")
 
+# --- JSON results folder setup ---
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+JSON_RESULTS_DIR = os.path.join(SCRIPT_DIR, 'json_results')
+os.makedirs(JSON_RESULTS_DIR, exist_ok=True)
+
+def save_json_result(data, filename):
+    """
+    Save analysis results as JSON with metadata
+    """
+    try:
+        json_filepath = os.path.join(JSON_RESULTS_DIR, filename)
+        def np_encoder(obj):
+            if isinstance(obj, np.generic):
+                return obj.item()
+            if isinstance(obj, np.ndarray):
+                return obj.tolist()
+            return str(obj)
+        with open(json_filepath, 'w') as f:
+            json.dump(data, f, indent=2, default=np_encoder)
+        print(f"✅ JSON results saved to: {json_filepath}")
+        return json_filepath
+    except Exception as e:
+        print(f"❌ Error saving JSON results: {e}")
+        return None
+
 class CraterEdgesDetector:
     def __init__(self, output_dir="crater_walls"):
         """
@@ -111,6 +137,7 @@ class CraterEdgesDetector:
         self.layers = {}
         self.output_dir = output_dir
         self.detection_results = {}
+        self.json_results = {}
         
         # Create output directory if it doesn't exist
         if not os.path.exists(output_dir):
@@ -222,6 +249,16 @@ class CraterEdgesDetector:
                         'std': stats.stdDev
                     }
                 }
+                # --- Save JSON ---
+                slope_json = {
+                    'analysis_type': 'slope',
+                    'timestamp': str(datetime.now()),
+                    'input_file': input_path,
+                    'output_file': output_path,
+                    'stats': self.detection_results['slope']['stats']
+                }
+                save_json_result(slope_json, 'crater_slope_analysis.json')
+                self.json_results['slope'] = slope_json
             
             return True
             
@@ -304,6 +341,16 @@ class CraterEdgesDetector:
                         'std': stats.stdDev
                     }
                 }
+                # --- Save JSON ---
+                curvature_json = {
+                    'analysis_type': 'curvature',
+                    'timestamp': str(datetime.now()),
+                    'input_file': input_path,
+                    'output_file': output_path,
+                    'stats': self.detection_results['curvature']['stats']
+                }
+                save_json_result(curvature_json, 'crater_curvature_analysis.json')
+                self.json_results['curvature'] = curvature_json
             
             return True
             
@@ -364,6 +411,15 @@ class CraterEdgesDetector:
                 self.detection_results['hillshade'] = {
                     'path': output_path
                 }
+                # --- Save JSON ---
+                hillshade_json = {
+                    'analysis_type': 'hillshade',
+                    'timestamp': str(datetime.now()),
+                    'input_file': input_path,
+                    'output_file': output_path
+                }
+                save_json_result(hillshade_json, 'crater_hillshade_analysis.json')
+                self.json_results['hillshade'] = hillshade_json
             
             return True
             
@@ -430,6 +486,16 @@ class CraterEdgesDetector:
                         'std': stats.stdDev
                     }
                 }
+                # --- Save JSON ---
+                aspect_json = {
+                    'analysis_type': 'aspect',
+                    'timestamp': str(datetime.now()),
+                    'input_file': input_path,
+                    'output_file': output_path,
+                    'stats': self.detection_results['aspect']['stats']
+                }
+                save_json_result(aspect_json, 'crater_aspect_analysis.json')
+                self.json_results['aspect'] = aspect_json
             
             return True
             
@@ -503,6 +569,17 @@ class CraterEdgesDetector:
                         'density_percent': (stats.sum / (edges_layer.width() * edges_layer.height()) * 100)
                     }
                 }
+                # --- Save JSON ---
+                edges_json = {
+                    'analysis_type': 'crater_edges',
+                    'timestamp': str(datetime.now()),
+                    'input_files': [slope_path, curvature_path],
+                    'output_file': output_path,
+                    'thresholds': self.detection_results['crater_edges']['thresholds'],
+                    'stats': self.detection_results['crater_edges']['stats']
+                }
+                save_json_result(edges_json, 'crater_edges_analysis.json')
+                self.json_results['crater_edges'] = edges_json
             
             return True
             
@@ -560,6 +637,16 @@ class CraterEdgesDetector:
                     'path': output_path,
                     'feature_count': feature_count
                 }
+                # --- Save JSON ---
+                walls_json = {
+                    'analysis_type': 'crater_walls',
+                    'timestamp': str(datetime.now()),
+                    'input_file': input_path,
+                    'output_file': output_path,
+                    'feature_count': feature_count
+                }
+                save_json_result(walls_json, 'crater_walls_analysis.json')
+                self.json_results['crater_walls'] = walls_json
             
             return True
             

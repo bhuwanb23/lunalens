@@ -1,6 +1,8 @@
 import sys
 import os
 import numpy as np
+import json
+# Removed tkinter import
 
 # ✅ 1. QGIS installation path
 QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.40.9"
@@ -18,8 +20,8 @@ if QGIS_PYTHON_PATH not in sys.path:
 
 # ✅ 4. Initialize QGIS Application (only if not already initialized)
 from qgis.core import QgsApplication
+qgs = None  # Global variable for QGIS app
 try:
-    # Check if QGIS is already initialized
     QgsApplication.instance()
     print("✅ QGIS already initialized")
 except:
@@ -32,6 +34,106 @@ except:
 from qgis.core import QgsRasterLayer, QgsProject
 
 print("✅ QGIS setup completed successfully!")
+
+# Set the base output directory to 'json_results' inside the current script's directory
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+RESULTS_DIR = os.path.join(SCRIPT_DIR, 'json_results')
+os.makedirs(RESULTS_DIR, exist_ok=True)
+
+def get_dem_file_path(default_path):
+    """
+    Interactive function to get DEM file path from user (manual entry only)
+    """
+    print(f"\n🔍 DEM file not found at: {default_path}")
+    print("Please provide the correct path to your DEM file.")
+    while True:
+        file_path = input("Enter the full path to your DEM file (or type 'exit' to quit): ").strip()
+        if file_path.lower() == 'exit':
+            print("Exiting...")
+            return None
+        if os.path.exists(file_path):
+            return file_path
+        else:
+            print(f"❌ File not found: {file_path}")
+
+def validate_dem_file(file_path):
+    """
+    Validate DEM file existence and format
+    """
+    if not os.path.exists(file_path):
+        return False, f"File not found: {file_path}"
+    
+    # Check file extension
+    valid_extensions = ['.tif', '.tiff', '.asc', '.dem', '.geotiff']
+    file_ext = os.path.splitext(file_path)[1].lower()
+    
+    if file_ext not in valid_extensions:
+        return False, f"Unsupported file format: {file_ext}. Supported formats: {', '.join(valid_extensions)}"
+    
+    # Check file size
+    file_size = os.path.getsize(file_path)
+    if file_size == 0:
+        return False, "File is empty"
+    
+    return True, f"File is valid ({file_size} bytes)"
+
+def save_json_result(data, output_path, analysis_type="slope"):
+    """
+    Save analysis results as JSON with metadata
+    """
+    try:
+        # Store all results in the json_results directory
+        result_dir = RESULTS_DIR
+        os.makedirs(result_dir, exist_ok=True)
+        
+        # Prepare JSON data
+        json_data = {
+            "analysis_type": analysis_type,
+            "timestamp": str(np.datetime64('now')),
+            "metadata": {
+                "input_file": getattr(data, 'input_file', 'unknown'),
+                "output_directory": result_dir,
+                "analysis_method": getattr(data, 'method', 'unknown')
+            },
+            "statistics": {
+                "min_value": float(np.min(data.slope_data)) if hasattr(data, 'slope_data') else 0.0,
+                "max_value": float(np.max(data.slope_data)) if hasattr(data, 'slope_data') else 0.0,
+                "mean_value": float(np.mean(data.slope_data)) if hasattr(data, 'slope_data') else 0.0,
+                "std_dev": float(np.std(data.slope_data)) if hasattr(data, 'slope_data') else 0.0,
+                "median_value": float(np.median(data.slope_data)) if hasattr(data, 'slope_data') else 0.0
+            },
+            "analysis_results": {
+                "terrain_assessment": getattr(data, 'terrain_assessment', 'unknown'),
+                "landing_suitability": getattr(data, 'landing_suitability', 'unknown'),
+                "risk_level": getattr(data, 'risk_level', 'unknown')
+            },
+            "thresholds": {
+                "gentle_slope_threshold": 5.0,
+                "moderate_slope_threshold": 15.0,
+                "steep_slope_threshold": 30.0
+            },
+            "percentiles": {
+                "p10": float(np.percentile(data.slope_data, 10)) if hasattr(data, 'slope_data') else 0.0,
+                "p25": float(np.percentile(data.slope_data, 25)) if hasattr(data, 'slope_data') else 0.0,
+                "p50": float(np.percentile(data.slope_data, 50)) if hasattr(data, 'slope_data') else 0.0,
+                "p75": float(np.percentile(data.slope_data, 75)) if hasattr(data, 'slope_data') else 0.0,
+                "p90": float(np.percentile(data.slope_data, 90)) if hasattr(data, 'slope_data') else 0.0
+            }
+        }
+        
+        # Save JSON file
+        json_filename = f"{analysis_type}_analysis_results.json"
+        json_filepath = os.path.join(result_dir, json_filename)
+        
+        with open(json_filepath, 'w') as f:
+            json.dump(json_data, f, indent=2, default=str)
+        
+        print(f"✅ JSON results saved to: {json_filepath}")
+        return json_filepath
+        
+    except Exception as e:
+        print(f"❌ Error saving JSON results: {e}")
+        return None
 
 class MoonSlopeCalculator:
     def __init__(self):
@@ -120,6 +222,19 @@ class MoonSlopeCalculator:
                 print(f"   - Max slope: {stats.maximumValue:.2f}°")
                 print(f"   - Mean slope: {stats.mean:.2f}°")
                 print(f"   - Std dev slope: {stats.stdDev:.2f}°")
+                
+                # Create analysis result object for JSON
+                analysis_result = type('AnalysisResult', (), {
+                    'slope_data': np.array([stats.minimumValue, stats.maximumValue, stats.mean, stats.stdDev]),
+                    'input_file': input_path,
+                    'method': 'QGIS Processing',
+                    'terrain_assessment': self.analyze_moon_slope(stats.mean),
+                    'landing_suitability': 'Good' if stats.mean < 15.0 else 'Challenging',
+                    'risk_level': 'Low' if stats.mean < 5.0 else 'Medium' if stats.mean < 15.0 else 'High'
+                })()
+                
+                # Save JSON results
+                save_json_result(analysis_result, output_path, "slope")
                 
                 # Moon-specific slope analysis
                 self.analyze_moon_slope(stats.mean)
@@ -210,6 +325,19 @@ class MoonSlopeCalculator:
             print(f"   - Mean slope: {np.mean(slope_degrees):.2f}°")
             print(f"   - Std dev slope: {np.std(slope_degrees):.2f}°")
             
+            # Create analysis result object for JSON
+            analysis_result = type('AnalysisResult', (), {
+                'slope_data': slope_degrees.flatten(),
+                'input_file': input_layer.source(),
+                'method': 'Manual Calculation',
+                'terrain_assessment': self.analyze_moon_slope(np.mean(slope_degrees)),
+                'landing_suitability': 'Good' if np.mean(slope_degrees) < 15.0 else 'Challenging',
+                'risk_level': 'Low' if np.mean(slope_degrees) < 5.0 else 'Medium' if np.mean(slope_degrees) < 15.0 else 'High'
+            })()
+            
+            # Save JSON results
+            save_json_result(analysis_result, output_path, "slope")
+            
             # Moon-specific slope analysis
             self.analyze_moon_slope(np.mean(slope_degrees))
             
@@ -274,6 +402,19 @@ class MoonSlopeCalculator:
             print(f"   - Mean slope: {np.mean(slope_estimation):.2f}°")
             print(f"   - Std dev slope: {np.std(slope_estimation):.2f}°")
             
+            # Create analysis result object for JSON
+            analysis_result = type('AnalysisResult', (), {
+                'slope_data': slope_estimation.flatten(),
+                'input_file': input_layer.source(),
+                'method': 'Simple Estimation',
+                'terrain_assessment': self.analyze_moon_slope(np.mean(slope_estimation)),
+                'landing_suitability': 'Good' if np.mean(slope_estimation) < 15.0 else 'Challenging',
+                'risk_level': 'Low' if np.mean(slope_estimation) < 5.0 else 'Medium' if np.mean(slope_estimation) < 15.0 else 'High'
+            })()
+            
+            # Save JSON results
+            save_json_result(analysis_result, output_path, "slope")
+            
             # Moon-specific slope analysis
             self.analyze_moon_slope(np.mean(slope_estimation))
             
@@ -305,6 +446,7 @@ class MoonSlopeCalculator:
             terrain_type = "Steep slopes (challenging for landing)"
         
         print(f"     * Terrain: {terrain_type}")
+        return terrain_type
     
     def save_slope_statistics(self, slope_data, output_path):
         """
@@ -343,11 +485,10 @@ class MoonSlopeCalculator:
                 print(f"   - {name}: Numpy array")
     
     def cleanup(self):
-        """
-        Clean up QGIS application
-        """
-        qgs.exitQgis()
-        print("✅ QGIS cleanup completed")
+        global qgs
+        if qgs is not None:
+            qgs.exitQgis()
+            print("✅ QGIS cleanup completed")
 
 def main():
     print("🌙 Moon Slope Calculator")
@@ -356,9 +497,28 @@ def main():
     # Initialize calculator
     calculator = MoonSlopeCalculator()
     
-    # 🔧 CONFIGURE YOUR PATHS HERE
-    tif_path = r"E:\moon extract\data\derived\20250207\PIA12927.tif"
-    slope_output = r"E:\moon extract\data\derived\20250207\moon_slope.tif"
+    # Set default DEM and output paths to the json_results folder
+    tif_path = os.path.join(RESULTS_DIR, 'PIA12927.tif')  # You may prompt for this or let user provide
+    slope_output = os.path.join(RESULTS_DIR, 'moon_slope.tif')
+    
+    # Validate DEM file
+    is_valid, message = validate_dem_file(tif_path)
+    if not is_valid:
+        print(f"❌ {message}")
+        # Try to get correct path interactively
+        tif_path = get_dem_file_path(tif_path)
+        if tif_path is None:
+            print("Exiting due to invalid file path.")
+            calculator.cleanup()
+            return
+        
+        # Validate the new path
+        is_valid, message = validate_dem_file(tif_path)
+        if not is_valid:
+            print(f"❌ {message}")
+            print("Exiting due to invalid file path.")
+            calculator.cleanup()
+            return
     
     print("📁 Step 1: Loading moon TIF file...")
     
@@ -412,6 +572,7 @@ def main():
     else:
         print(f"   - Slope data: {slope_output.replace('.tif', '.npy')}")
     print(f"   - Statistics: {slope_output.replace('.tif', '_slope_stats.txt')}")
+    print(f"   - JSON results: {os.path.join(RESULTS_DIR, 'slope_analysis_results.json')}")
 
 if __name__ == "__main__":
     main()
