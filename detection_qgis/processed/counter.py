@@ -625,39 +625,28 @@ def main():
     processor = None
     try:
         print("🌙 Starting Real-Time Lunar Contour Generator...")
-        
-        # Initialize processor
         processor = LunarContourGenerator()
-        
-        # Example TIF file path (replace with your actual path)
-        tif_path = r"D:\data\derived\20090731\ch1_tmc_ndn_20090731T1812342475_d_oth_d18.tif"
-        
-        # Check if file exists
+        tif_path = r"D:\moon extract\ch2_tmc_ndn_20200208T0057596133_d_dtm_m65.tif"
         if not os.path.exists(tif_path):
-            print(f"⚠️  Example file not found: {tif_path}")
-            print("   Please update the tif_path variable with your actual file path")
+            print(f"❌ DEM file not found: {tif_path}")
+            print("Please check the path and try again.")
             return
-        
-        # Process DEM to generate contours in real-time
         print("\n🔄 Processing DEM for contour generation...")
         success = processor.process_dem_contours(
-            tif_path, 
+            tif_path,
             output_dir="counter_outputs",
-            interval=50,              # 50 meters between contours
-            attribute_name="elevation", # Attribute field name
-            offset=None,              # Start from minimum elevation
-            simplification_tolerance=None  # No simplification for accuracy
+            interval=50,
+            attribute_name="elevation",
+            offset=None,
+            simplification_tolerance=None
         )
-        
         if success:
             print("\n✅ Real-time lunar contour generation completed successfully!")
         else:
             print("\n❌ Real-time contour generation failed!")
-        
     except Exception as e:
         print(f"❌ Error in main function: {e}")
         print(f"   Traceback: {traceback.format_exc()}")
-    
     finally:
         print("\n📝 Usage Instructions:")
         print("1. Update the tif_path variable with your actual TIF file path")

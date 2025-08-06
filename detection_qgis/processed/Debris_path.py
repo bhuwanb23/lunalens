@@ -1,6 +1,7 @@
 import sys
 import os
 import numpy as np
+import json
 from datetime import datetime
 
 # ✅ 1. QGIS installation path (update if needed)
@@ -42,6 +43,7 @@ for path in paths_to_add:
         sys.path.insert(0, path)
 
 # ✅ 4. Initialize QGIS Application
+qgs = None
 try:
     from qgis.core import QgsApplication
     print("✅ QGIS core imported successfully!")
@@ -99,6 +101,31 @@ except Exception as e:
 
 print("✅ QGIS setup completed successfully!")
 
+# --- JSON results folder setup ---
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+JSON_RESULTS_DIR = os.path.join(SCRIPT_DIR, 'json_results')
+os.makedirs(JSON_RESULTS_DIR, exist_ok=True)
+
+def save_json_result(data, filename):
+    """
+    Save analysis results as JSON with metadata
+    """
+    try:
+        json_filepath = os.path.join(JSON_RESULTS_DIR, filename)
+        def np_encoder(obj):
+            if isinstance(obj, np.generic):
+                return obj.item()
+            if isinstance(obj, np.ndarray):
+                return obj.tolist()
+            return str(obj)
+        with open(json_filepath, 'w') as f:
+            json.dump(data, f, indent=2, default=np_encoder)
+        print(f"✅ JSON results saved to: {json_filepath}")
+        return json_filepath
+    except Exception as e:
+        print(f"❌ Error saving JSON results: {e}")
+        return None
+
 class DebrisFlowPathsDetector:
     def __init__(self, output_dir="debris_path_output"):
         """
@@ -111,6 +138,7 @@ class DebrisFlowPathsDetector:
         self.layers = {}
         self.output_dir = output_dir
         self.detection_results = {}
+        self.json_results = {}
         
         # Create output directory if it doesn't exist
         if not os.path.exists(output_dir):
@@ -222,6 +250,16 @@ class DebrisFlowPathsDetector:
                         'std': stats.stdDev
                     }
                 }
+                # --- Save JSON ---
+                slope_json = {
+                    'analysis_type': 'slope',
+                    'timestamp': str(datetime.now()),
+                    'input_file': input_path,
+                    'output_file': output_path,
+                    'stats': self.detection_results['slope']['stats']
+                }
+                save_json_result(slope_json, 'debris_slope_analysis.json')
+                self.json_results['slope'] = slope_json
             
             return True
             
@@ -282,6 +320,15 @@ class DebrisFlowPathsDetector:
                 self.detection_results['hillshade'] = {
                     'path': output_path
                 }
+                # --- Save JSON ---
+                hillshade_json = {
+                    'analysis_type': 'hillshade',
+                    'timestamp': str(datetime.now()),
+                    'input_file': input_path,
+                    'output_file': output_path
+                }
+                save_json_result(hillshade_json, 'debris_hillshade_analysis.json')
+                self.json_results['hillshade'] = hillshade_json
             
             return True
             
@@ -352,6 +399,17 @@ class DebrisFlowPathsDetector:
                         'density_percent': (stats.sum / (debris_layer.width() * debris_layer.height()) * 100)
                     }
                 }
+                # --- Save JSON ---
+                debris_json = {
+                    'analysis_type': 'debris_flow_paths',
+                    'timestamp': str(datetime.now()),
+                    'input_file': slope_path,
+                    'output_file': output_path,
+                    'thresholds': self.detection_results['debris_flow_paths']['thresholds'],
+                    'stats': self.detection_results['debris_flow_paths']['stats']
+                }
+                save_json_result(debris_json, 'debris_flow_paths_analysis.json')
+                self.json_results['debris_flow_paths'] = debris_json
             
             return True
             
@@ -409,6 +467,16 @@ class DebrisFlowPathsDetector:
                     'path': output_path,
                     'feature_count': feature_count
                 }
+                # --- Save JSON ---
+                vector_json = {
+                    'analysis_type': 'debris_vector',
+                    'timestamp': str(datetime.now()),
+                    'input_file': input_path,
+                    'output_file': output_path,
+                    'feature_count': feature_count
+                }
+                save_json_result(vector_json, 'debris_vector_analysis.json')
+                self.json_results['debris_vector'] = vector_json
             
             return True
             
@@ -468,60 +536,46 @@ class DebrisFlowPathsDetector:
         print("4. Consider temporal analysis for debris flow monitoring")
         print("5. Overlay with optical imagery for visual confirmation")
         
+        # --- Save summary JSON ---
+        summary_json = {
+            'analysis_type': 'debris_flow_pipeline_summary',
+            'timestamp': str(datetime.now()),
+            'input_file': dem_path,
+            'results': self.json_results,
+            'detection_results': self.detection_results
+        }
+        save_json_result(summary_json, 'debris_flow_pipeline_summary.json')
+
         return True
     
     def cleanup(self):
         """
         Clean up QGIS application
         """
-        qgs.exitQgis()
-        print("✅ QGIS cleanup completed")
+        if qgs is not None:
+            qgs.exitQgis()
+            print("✅ QGIS cleanup completed")
+        else:
+            print("✅ QGIS cleanup completed (no cleanup needed)")
 
 # Example usage
 if __name__ == "__main__":
-    # Initialize detector
+    # Set the DEM path to the requested file
+    dem_path = r"D:\moon extract\ch2_tmc_ndn_20200208T0057596133_d_dtm_m65.tif"
+    if not os.path.exists(dem_path):
+        print(f"❌ DEM file not found: {dem_path}")
+        print("Please check the path and try again.")
+        sys.exit(1)
     detector = DebrisFlowPathsDetector()
-    
-    # Available DEM files - try them in order of preference
-    dem_files = [
-        r"aspect_outputs\lunar_slope.tif",      # Best for debris flow detection
-        r"aspect_outputs\lunar_aspect.tif",     # Alternative DEM
-        r"terrain_outputs\terrain_output.tif"   # Fallback option
-    ]
-    
-    dem_path = None
-    for file_path in dem_files:
-        if os.path.exists(file_path):
-            dem_path = file_path
-            print(f"✅ DEM file found: {dem_path}")
-            break
-    
-    if dem_path:
-        print("🚀 Starting debris flow paths analysis...")
-        print(f"📊 Using DEM: {os.path.basename(dem_path)}")
-        
-        # Run the complete analysis with optimized parameters
-        success = detector.run_complete_analysis(
-            dem_path=dem_path,
-            slope_threshold=18.0      # Optimized for lunar terrain
-        )
-        
-        if success:
-            print("\n✅ Analysis completed successfully!")
-            print("📁 Check the 'debris_path_output' directory for outputs")
-            print("🎯 Generated files:")
-            print("   - slope.tif (Slope analysis)")
-            print("   - hillshade.tif (Visual enhancement)")
-            print("   - debris_flow_paths.tif (Detected paths)")
-            print("   - debris_flow_paths.shp (Vector polygons)")
-        else:
-            print("\n❌ Analysis failed!")
+    print("🚀 Starting debris flow paths analysis...")
+    print(f"📊 Using DEM: {os.path.basename(dem_path)}")
+    success = detector.run_complete_analysis(
+        dem_path=dem_path,
+        slope_threshold=18.0      # Optimized for lunar terrain
+    )
+    if success:
+        print("\n✅ Analysis completed successfully!")
+        print("📁 Check the 'debris_path_output' directory for outputs")
     else:
-        print("❌ No DEM files found!")
-        print("📝 Expected DEM files:")
-        for file_path in dem_files:
-            print(f"   - {file_path}")
-        print("\n💡 Please ensure DEM files exist before running analysis")
-    
-    # Clean up
+        print("\n❌ Analysis failed!")
     detector.cleanup() 

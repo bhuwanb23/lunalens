@@ -44,6 +44,7 @@ for path in paths_to_add:
         sys.path.insert(0, path)
 
 # ✅ 4. Initialize QGIS Application
+qgs = None
 try:
     from qgis.core import QgsApplication
     print("✅ QGIS core imported successfully!")
@@ -1158,8 +1159,11 @@ class LunarMainController:
             warnings.filterwarnings("ignore")
             
             # Use a more graceful exit approach
+            if qgs is not None:
             qgs.exitQgis()
             print("✅ QGIS cleanup completed")
+            else:
+                print("✅ QGIS cleanup completed (no cleanup needed)")
         except Exception as e:
             # Ignore cleanup errors as they don't affect functionality
             print("✅ QGIS cleanup completed (with warnings)")

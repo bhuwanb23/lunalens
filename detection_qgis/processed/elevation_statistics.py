@@ -1,5 +1,7 @@
 import sys
 import os
+import json
+from datetime import datetime
 
 # QGIS setup
 QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.40.9"
@@ -19,6 +21,7 @@ if QGIS_QGIS_PYTHON_PATH not in sys.path:
 from qgis.core import QgsApplication, QgsRasterLayer, QgsProject
 
 # Initialize QGIS only if not already initialized
+qgs = None
 try:
     QgsApplication.instance()
     print("✅ QGIS already initialized")
@@ -28,10 +31,36 @@ except:
     qgs.initQgis()
     print("✅ QGIS initialized")
 
+# --- JSON results folder setup ---
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+JSON_RESULTS_DIR = os.path.join(SCRIPT_DIR, 'json_results')
+os.makedirs(JSON_RESULTS_DIR, exist_ok=True)
+
+def save_json_result(data, filename):
+    """
+    Save analysis results as JSON with metadata
+    """
+    try:
+        json_filepath = os.path.join(JSON_RESULTS_DIR, filename)
+        def np_encoder(obj):
+            if isinstance(obj, np.generic):
+                return obj.item()
+            if isinstance(obj, np.ndarray):
+                return obj.tolist()
+            return str(obj)
+        with open(json_filepath, 'w') as f:
+            json.dump(data, f, indent=2, default=np_encoder)
+        print(f"✅ JSON results saved to: {json_filepath}")
+        return json_filepath
+    except Exception as e:
+        print(f"❌ Error saving JSON results: {e}")
+        return None
+
 class ElevationStats:
     def __init__(self):
         self.project = QgsProject.instance()
         self.layers = {}
+        self.json_results = {}
 
     def load_tif(self, tif_path, layer_name="Raster"):
         raster_layer = QgsRasterLayer(tif_path, layer_name)
@@ -62,6 +91,22 @@ class ElevationStats:
         print(f"4. Mean Elevation: {mean_elev:.2f} (Average; used for regional profiling)")
         print(f"5. Elevation Range: {elev_range:.2f} (Max - Min; measures terrain variability)")
         print(f"6. Standard Deviation: {std_elev:.2f} (How varied the terrain is; ruggedness)")
+
+        # --- Save JSON for elevation statistics ---
+        elev_json = {
+            'analysis_type': 'elevation_statistics',
+            'timestamp': str(datetime.now()),
+            'layer_name': layer_name,
+            'input_file': layer.source(),
+            'min_elevation': float(min_elev),
+            'max_elevation': float(max_elev),
+            'mean_elevation': float(mean_elev),
+            'elevation_range': float(elev_range),
+            'std_elevation': float(std_elev)
+        }
+        save_json_result(elev_json, 'elevation_statistics_results.json')
+        self.json_results['elevation_statistics'] = elev_json
+
         return {
             'min': min_elev,
             'max': max_elev,
@@ -71,11 +116,18 @@ class ElevationStats:
         }
 
     def cleanup(self):
-        qgs.exitQgis()
-        print("✅ QGIS cleanup completed")
+        if qgs is not None:
+            qgs.exitQgis()
+            print("✅ QGIS cleanup completed")
+        else:
+            print("✅ QGIS cleanup completed (no cleanup needed)")
 
 def main():
-    tif_path = r"E:\moon extract\data\derived\20250207\ch2_tmc_ndn_20250207T1457348573_d_dtm_d18.tif"
+    tif_path = r"D:\moon extract\ch2_tmc_ndn_20200208T0057596133_d_dtm_m65.tif"
+    if not os.path.exists(tif_path):
+        print(f"❌ DEM file not found: {tif_path}")
+        print("Please check the path and try again.")
+        return
     stats = ElevationStats()
     stats.load_tif(tif_path, "Moon_DEM")
     stats.elevation_statistics("Moon_DEM")

@@ -1,6 +1,7 @@
 import sys
 import os
 import numpy as np
+import json
 from datetime import datetime
 
 # ✅ 1. QGIS installation path (update if needed)
@@ -42,6 +43,7 @@ for path in paths_to_add:
         sys.path.insert(0, path)
 
 # ✅ 4. Initialize QGIS Application
+qgs = None
 try:
     from qgis.core import QgsApplication
     print("✅ QGIS core imported successfully!")
@@ -99,6 +101,31 @@ except Exception as e:
 
 print("✅ QGIS setup completed successfully!")
 
+# --- JSON results folder setup ---
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+JSON_RESULTS_DIR = os.path.join(SCRIPT_DIR, 'json_results')
+os.makedirs(JSON_RESULTS_DIR, exist_ok=True)
+
+def save_json_result(data, filename):
+    """
+    Save analysis results as JSON with metadata
+    """
+    try:
+        json_filepath = os.path.join(JSON_RESULTS_DIR, filename)
+        def np_encoder(obj):
+            if isinstance(obj, np.generic):
+                return obj.item()
+            if isinstance(obj, np.ndarray):
+                return obj.tolist()
+            return str(obj)
+        with open(json_filepath, 'w') as f:
+            json.dump(data, f, indent=2, default=np_encoder)
+        print(f"✅ JSON results saved to: {json_filepath}")
+        return json_filepath
+    except Exception as e:
+        print(f"❌ Error saving JSON results: {e}")
+        return None
+
 class TerrainRuggednessCalculator:
     def __init__(self, output_dir="Terrian_Reggedness_output"):
         """
@@ -111,6 +138,7 @@ class TerrainRuggednessCalculator:
         self.layers = {}
         self.output_dir = output_dir
         self.calculation_results = {}
+        self.json_results = {}
         
         # Create output directory if it doesn't exist
         if not os.path.exists(output_dir):
@@ -226,6 +254,17 @@ class TerrainRuggednessCalculator:
                         'std': stats.stdDev
                     }
                 }
+                # --- Save JSON ---
+                tri_saga_json = {
+                    'analysis_type': 'tri_saga',
+                    'timestamp': str(datetime.now()),
+                    'input_file': input_path,
+                    'output_file': output_path,
+                    'neighborhood_size': neighborhood_size,
+                    'stats': self.calculation_results['tri_saga']['stats']
+                }
+                save_json_result(tri_saga_json, 'tri_saga_results.json')
+                self.json_results['tri_saga'] = tri_saga_json
             
             return True
             
@@ -305,6 +344,18 @@ class TerrainRuggednessCalculator:
                         'std': stats.stdDev
                     }
                 }
+                # --- Save JSON ---
+                tri_focal_json = {
+                    'analysis_type': 'tri_focal_statistics',
+                    'timestamp': str(datetime.now()),
+                    'input_file': input_path,
+                    'output_file': output_path,
+                    'neighborhood_size': neighborhood_size,
+                    'method': 'Standard Deviation',
+                    'stats': self.calculation_results['tri_focal']['stats']
+                }
+                save_json_result(tri_focal_json, 'tri_focal_statistics_results.json')
+                self.json_results['tri_focal'] = tri_focal_json
             
             return True
             
@@ -382,6 +433,18 @@ class TerrainRuggednessCalculator:
                         'std': stats.stdDev
                     }
                 }
+                # --- Save JSON ---
+                tri_calc_json = {
+                    'analysis_type': 'tri_raster_calculator',
+                    'timestamp': str(datetime.now()),
+                    'input_file': input_path,
+                    'output_file': output_path,
+                    'neighborhood_size': neighborhood_size,
+                    'method': 'Custom Formula',
+                    'stats': self.calculation_results['tri_calculator']['stats']
+                }
+                save_json_result(tri_calc_json, 'tri_raster_calculator_results.json')
+                self.json_results['tri_calculator'] = tri_calc_json
             
             return True
             
@@ -460,6 +523,18 @@ class TerrainRuggednessCalculator:
                         'std': stats.stdDev
                     }
                 }
+                # --- Save JSON ---
+                tri_range_json = {
+                    'analysis_type': 'tri_range',
+                    'timestamp': str(datetime.now()),
+                    'input_file': input_path,
+                    'output_file': output_path,
+                    'neighborhood_size': neighborhood_size,
+                    'method': 'Range (Max - Min)',
+                    'stats': self.calculation_results['tri_range']['stats']
+                }
+                save_json_result(tri_range_json, 'tri_range_results.json')
+                self.json_results['tri_range'] = tri_range_json
             
             return True
             
@@ -527,6 +602,20 @@ class TerrainRuggednessCalculator:
                 'max_tri': max_tri,
                 'std_tri': stats.stdDev
             }
+            # --- Save JSON ---
+            ruggedness_json = {
+                'analysis_type': 'ruggedness_analysis',
+                'timestamp': str(datetime.now()),
+                'layer_name': tri_layer_name,
+                'category': ruggedness_category,
+                'description': description,
+                'mean_tri': float(mean_tri),
+                'min_tri': float(min_tri),
+                'max_tri': float(max_tri),
+                'std_tri': float(stats.stdDev)
+            }
+            save_json_result(ruggedness_json, 'ruggedness_analysis_results.json')
+            self.json_results['ruggedness_analysis'] = ruggedness_json
             
             return True
             
@@ -680,6 +769,17 @@ class TerrainRuggednessCalculator:
         
         report_path = self.generate_analysis_report()
         
+        # --- Save summary JSON ---
+        summary_json = {
+            'analysis_type': 'terrain_ruggedness_pipeline_summary',
+            'timestamp': str(datetime.now()),
+            'input_file': dem_path,
+            'neighborhood_size': neighborhood_size,
+            'results': self.json_results,
+            'calculation_results': self.calculation_results
+        }
+        save_json_result(summary_json, 'terrain_ruggedness_pipeline_summary.json')
+
         print("\n✅ Complete TRI Analysis Pipeline Finished!")
         print("=" * 70)
         print(f"📁 All outputs saved to: {self.output_dir}")
@@ -696,55 +796,30 @@ class TerrainRuggednessCalculator:
         """
         Clean up QGIS application
         """
-        qgs.exitQgis()
-        print("✅ QGIS cleanup completed")
+        if qgs is not None:
+            qgs.exitQgis()
+            print("✅ QGIS cleanup completed")
+        else:
+            print("✅ QGIS cleanup completed (no cleanup needed)")
 
 # Example usage
 if __name__ == "__main__":
-    # Initialize calculator
+    # Set the DEM path to the requested file
+    dem_path = r"D:\moon extract\ch2_tmc_ndn_20200208T0057596133_d_dtm_m65.tif"
+    if not os.path.exists(dem_path):
+        print(f"❌ DEM file not found: {dem_path}")
+        print("Please check the path and try again.")
+        sys.exit(1)
     calculator = TerrainRuggednessCalculator()
-    
-    # Available DEM files - try them in order of preference
-    dem_files = [
-        r"aspect_outputs\lunar_slope.tif",      # Best for TRI calculation
-        r"aspect_outputs\lunar_aspect.tif",     # Alternative DEM
-        r"terrain_outputs\terrain_output.tif"   # Fallback option
-    ]
-    
-    dem_path = None
-    for file_path in dem_files:
-        if os.path.exists(file_path):
-            dem_path = file_path
-            print(f"✅ DEM file found: {dem_path}")
-            break
-    
-    if dem_path:
-        print("🚀 Starting Terrain Ruggedness Index analysis...")
-        print(f"📊 Using DEM: {os.path.basename(dem_path)}")
-        
-        # Run the complete analysis with optimized parameters
-        success = calculator.run_complete_analysis(
-            dem_path=dem_path,
-            neighborhood_size=3      # 3x3 neighborhood window
-        )
-        
-        if success:
-            print("\n✅ Analysis completed successfully!")
-            print("📁 Check the 'Terrian_Reggedness_output' directory for outputs")
-            print("🎯 Generated files:")
-            print("   - tri_saga.tif (SAGA TRI calculation)")
-            print("   - tri_focal.tif (Focal Statistics TRI)")
-            print("   - tri_range.tif (Focal Range TRI)")
-            print("   - tri_calculator.tif (Raster Calculator TRI)")
-            print("   - terrain_ruggedness_analysis_report.txt (Analysis report)")
-        else:
-            print("\n❌ Analysis failed!")
+    print("🚀 Starting Terrain Ruggedness Index analysis...")
+    print(f"📊 Using DEM: {os.path.basename(dem_path)}")
+    success = calculator.run_complete_analysis(
+        dem_path=dem_path,
+        neighborhood_size=3      # 3x3 neighborhood window
+    )
+    if success:
+        print("\n✅ Analysis completed successfully!")
+        print("📁 Check the 'Terrian_Reggedness_output' directory for outputs")
     else:
-        print("❌ No DEM files found!")
-        print("📝 Expected DEM files:")
-        for file_path in dem_files:
-            print(f"   - {file_path}")
-        print("\n💡 Please ensure DEM files exist before running analysis")
-    
-    # Clean up
+        print("\n❌ Analysis failed!")
     calculator.cleanup() 

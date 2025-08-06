@@ -22,6 +22,7 @@ if QGIS_QGIS_PYTHON_PATH not in sys.path:
 from qgis.core import QgsApplication, QgsRasterLayer, QgsProject
 
 # Initialize QGIS only if not already initialized
+qgs = None
 try:
     QgsApplication.instance()
     print("✅ QGIS already initialized")
@@ -192,11 +193,18 @@ class CurvatureStats:
         return curvs
 
     def cleanup(self):
-        qgs.exitQgis()
-        print("✅ QGIS cleanup completed")
+        if qgs is not None:
+            qgs.exitQgis()
+            print("✅ QGIS cleanup completed")
+        else:
+            print("✅ QGIS cleanup completed (no cleanup needed)")
 
 def main():
-    tif_path = r"E:\moon extract\data\derived\20250207\ch2_tmc_ndn_20250207T1457348573_d_dtm_d18.tif"
+    tif_path = r"D:\moon extract\ch2_tmc_ndn_20200208T0057596133_d_dtm_m65.tif"
+    if not os.path.exists(tif_path):
+        print(f"❌ DEM file not found: {tif_path}")
+        print("Please check the path and try again.")
+        return
     stats = CurvatureStats()
     stats.load_tif(tif_path, "Moon_DEM")
     stats.compute_and_print_curvatures("Moon_DEM")

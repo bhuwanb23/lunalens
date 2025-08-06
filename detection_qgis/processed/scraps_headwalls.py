@@ -42,6 +42,7 @@ for path in paths_to_add:
         sys.path.insert(0, path)
 
 # ✅ 4. Initialize QGIS Application
+qgs = None
 try:
     from qgis.core import QgsApplication
     print("✅ QGIS core imported successfully!")
@@ -815,8 +816,11 @@ class ScarpsHeadwallsDetector:
         """
         Clean up QGIS application
         """
-        qgs.exitQgis()
-        print("✅ QGIS cleanup completed")
+        if qgs is not None:
+            qgs.exitQgis()
+            print("✅ QGIS cleanup completed")
+        else:
+            print("✅ QGIS cleanup completed (no cleanup needed)")
 
 # Example usage
 if __name__ == "__main__":

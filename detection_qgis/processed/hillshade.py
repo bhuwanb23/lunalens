@@ -27,6 +27,7 @@ import os
 import traceback
 import time
 import numpy as np
+import json
 from datetime import datetime
 
 try:
@@ -51,6 +52,31 @@ except ImportError:
     MATPLOTLIB_AVAILABLE = False
     print("⚠️  Matplotlib not available. Visualization will be limited.")
 
+# --- JSON results folder setup ---
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+JSON_RESULTS_DIR = os.path.join(SCRIPT_DIR, 'json_results')
+os.makedirs(JSON_RESULTS_DIR, exist_ok=True)
+
+def save_json_result(data, filename):
+    """
+    Save analysis results as JSON with metadata
+    """
+    try:
+        json_filepath = os.path.join(JSON_RESULTS_DIR, filename)
+        def np_encoder(obj):
+            if isinstance(obj, np.generic):
+                return obj.item()
+            if isinstance(obj, np.ndarray):
+                return obj.tolist()
+            return str(obj)
+        with open(json_filepath, 'w') as f:
+            json.dump(data, f, indent=2, default=np_encoder)
+        print(f"✅ JSON results saved to: {json_filepath}")
+        return json_filepath
+    except Exception as e:
+        print(f"❌ Error saving JSON results: {e}")
+        return None
+
 class LunarHillshadeProcessor:
     """
     🌙 Lunar Hillshade Processor for Real-Time Landslide Detection
@@ -63,6 +89,7 @@ class LunarHillshadeProcessor:
             
         self.layers = {}
         self.analysis_results = {}
+        self.json_results = {}
         print("✅ LunarHillshadeProcessor initialized successfully")
     
     def load_tif_file(self, tif_path, layer_name="Raster", max_size=8192):
@@ -260,6 +287,21 @@ class LunarHillshadeProcessor:
             print(f"   - Mean hillshade value: {hillshade_info['stats']['mean']:.2f}")
             print(f"   - Std dev hillshade value: {hillshade_info['stats']['std']:.2f}")
             
+            # --- Save JSON for hillshade calculation ---
+            hillshade_json = {
+                'analysis_type': 'hillshade_calculation',
+                'timestamp': str(datetime.now()),
+                'input_layer': input_layer_name,
+                'output_file': output_path,
+                'azimuth': azimuth,
+                'altitude': altitude,
+                'z_factor': z_factor,
+                'scale': scale,
+                'stats': hillshade_info['stats']
+            }
+            save_json_result(hillshade_json, 'hillshade_calculation_results.json')
+            self.json_results['hillshade_calculation'] = hillshade_json
+            
             return True
             
         except Exception as e:
@@ -352,6 +394,24 @@ class LunarHillshadeProcessor:
             print(f"   - Risk Level: {risk_level}")
             print(f"   - Risk Factors: {', '.join(risk_factors)}")
             print(f"   - Analysis stored for further processing")
+            
+            # --- Save JSON for landslide analysis ---
+            landslide_json = {
+                'analysis_type': 'landslide_analysis',
+                'timestamp': str(datetime.now()),
+                'layer_name': hillshade_layer_name,
+                'min': analysis_result['min'],
+                'max': analysis_result['max'],
+                'mean': analysis_result['mean'],
+                'std': analysis_result['std'],
+                'contrast_threshold': analysis_result['contrast_threshold'],
+                'shadow_threshold': analysis_result['shadow_threshold'],
+                'bright_threshold': analysis_result['bright_threshold'],
+                'risk_level': analysis_result['risk_level'],
+                'risk_factors': analysis_result['risk_factors']
+            }
+            save_json_result(landslide_json, 'landslide_analysis_results.json')
+            self.json_results['landslide_analysis'] = landslide_json
             
             return analysis_result
             
@@ -524,12 +584,12 @@ def main():
         processor = LunarHillshadeProcessor()
         
         # Example TIF file path (replace with your actual path)
-        tif_path = r"E:\moon extract\data\derived\20250207\PIA12927.tif"
+        tif_path = r"D:\moon extract\ch2_tmc_ndn_20200208T0057596133_d_dtm_m65.tif"
         
         # Check if file exists
         if not os.path.exists(tif_path):
-            print(f"⚠️  Example file not found: {tif_path}")
-            print("   Please update the tif_path variable with your actual file path")
+            print(f"❌ DEM file not found: {tif_path}")
+            print("Please check the path and try again.")
             return
         
         # Process DEM in real-time

@@ -43,6 +43,7 @@ for path in paths_to_add:
         sys.path.insert(0, path)
 
 # ✅ 4. Initialize QGIS Application
+qgs = None
 try:
     from qgis.core import QgsApplication
     print("✅ QGIS core imported successfully!")
@@ -797,58 +798,31 @@ class CraterEdgesDetector:
         """
         Clean up QGIS application
         """
-        qgs.exitQgis()
-        print("✅ QGIS cleanup completed")
+        if qgs is not None:
+            qgs.exitQgis()
+            print("✅ QGIS cleanup completed")
+        else:
+            print("✅ QGIS cleanup completed (no cleanup needed)")
 
 # Example usage
 if __name__ == "__main__":
-    # Initialize detector
+    # Set the DEM path to the requested file
+    dem_path = r"D:\moon extract\ch2_tmc_ndn_20200208T0057596133_d_dtm_m65.tif"
+    if not os.path.exists(dem_path):
+        print(f"❌ DEM file not found: {dem_path}")
+        print("Please check the path and try again.")
+        sys.exit(1)
     detector = CraterEdgesDetector()
-    
-    # Available DEM files - try them in order of preference
-    dem_files = [
-        r"..\aspect_outputs\lunar_slope.tif",      # Best for crater edge detection
-        r"..\aspect_outputs\lunar_aspect.tif",     # Alternative DEM
-        r"..\terrain_outputs\terrain_output.tif"   # Fallback option
-    ]
-    
-    dem_path = None
-    for file_path in dem_files:
-        if os.path.exists(file_path):
-            dem_path = file_path
-            print(f"✅ DEM file found: {dem_path}")
-            break
-    
-    if dem_path:
-        print("🚀 Starting crater edges analysis...")
-        print(f"📊 Using DEM: {os.path.basename(dem_path)}")
-        
-        # Run the complete analysis with optimized parameters
-        success = detector.run_complete_analysis(
-            dem_path=dem_path,
-            slope_threshold=12.0,      # Optimized for lunar terrain
-            curvature_threshold=0.0008  # Optimized for crater detection
-        )
-        
-        if success:
-            print("\n✅ Analysis completed successfully!")
-            print("📁 Check the 'crater_walls' directory for outputs")
-            print("🎯 Generated files:")
-            print("   - slope.tif (Slope analysis)")
-            print("   - curvature.tif (Curvature analysis)")
-            print("   - hillshade.tif (Visual enhancement)")
-            print("   - aspect.tif (Aspect analysis)")
-            print("   - crater_edges.tif (Detected edges)")
-            print("   - crater_walls.shp (Vector polygons)")
-            print("   - crater_edge_analysis_report.txt (Analysis report)")
-        else:
-            print("\n❌ Analysis failed!")
+    print("🚀 Starting crater edges analysis...")
+    print(f"📊 Using DEM: {os.path.basename(dem_path)}")
+    success = detector.run_complete_analysis(
+        dem_path=dem_path,
+        slope_threshold=12.0,      # Optimized for lunar terrain
+        curvature_threshold=0.0008  # Optimized for crater detection
+    )
+    if success:
+        print("\n✅ Analysis completed successfully!")
+        print("📁 Check the 'crater_walls' directory for outputs")
     else:
-        print("❌ No DEM files found!")
-        print("📝 Expected DEM files:")
-        for file_path in dem_files:
-            print(f"   - {file_path}")
-        print("\n💡 Please ensure DEM files exist before running analysis")
-    
-    # Clean up
+        print("\n❌ Analysis failed!")
     detector.cleanup() 
