@@ -161,7 +161,7 @@ const TerrainRuggednessAnalysis = ({ data }) => {
       <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
         <h5 className="text-md font-bold text-gray-200 mb-4">Terrain Distribution</h5>
         <div className="space-y-3">
-          {Object.entries(triData.terrainDistribution).map(([level, data]) => (
+          {Object.entries(triData.terrainDistribution || {}).map(([level, data]) => (
             <div key={level} className="flex items-center justify-between p-3 bg-gray-600/30 rounded-lg">
               <div className="flex items-center">
                 <div className={`w-3 h-3 rounded-full mr-3 ${
@@ -172,8 +172,8 @@ const TerrainRuggednessAnalysis = ({ data }) => {
                 <span className="text-gray-300 capitalize">{level.replace(/([A-Z])/g, ' $1')}</span>
               </div>
               <div className="text-right">
-                <div className="text-sm font-medium text-gray-200">{data.pixels.toLocaleString()} pixels</div>
-                <div className="text-xs text-gray-400">{data.percentage}%</div>
+                <div className="text-sm font-medium text-gray-200">{(data?.pixels || 0).toLocaleString()} pixels</div>
+                <div className="text-xs text-gray-400">{data?.percentage || 0}%</div>
               </div>
             </div>
           ))}
@@ -184,14 +184,14 @@ const TerrainRuggednessAnalysis = ({ data }) => {
       <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
         <h5 className="text-md font-bold text-gray-200 mb-3">TRI Categories</h5>
         <div className="space-y-3">
-          {Object.entries(triData.categories).map(([category, info]) => (
+          {Object.entries(triData.categories || {}).map(([category, info]) => (
             <div key={category} className="flex items-center justify-between p-3 bg-gray-600/30 rounded-lg">
               <div>
                 <div className="font-medium text-gray-200">{category}</div>
-                <div className="text-sm text-gray-400">{info.description}</div>
+                <div className="text-sm text-gray-400">{info?.description || 'No description available'}</div>
               </div>
               <div className={`px-3 py-1 rounded text-xs font-medium ${getRiskBgColor(category)} text-white`}>
-                                 {info.threshold ? `TRI &lt; ${info.threshold}` : 'TRI &gt; 1.0'}
+                                 {info?.threshold ? `TRI &lt; ${info.threshold}` : 'TRI &gt; 1.0'}
               </div>
             </div>
           ))}
@@ -225,7 +225,7 @@ const TerrainRuggednessAnalysis = ({ data }) => {
           Risk Factors
         </h5>
         <ul className="text-gray-300 space-y-1">
-          {triData.riskFactors.map((factor, index) => (
+          {(triData.riskFactors || []).map((factor, index) => (
             <li key={index} className="flex items-center">
               <span className="w-2 h-2 bg-yellow-400 rounded-full mr-3"></span>
               {factor}
@@ -239,10 +239,10 @@ const TerrainRuggednessAnalysis = ({ data }) => {
         <h5 className="text-md font-bold text-gray-200 mb-3">Analysis Notes</h5>
         <div className="text-sm text-gray-400 space-y-2">
           <p>• TRI calculated using {triData.statistics.neighborhoodSize} neighborhood</p>
-          <p>• Mean TRI of {triData.statistics.mean.toFixed(6)} indicates moderate terrain complexity</p>
-          <p>• {triData.terrainDistribution.moderate.percentage}% of terrain is moderately rugged</p>
-          <p>• {triData.terrainDistribution.low.percentage}% of terrain is smooth</p>
-          <p>• TRI values range from {triData.statistics.min.toFixed(6)} to {triData.statistics.max.toFixed(6)}</p>
+          <p>• Mean TRI of {safeFormat(triData.statistics.mean)} indicates moderate terrain complexity</p>
+          <p>• {triData.terrainDistribution?.moderate?.percentage || 0}% of terrain is moderately rugged</p>
+          <p>• {triData.terrainDistribution?.low?.percentage || 0}% of terrain is smooth</p>
+          <p>• TRI values range from {safeFormat(triData.statistics.min)} to {safeFormat(triData.statistics.max)}</p>
         </div>
       </div>
     </div>
