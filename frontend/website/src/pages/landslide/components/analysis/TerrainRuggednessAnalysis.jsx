@@ -1,37 +1,71 @@
 import React from 'react';
 
 const TerrainRuggednessAnalysis = ({ data }) => {
-  // Default data based on terrain_ruggedness_analysis_report.txt and lunar_tri_analysis_report.txt
-  const triData = data || {
-    riskLevel: 'MODERATE',
-    riskFactors: ['Moderate terrain complexity'],
+  // Create safe data with fallbacks for all properties
+  const safeData = {
+    riskLevel: data?.riskLevel ?? 'MODERATE',
+    riskFactors: data?.riskFactors ?? ['Moderate terrain complexity'],
     statistics: {
-      min: 0.000000,
-      max: 8.999971,
-      mean: 7.327898,
-      std: 3.496449,
-      neighborhoodSize: '3x3'
+      min: data?.statistics?.min ?? 0.000000,
+      max: data?.statistics?.max ?? 8.999971,
+      mean: data?.statistics?.mean ?? 7.327898,
+      std: data?.statistics?.std ?? 3.496449,
+      neighborhoodSize: data?.statistics?.neighborhoodSize ?? '3x3'
     },
     percentiles: {
-      p25: 3.32,
-      p50: 6.71,
-      p75: 11.79,
-      p90: 20.02,
-      p95: 28.04,
-      p99: 69.61
+      p25: data?.percentiles?.p25 ?? 3.32,
+      p50: data?.percentiles?.p50 ?? 6.71,
+      p75: data?.percentiles?.p75 ?? 11.79,
+      p90: data?.percentiles?.p90 ?? 20.02,
+      p95: data?.percentiles?.p95 ?? 28.04,
+      p99: data?.percentiles?.p99 ?? 69.61
     },
     terrainDistribution: {
-      low: { pixels: 1062978, percentage: 20.3 },
-      moderate: { pixels: 3527883, percentage: 67.5 },
-      high: { pixels: 334127, percentage: 6.4 },
-      veryHigh: { pixels: 301508, percentage: 5.8 }
+      low: { 
+        pixels: data?.terrainDistribution?.low?.pixels ?? 1062978, 
+        percentage: data?.terrainDistribution?.low?.percentage ?? 20.3 
+      },
+      moderate: { 
+        pixels: data?.terrainDistribution?.moderate?.pixels ?? 3527883, 
+        percentage: data?.terrainDistribution?.moderate?.percentage ?? 67.5 
+      },
+      high: { 
+        pixels: data?.terrainDistribution?.high?.pixels ?? 334127, 
+        percentage: data?.terrainDistribution?.high?.percentage ?? 6.4 
+      },
+      veryHigh: { 
+        pixels: data?.terrainDistribution?.veryHigh?.pixels ?? 301508, 
+        percentage: data?.terrainDistribution?.veryHigh?.percentage ?? 5.8 
+      }
     },
     categories: {
-      'LOW': { threshold: 0.1, description: 'Smooth terrain with minimal elevation variation' },
-      'MODERATE': { threshold: 0.5, description: 'Moderate terrain variation' },
-      'HIGH': { threshold: 1.0, description: 'High terrain ruggedness' },
-      'VERY HIGH': { threshold: null, description: 'Extreme terrain variation' }
+      'LOW': { 
+        threshold: data?.categories?.LOW?.threshold ?? 0.1, 
+        description: data?.categories?.LOW?.description ?? 'Smooth terrain with minimal elevation variation' 
+      },
+      'MODERATE': { 
+        threshold: data?.categories?.MODERATE?.threshold ?? 0.5, 
+        description: data?.categories?.MODERATE?.description ?? 'Moderate terrain variation' 
+      },
+      'HIGH': { 
+        threshold: data?.categories?.HIGH?.threshold ?? 1.0, 
+        description: data?.categories?.HIGH?.description ?? 'High terrain ruggedness' 
+      },
+      'VERY HIGH': { 
+        threshold: data?.categories?.['VERY HIGH']?.threshold ?? null, 
+        description: data?.categories?.['VERY HIGH']?.description ?? 'Extreme terrain variation' 
+      }
     }
+  };
+
+  const triData = safeData;
+
+  // Helper function to safely format numbers
+  const safeFormat = (value, decimals = 6) => {
+    if (value === undefined || value === null || isNaN(value)) {
+      return '0.000000';
+    }
+    return Number(value).toFixed(decimals);
   };
 
   const getRiskColor = (level) => {
@@ -75,19 +109,19 @@ const TerrainRuggednessAnalysis = ({ data }) => {
       {/* Statistics Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600 text-center">
-          <div className="text-2xl font-bold text-blue-400">{triData.statistics.min.toFixed(6)}</div>
+          <div className="text-2xl font-bold text-blue-400">{safeFormat(triData.statistics.min)}</div>
           <div className="text-sm text-gray-400">Minimum</div>
         </div>
         <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600 text-center">
-          <div className="text-2xl font-bold text-orange-400">{triData.statistics.max.toFixed(6)}</div>
+          <div className="text-2xl font-bold text-orange-400">{safeFormat(triData.statistics.max)}</div>
           <div className="text-sm text-gray-400">Maximum</div>
         </div>
         <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600 text-center">
-          <div className="text-2xl font-bold text-green-400">{triData.statistics.mean.toFixed(6)}</div>
+          <div className="text-2xl font-bold text-green-400">{safeFormat(triData.statistics.mean)}</div>
           <div className="text-sm text-gray-400">Mean</div>
         </div>
         <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600 text-center">
-          <div className="text-2xl font-bold text-purple-400">{triData.statistics.std.toFixed(6)}</div>
+          <div className="text-2xl font-bold text-purple-400">{safeFormat(triData.statistics.std)}</div>
           <div className="text-sm text-gray-400">Std Dev</div>
         </div>
       </div>

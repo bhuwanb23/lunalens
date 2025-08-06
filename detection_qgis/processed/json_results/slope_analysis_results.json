@@ -1,17 +1,17 @@
 {
   "analysis_type": "slope",
-  "timestamp": "2025-08-06T06:14:47",
+  "timestamp": "2025-08-06T12:16:28",
   "metadata": {
     "input_file": "D:\\moon extract\\ch2_tmc_ndn_20200208T0057596133_d_dtm_m65.tif",
     "output_directory": "D:\\lunalens\\detection_qgis\\processed\\json_results",
-    "analysis_method": "Manual Calculation"
+    "analysis_method": "QGIS Processing"
   },
   "statistics": {
-    "min_value": 52.43700032457932,
-    "max_value": 89.94375541366534,
-    "mean_value": 89.65348256484572,
-    "std_dev": 0.6937088841789986,
-    "median_value": 89.77854137834507
+    "min_value": 0.0,
+    "max_value": 89.99974822998047,
+    "mean_value": 49.554674934059676,
+    "std_dev": 37.01997651078571,
+    "median_value": 54.10947575312913
   },
   "analysis_results": {
     "terrain_assessment": "Steep slopes (challenging for landing)",
@@ -24,10 +24,10 @@
     "steep_slope_threshold": 30.0
   },
   "percentiles": {
-    "p10": 89.41873097451611,
-    "p25": 89.65372575542284,
-    "p50": 89.77854137834507,
-    "p75": 89.83907389042807,
-    "p90": 89.86862731556685
+    "p10": 8.441638664207055,
+    "p25": 21.104096660517634,
+    "p50": 54.10947575312913,
+    "p75": 82.56005402667118,
+    "p90": 87.02387054865676
   }
 }

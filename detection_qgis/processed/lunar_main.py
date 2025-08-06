@@ -59,10 +59,10 @@ try:
         print("✅ QGIS initialized successfully!")
         
 except ImportError as e:
-    print(f"❌ QGIS core import failed: {e}")
+    print(f"X QGIS core import failed: {e}")
     sys.exit(1)
 except Exception as e:
-    print(f"❌ QGIS initialization failed: {e}")
+    print(f"X QGIS initialization failed: {e}")
     sys.exit(1)
 
 # ✅ 5. Import QGIS modules
@@ -77,7 +77,25 @@ from qgis.core import (
     QgsField,
     QgsVectorFileWriter
 )
-from qgis.PyQt.QtCore import QVariant
+
+# Try to import PyQt5, but make it optional
+try:
+    from qgis.PyQt.QtCore import QVariant
+    QVARIANT_AVAILABLE = True
+except ImportError:
+    # Define a fallback if PyQt5 is not available
+    class QVariant:
+        @staticmethod
+        def Int():
+            return "int"
+        @staticmethod
+        def Double():
+            return "double"
+        @staticmethod
+        def String():
+            return "string"
+    QVARIANT_AVAILABLE = False
+    print("WARNING: PyQt5.QtCore not available, using fallback QVariant")
 
 # Try to import processing
 try:
@@ -85,7 +103,7 @@ try:
     PROCESSING_AVAILABLE = True
     print("✅ Processing module available")
 except ImportError as e:
-    print(f"❌ Processing module import failed: {e}")
+    print(f"X Processing module import failed: {e}")
     PROCESSING_AVAILABLE = False
 
 # ✅ 6. Register native QGIS algorithms
@@ -98,7 +116,7 @@ try:
     Processing.initialize()
     print("✅ GDAL algorithms registered")
 except Exception as e:
-    print(f"⚠️  GDAL algorithms registration failed: {e}")
+    print(f"WARNING: GDAL algorithms registration failed: {e}")
 
 # Suppress QGIS cleanup warnings
 import warnings
@@ -123,13 +141,13 @@ class LunarMainController:
         # Create output directory if it doesn't exist
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
-            print(f"📁 Created main output directory: {output_dir}")
+            print(f"Created main output directory: {output_dir}")
         
         # Create result_json directory
         self.result_json_dir = os.path.join(output_dir, "result_json")
         if not os.path.exists(self.result_json_dir):
             os.makedirs(self.result_json_dir)
-            print(f"📁 Created JSON results directory: {self.result_json_dir}")
+            print(f"Created JSON results directory: {self.result_json_dir}")
         
         # Initialize available analysis modules
         self.initialize_modules()
@@ -180,11 +198,11 @@ class LunarMainController:
             with open(json_path, 'w', encoding='utf-8') as f:
                 json.dump(json_data, f, indent=2, ensure_ascii=False)
             
-            print(f"✅ JSON results saved: {json_path}")
+            print(f"JSON results saved: {json_path}")
             return json_path
             
         except Exception as e:
-            print(f"❌ Error saving JSON results for {analysis_name}: {e}")
+            print(f"Error saving JSON results for {analysis_name}: {e}")
             return None
     
     def save_comprehensive_json_summary(self):
@@ -216,11 +234,11 @@ class LunarMainController:
             with open(json_path, 'w', encoding='utf-8') as f:
                 json.dump(comprehensive_data, f, indent=2, ensure_ascii=False)
             
-            print(f"✅ Comprehensive JSON summary saved: {json_path}")
+            print(f"Comprehensive JSON summary saved: {json_path}")
             return json_path
             
         except Exception as e:
-            print(f"❌ Error saving comprehensive JSON summary: {e}")
+            print(f"Error saving comprehensive JSON summary: {e}")
             return None
     
     def initialize_modules(self):
@@ -343,26 +361,26 @@ class LunarMainController:
                     }
                 except ImportError as e:
                     if config['required']:
-                        print(f"   ❌ {module_name}: {config['description']} (REQUIRED - IMPORT FAILED: {e})")
+                        print(f"   X {module_name}: {config['description']} (REQUIRED - IMPORT FAILED: {e})")
                     else:
-                        print(f"   ⚠️  {module_name}: {config['description']} (Optional - Import Failed: {e})")
+                        print(f"   WARNING {module_name}: {config['description']} (Optional - Import Failed: {e})")
                 except Exception as e:
                     if config['required']:
-                        print(f"   ❌ {module_name}: {config['description']} (REQUIRED - ERROR: {e})")
+                        print(f"   X {module_name}: {config['description']} (REQUIRED - ERROR: {e})")
                     else:
-                        print(f"   ⚠️  {module_name}: {config['description']} (Optional - Error: {e})")
+                        print(f"   WARNING {module_name}: {config['description']} (Optional - Error: {e})")
             else:
                 if config['required']:
-                    print(f"   ❌ {module_name}: {config['description']} (REQUIRED - NOT FOUND)")
+                    print(f"   X {module_name}: {config['description']} (REQUIRED - NOT FOUND)")
                 else:
-                    print(f"   ⚠️  {module_name}: {config['description']} (Optional - Not Found)")
+                    print(f"   WARNING {module_name}: {config['description']} (Optional - Not Found)")
         
-        print(f"📊 Total modules available: {len(self.available_modules)}")
+        print(f"Total modules available: {len(self.available_modules)}")
         print(f"🎯 Expected modules: 11")
         print(f"📈 Success rate: {len(self.available_modules)}/11 ({len(self.available_modules)/11*100:.1f}%)")
         
         if len(self.available_modules) < 11:
-            print("\n⚠️  Some modules are missing or failed to import.")
+            print("\nWARNING: Some modules are missing or failed to import.")
             print("   This may affect the analysis pipeline.")
             print("   Run test_all_modules.py to diagnose import issues.")
     
@@ -384,10 +402,10 @@ class LunarMainController:
             raster_layer = QgsRasterLayer(dem_path, layer_name)
             
             if not raster_layer.isValid():
-                print(f"❌ Failed to load DEM: {dem_path}")
+                print(f"Failed to load DEM: {dem_path}")
                 return False
             else:
-                print(f"✅ Successfully loaded DEM: {dem_path}")
+                print(f"Successfully loaded DEM: {dem_path}")
                 print(f"   - Width: {raster_layer.width()} pixels")
                 print(f"   - Height: {raster_layer.height()} pixels")
                 print(f"   - Extent: {raster_layer.extent()}")
@@ -1160,8 +1178,8 @@ class LunarMainController:
             
             # Use a more graceful exit approach
             if qgs is not None:
-            qgs.exitQgis()
-            print("✅ QGIS cleanup completed")
+                qgs.exitQgis()
+                print("✅ QGIS cleanup completed")
             else:
                 print("✅ QGIS cleanup completed (no cleanup needed)")
         except Exception as e:
@@ -1173,11 +1191,19 @@ class LunarMainController:
 
 # Example usage
 if __name__ == "__main__":
+    import sys
+    
     # Initialize main controller
     controller = LunarMainController()
     
     # List available analyses
     controller.list_available_analyses()
+    
+    # Check if DEM path was provided as command line argument
+    dem_path = None
+    if len(sys.argv) > 1:
+        dem_path = sys.argv[1]
+        print(f"Using DEM path from command line: {dem_path}")
     
     def validate_dem_file(file_path):
         """
@@ -1301,38 +1327,39 @@ if __name__ == "__main__":
                 print("⚠️  Invalid choice. Please enter 1, 2, 3, or 4.")
                 print("💡 Tip: You can also press Enter to use option 1 (enter path manually)")
     
-    # Get DEM file path interactively
-    dem_path = get_dem_file_path()
-    
+    # Get DEM file path interactively or from command line
     if dem_path is None:
-        # User chose to exit
-        print("✅ Program terminated by user.")
-        sys.exit(0)
+        dem_path = get_dem_file_path()
+        
+        if dem_path is None:
+            # User chose to exit
+            print("Program terminated by user.")
+            sys.exit(0)
     
     # Check if the file exists
     if os.path.exists(dem_path):
         print(f"\n✅ DEM file found: {dem_path}")
-        print("🚀 Starting comprehensive lunar analysis...")
-        print(f"📊 Using DEM: {os.path.basename(dem_path)}")
+        print("Starting comprehensive lunar analysis...")
+        print(f"Using DEM: {os.path.basename(dem_path)}")
         
         # Run complete analysis pipeline with all available modules
-        print("🔬 Running complete lunar analysis pipeline...")
+        print("Running complete lunar analysis pipeline...")
         success = controller.run_complete_analysis_pipeline(dem_path)
         
         if success:
-            print("\n✅ Comprehensive lunar analysis completed successfully!")
-            print("📁 Check the 'lunar_analysis_output' directory for summary report")
-            print("🎯 Individual analysis outputs:")
+            print("\nComprehensive lunar analysis completed successfully!")
+            print("Check the 'lunar_analysis_output' directory for summary report")
+            print("Individual analysis outputs:")
             for analysis_name, result in controller.analysis_results.items():
                 if 'output_dir' in result:
                     print(f"   - {analysis_name}: {result['output_dir']}")
                 elif 'output_path' in result:
                     print(f"   - {analysis_name}: {result['output_path']}")
         else:
-            print("\n❌ Comprehensive lunar analysis failed!")
+            print("\nComprehensive lunar analysis failed!")
     else:
-        print(f"❌ DEM file not found: {dem_path}")
-        print("💡 Please ensure the TIF file exists at the specified path")
+        print(f"DEM file not found: {dem_path}")
+        print("Please ensure the TIF file exists at the specified path")
     
     # Clean up
     try:
@@ -1350,37 +1377,50 @@ if __name__ == "__main__":
         sys.stderr.close()
         sys.stderr = original_stderr
         
-        print("✅ Analysis completed successfully!")
+        print("Analysis completed successfully!")
     except Exception as e:
         # Restore stderr in case of other errors
         if 'sys' in locals():
             sys.stderr = original_stderr
-        print("✅ Analysis completed successfully!")
-        print("⚠️  Cleanup warnings can be safely ignored")
+        print("Analysis completed successfully!")
+        print("Cleanup warnings can be safely ignored")
 
     # --- LUNAR RISK ANALYSIS INTEGRATION ---
     try:
         from lunar_risk_analysis import LunarRiskAnalyzer
         import json
 
-        # List of report files generated by the pipeline (relative to processed/)
-        report_files = [
-            "lunar_analysis_output/lunar_slope_analysis_report.txt",
-            "aspect_outputs/lunar_aspect_analysis_report.txt",
-            "lunar_analysis_output/lunar_curvature_analysis_report.txt",
-            "lunar_analysis_output/lunar_elevation_analysis_report.txt",
-            "counter_outputs/lunar_contour_analysis_report.txt",
-            "Terrian_Reggedness_output/terrain_ruggedness_analysis_report.txt",
-            "hillshade_outputs/lunar_landslide_analysis_report.txt",
-            "headwalls_scraps/scarps_headwalls_analysis_report.txt"
+        # List of JSON files generated by the pipeline (relative to processed/)
+        json_files = [
+            "lunar_analysis_output/result_json/slope_analysis_results.json",
+            "lunar_analysis_output/result_json/elevation_statistics_results.json",
+            "lunar_analysis_output/result_json/curvature_statistics_results.json",
+            "lunar_analysis_output/result_json/contour_analysis_results.json",
+            "lunar_analysis_output/result_json/terrain_ruggedness_pipeline_summary.json",
+            "lunar_analysis_output/result_json/hillshade_calculation_results.json",
+            "lunar_analysis_output/result_json/crater_edges_analysis.json",
+            "lunar_analysis_output/result_json/lunar_aspect_calculator_results.json"
         ]
         # Only use files that actually exist
-        report_files = [f for f in report_files if os.path.exists(f)]
+        json_files = [f for f in json_files if os.path.exists(f)]
+        
+        # Debug: Print which files were found
+        print(f"Found {len(json_files)} JSON files:")
+        for f in json_files:
+            print(f"  - {f}")
+        
+        # Also check what's in the result_json directory
+        result_json_dir = "lunar_analysis_output/result_json"
+        if os.path.exists(result_json_dir):
+            print(f"Files in {result_json_dir}:")
+            for f in os.listdir(result_json_dir):
+                if f.endswith('.json'):
+                    print(f"  - {f}")
 
-        if report_files:
-            print(f"📊 Running risk analysis on {len(report_files)} reports...")
+        if json_files:
+            print(f"Running risk analysis on {len(json_files)} JSON files...")
             analyzer = LunarRiskAnalyzer()
-            results = analyzer.process_analysis_reports(report_files)
+            results = analyzer.process_analysis_jsons(json_files)
             
             # Save risk report as text file
             analyzer.generate_risk_report(results, "comprehensive_lunar_risk_report.txt")
@@ -1395,7 +1435,7 @@ if __name__ == "__main__":
             except Exception as e:
                 print(f"❌ Error saving JSON results: {e}")
         else:
-            print("❌ No report files found for risk analysis.")
+            print("No JSON files found for risk analysis.")
 
     except Exception as e:
         print(f"❌ Error running risk analysis: {e}") 

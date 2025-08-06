@@ -4,213 +4,170 @@ import ImageUpload from './components/ImageUpload';
 import ImagePreview from './components/ImagePreview';
 import AnalysisResults from './components/AnalysisResults';
 
-const sampleAnalysisData = {
-    slope: {
-        riskLevel: 'LOW',
-        riskFactors: ['Gentle slopes', 'Low slope variability'],
-        statistics: { min: 0.00, max: 11.54, mean: 5.01, stdDev: 2.00 },
-        thresholds: { gentleSlopes: 3.01, moderateSlopes: 5.01, steepSlopes: 7.01 }
+// Helper to map backend JSON results to frontend analysisData structure
+function mapBackendResultsToAnalysisData(results) {
+  // Slope
+  const slopeJson = results['slope_analysis_results.json'];
+  const slopeStats = slopeJson?.statistics || {};
+  const slope = slopeJson ? {
+    riskLevel: slopeJson.analysis_results?.risk_level || 'N/A',
+    riskFactors: slopeJson.analysis_results?.risk_factors || [],
+    statistics: {
+      min: slopeStats.min_value ?? slopeStats.min ?? 0,
+      max: slopeStats.max_value ?? slopeStats.max ?? 0,
+      mean: slopeStats.mean_value ?? slopeStats.mean ?? 0,
+      stdDev: slopeStats.std_dev ?? slopeStats.std ?? 0,
     },
-    aspect: { 
-        statistics: { min: 0.00, max: 359.9999, mean: 189.4721, stdDev: 89.5053 }
+    thresholds: slopeJson.thresholds || {},
+  } : undefined;
+
+  // Elevation
+  const elevJson = results['elevation_statistics_results.json'];
+  const elevation = elevJson ? {
+    riskLevel: 'N/A',
+    riskFactors: [],
+    statistics: {
+      min: elevJson.min_elevation,
+      max: elevJson.max_elevation,
+      mean: elevJson.mean_elevation,
+      stdDev: elevJson.std_elevation,
+      range: elevJson.elevation_range,
     },
-    elevation: {
-        riskLevel: 'HIGH',
-        riskFactors: ['High terrain variability', 'Extreme elevation differences'],
-        statistics: { min: -3641.00, max: 205.00, mean: -1977.48, stdDev: 625.98, range: 3846.00 },
-        thresholds: {
-            lowElevation: -2679.50,
-            mediumElevation: -1718.00,
-            highElevation: -756.50
-        },
-        elevationDistribution: {
-            low: { pixels: 1000000, percentage: 20.0 },
-            medium: { pixels: 3000000, percentage: 60.0 },
-            high: { pixels: 1000000, percentage: 20.0 }
-        }
+    thresholds: {},
+    elevationDistribution: {},
+  } : undefined;
+
+  // Curvature
+  const curvJson = results['curvature_statistics_results.json'];
+  const curvature = curvJson ? {
+    riskLevel: 'N/A',
+    riskFactors: [],
+    statistics: {
+      profileCurvatureMean: curvJson.profile_mean,
+      profileCurvatureStd: curvJson.profile_std,
+      planCurvatureMean: curvJson.plan_mean,
+      planCurvatureStd: curvJson.plan_std,
+      gaussianCurvatureMean: curvJson.gaussian_mean,
+      gaussianCurvatureStd: curvJson.gaussian_std,
+      meanCurvatureMean: curvJson.mean_mean,
+      meanCurvatureStd: curvJson.mean_std,
     },
-    curvature: {
-        riskLevel: 'HIGH',
-        riskFactors: ['High curvature variability', 'Complex terrain features'],
-        statistics: {
-            profileCurvatureMean: -0.010725,
-            profileCurvatureStd: 3.716956,
-            planCurvatureMean: -0.009777,
-            planCurvatureStd: 3.628621,
-            gaussianCurvatureMean: -0.019519,
-            gaussianCurvatureStd: 385.109967,
-            meanCurvatureMean: 0.024214,
-            meanCurvatureStd: 6.684292
-        },
-        thresholds: {
-            profileCurvatureThreshold: 7.433913,
-            planCurvatureThreshold: 7.257242,
-            gaussianCurvatureThreshold: 770.219933,
-            tangentialCurvatureThreshold: 7.257242,
-            meanCurvatureThreshold: 13.368584
-        }
+    thresholds: {},
+  } : undefined;
+
+  // Roughness (TRI)
+  const triJson = results['terrain_ruggedness_pipeline_summary.json'];
+  let triStats = undefined;
+  if (triJson?.results?.ruggedness_analysis) {
+    triStats = triJson.results.ruggedness_analysis;
+  } else if (triJson?.calculation_results?.ruggedness_analysis) {
+    triStats = triJson.calculation_results.ruggedness_analysis;
+  }
+  const roughness = triStats ? {
+    riskLevel: triStats.category || 'N/A',
+    riskFactors: [triStats.description || ''],
+    statistics: {
+      min: triStats.min_tri,
+      max: triStats.max_tri,
+      mean: triStats.mean_tri,
+      std: triStats.std_tri,
     },
-    roughness: {
-        riskLevel: 'MODERATE',
-        riskFactors: ['Moderate terrain complexity'],
-        statistics: { min: 0.000000, max: 8.999971, mean: 7.327898, std: 3.496449 },
-        percentiles: {
-            p25: 3.32,
-            p50: 6.71,
-            p75: 11.79,
-            p90: 20.02,
-            p95: 28.04,
-            p99: 69.61
-        },
-        terrainDistribution: {
-            low: { pixels: 1062978, percentage: 20.3 },
-            moderate: { pixels: 3527883, percentage: 67.5 },
-            high: { pixels: 334127, percentage: 6.4 },
-            veryHigh: { pixels: 301508, percentage: 5.8 }
-        },
-        categories: {
-            'LOW': { threshold: 0.1, description: 'Smooth terrain with minimal elevation variation' },
-            'MODERATE': { threshold: 0.5, description: 'Moderate terrain variation' },
-            'HIGH': { threshold: 1.0, description: 'High terrain ruggedness' },
-            'VERY HIGH': { threshold: null, description: 'Extreme terrain variation' }
-        }
+    percentiles: {},
+    terrainDistribution: {},
+    categories: {},
+  } : undefined;
+
+  // Contours
+  const contourJson = results['contour_analysis_results.json'];
+  const contours = contourJson ? {
+    terrainComplexity: contourJson.terrain_complexity,
+    statistics: {
+      numberOfContours: contourJson.num_contours,
+      numberOfLevels: contourJson.num_levels,
+      contourDensity: contourJson.contour_density,
+      elevationRange: { min: contourJson.elevation_range?.[0], max: contourJson.elevation_range?.[1] },
     },
-    contours: {
-        terrainComplexity: 'HIGH',
-        statistics: {
-            numberOfContours: 12,
-            numberOfLevels: 14,
-            contourDensity: 0.1211,
-            elevationRange: { min: 0.0, max: 650.0 }
-        },
-        elevationDistribution: {
-            '0-50m': 1,
-            '50-100m': 1,
-            '100-150m': 1,
-            '150-200m': 1,
-            '200-250m': 1,
-            '250-300m': 1,
-            '300-350m': 1,
-            '350-400m': 1,
-            '400-450m': 1,
-            '450-500m': 1,
-            '500-550m': 1,
-            '550-600m': 1
-        }
+    elevationDistribution: contourJson.elevation_distribution,
+  } : undefined;
+
+  // Composite (from risk analysis, if available)
+  const riskJson = results['lunar_risk_analysis_results.json'];
+  const composite = riskJson ? {
+    overallRisk: {
+      score: riskJson.composite_risk_score,
+      level: riskJson.risk_level,
+      description: riskJson.risk_description,
     },
-    scarps: {
-        riskLevel: 'LOW',
-        riskFactors: ['Limited scarp features'],
-        statistics: {
-            scarpPixels: 195324.0000,
-            densityPercent: 0.0504,
-            slopeThreshold: 30.0,
-            curvatureThreshold: 0.001,
-            triThreshold: 0.5,
-            featureCount: 1331731
-        },
-        parameters: {
-            slope: {
-                min: 0.0000,
-                max: 89.9996,
-                mean: 0.2286,
-                std: 4.5305
-            },
-            aspect: {
-                min: 0.0000,
-                max: 359.9999,
-                mean: 189.4721,
-                std: 89.5053
-            },
-            curvature: {
-                min: 0.0000,
-                max: 89.9996,
-                mean: 0.2286,
-                std: 4.5305
-            },
-            tri: {
-                min: 0.0000,
-                max: 89.9996,
-                mean: 0.2286,
-                std: 4.5305
-            }
-        },
-        detectionResults: {
-            totalPixels: 5227296,
-            scarpPixels: 195324,
-            densityPercent: 0.0504,
-            featureCount: 1331731
-        }
-    },
-    composite: {
-        overallRisk: { score: 10.13, level: 'LOW', description: 'Safe terrain for lunar operations' },
-        components: [
-            { name: 'SLOPE', riskScore: 19.23, weight: 0.30, weightedContribution: 5.77 },
-            { name: 'ASPECT', riskScore: 0.00, weight: 0.15, weightedContribution: 0.00 },
-            { name: 'CONTOUR_DENSITY', riskScore: 1.21, weight: 0.10, weightedContribution: 0.12 },
-            { name: 'ELEVATION', riskScore: 0.00, weight: 0.05, weightedContribution: 0.00 },
-            { name: 'ROUGHNESS', riskScore: 34.96, weight: 0.10, weightedContribution: 3.50 },
-            { name: 'PROFILE_GRADIENT', riskScore: 7.43, weight: 0.10, weightedContribution: 0.74 },
-            { name: 'HILLSHADE', riskScore: 0.00, weight: 0.15, weightedContribution: 0.00 },
-            { name: 'CRATER_RATIO', riskScore: 0.00, weight: 0.05, weightedContribution: 0.00 }
-        ],
-        weights: {
-            SLOPE: 0.30,
-            ASPECT: 0.15,
-            CONTOUR_DENSITY: 0.10,
-            ELEVATION: 0.05,
-            ROUGHNESS: 0.10,
-            PROFILE_GRADIENT: 0.10,
-            HILLSHADE: 0.15,
-            CRATER_RATIO: 0.05
-        },
-        analysis: {
-            totalReportsProcessed: 9,
-            availableComponents: ['SLOPE', 'ASPECT', 'CONTOUR_DENSITY', 'ELEVATION', 'ROUGHNESS', 'PROFILE_GRADIENT', 'HILLSHADE', 'CRATER_RATIO'],
-            missingComponents: []
-        }
-    }
-};
+    components: (riskJson.individual_risk_scores && Object.entries(riskJson.individual_risk_scores).map(([name, riskScore]) => ({
+      name: name.toUpperCase(),
+      riskScore,
+      weight: riskJson.parsed_reports?.[name]?.weight || 0,
+      weightedContribution: (riskScore * (riskJson.parsed_reports?.[name]?.weight || 0)),
+    }))) || [],
+    weights: riskJson.weights || {},
+    analysis: riskJson.analysis_summary || {},
+  } : undefined;
+
+  return {
+    slope,
+    elevation,
+    curvature,
+    roughness,
+    contours,
+    composite,
+    // Add more mappings as needed
+  };
+}
 
 const LandslideDetection = () => {
   const [image, setImage] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-    const [showResults, setShowResults] = useState(false);
+  const [showResults, setShowResults] = useState(false);
+  const [analysisData, setAnalysisData] = useState(null);
+  const [error, setError] = useState(null);
 
-    const handleImageUpload = async (fileData) => {
+  const handleImageUpload = async (fileData) => {
     setIsUploading(true);
-        setShowResults(false);
-
-    // Simulate upload delay
+    setShowResults(false);
     await new Promise(resolve => setTimeout(resolve, 2000));
-    
-        // Create a mock file object for ImagePreview
-        const mockFile = {
-            name: fileData.path.split(/[\\/]/).pop(),
-            size: 1024 * 1024 * 50, // 50MB mock size
-            type: 'image/tiff',
-            path: fileData.path
-        };
-
-        setImage(mockFile);
+    const mockFile = {
+      name: fileData.path.split(/[\\/]/).pop(),
+      size: 1024 * 1024 * 50,
+      type: 'image/tiff',
+      path: fileData.path
+    };
+    setImage(mockFile);
     setIsUploading(false);
   };
 
   const startAnalysis = async () => {
     if (!image) return;
-
     setIsAnalyzing(true);
-
-    // Simulate analysis processing
-    await new Promise(resolve => setTimeout(resolve, 3000));
-
+    setError(null);
+    setShowResults(false);
+    try {
+      const response = await fetch('http://localhost:5000/api/lunar-analysis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dem_path: image.path })  
+      });
+      const data = await response.json();
+      if (data.success) {
+        const mapped = mapBackendResultsToAnalysisData(data.results);
+        setAnalysisData(mapped);
         setShowResults(true);
+      } else {
+        setError(data.error || 'Analysis failed.');
+      }
+    } catch (err) {
+      setError('Error connecting to backend.');
+    }
     setIsAnalyzing(false);
   };
 
-    return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100 relative overflow-hidden">
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-gray-100 relative overflow-hidden">
             {/* Animated Background Elements */}
             <div className="fixed inset-0 pointer-events-none z-0">
                 {/* Floating particles */}
@@ -300,7 +257,7 @@ const LandslideDetection = () => {
                             {/* Analysis Results */}
                             <AnalysisResults
                                 isVisible={showResults}
-                                analysisData={sampleAnalysisData}
+                                analysisData={analysisData}
               />
 
               {/* Placeholder for right column when no content */}

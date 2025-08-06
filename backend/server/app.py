@@ -7,6 +7,7 @@ import sys
 import numpy as np
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
+import traceback
 
 # Import database components
 from models import db, User, Analysis, DetectedObject, DensityAnalysis, AnalysisSession, SystemLog
@@ -694,6 +695,79 @@ def test_image(filename):
         return response
     else:
         return jsonify({"error": "File not found", "path": file_path}), 404
+
+@app.route('/api/lunar-analysis', methods=['POST'])
+def run_lunar_analysis():
+    import subprocess
+    import json as pyjson
+    import os
+    from pathlib import Path
+    import traceback
+
+    # Optionally get DEM path from request
+    data = request.get_json() or {}
+    dem_path = data.get('dem_path', None)
+    
+    # If only filename is provided, construct the full path
+    if dem_path and not os.path.isabs(dem_path):
+        # Assume the file is in a common location, or use a default path
+        # You may need to adjust this path based on where your DEM files are stored
+        default_dem_dir = r"D:\moon extract"  # Update this to your actual DEM directory
+        dem_path = os.path.join(default_dem_dir, dem_path)
+    
+    # Path to lunar_main.py (adjust if needed)
+    script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'detection_qgis', 'processed', 'lunar_main.py'))
+    qgis_python = r'C:\Program Files\QGIS 3.40.9\bin\python-qgis-ltr.bat'
+    cmd = [qgis_python, script_path]
+    if dem_path:
+        cmd.append(dem_path)
+
+    # Run the analysis script
+    try:
+        env = os.environ.copy()
+        env['PYTHONIOENCODING'] = 'utf-8'
+        
+        # Change to the script directory so it can find the modules
+        script_dir = os.path.dirname(script_path)
+        result = subprocess.run(cmd, capture_output=True, encoding='utf-8', check=True, env=env, cwd=script_dir)
+        print(f"Script stdout: {result.stdout}")
+        print(f"Script stderr: {result.stderr}")
+    except subprocess.CalledProcessError as e:
+        print(f"Script stdout: {e.stdout}")
+        print(f"Script stderr: {e.stderr}")
+        return jsonify({
+            "success": False, 
+            "error": e.stderr or "Script failed with no error message",
+            "stdout": e.stdout,
+            "stderr": e.stderr,
+            "traceback": traceback.format_exc()
+        }), 500
+    except Exception as e:
+        return jsonify({
+            "success": False, 
+            "error": str(e), 
+            "traceback": traceback.format_exc()
+        }), 500
+
+    # Read all JSON results
+    try:
+        json_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'detection_qgis', 'processed', 'json_results'))
+        results = {}
+        for fname in os.listdir(json_dir):
+            if fname.endswith('.json'):
+                fpath = os.path.join(json_dir, fname)
+                try:
+                    with open(fpath, 'r', encoding='utf-8') as f:
+                        results[fname] = pyjson.load(f)
+                except Exception as ex:
+                    results[fname] = {"error": f"Could not parse: {str(ex)}"}
+        return jsonify({"success": True, "results": results})
+    except Exception as e:
+        return jsonify({
+            "success": False, 
+            "error": str(e), 
+            "traceback": traceback.format_exc()
+        }), 500
 
 if __name__ == '__main__':
     # Initialize boulder detection system

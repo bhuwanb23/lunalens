@@ -1,29 +1,39 @@
 import React from 'react';
 
 const CurvatureAnalysis = ({ data }) => {
-  // Default data based on lunar_curvature_analysis_report.txt
-  const curvatureData = data || {
-    riskLevel: 'HIGH',
-    riskFactors: ['High curvature variability', 'Complex terrain features'],
+  // Create safe data with fallbacks for all properties
+  const safeData = {
+    riskLevel: data?.riskLevel ?? 'HIGH',
+    riskFactors: data?.riskFactors ?? ['High curvature variability', 'Complex terrain features'],
     statistics: {
-      profileCurvatureMean: -0.010725,
-      profileCurvatureStd: 3.716956,
-      planCurvatureMean: -0.009777,
-      planCurvatureStd: 3.628621,
-      gaussianCurvatureMean: -0.019519,
-      gaussianCurvatureStd: 385.109967,
-      tangentialCurvatureMean: -0.009777,
-      tangentialCurvatureStd: 3.628621,
-      meanCurvatureMean: 0.024214,
-      meanCurvatureStd: 6.684292
+      profileCurvatureMean: data?.statistics?.profileCurvatureMean ?? -0.010725,
+      profileCurvatureStd: data?.statistics?.profileCurvatureStd ?? 3.716956,
+      planCurvatureMean: data?.statistics?.planCurvatureMean ?? -0.009777,
+      planCurvatureStd: data?.statistics?.planCurvatureStd ?? 3.628621,
+      gaussianCurvatureMean: data?.statistics?.gaussianCurvatureMean ?? -0.019519,
+      gaussianCurvatureStd: data?.statistics?.gaussianCurvatureStd ?? 385.109967,
+      tangentialCurvatureMean: data?.statistics?.tangentialCurvatureMean ?? -0.009777,
+      tangentialCurvatureStd: data?.statistics?.tangentialCurvatureStd ?? 3.628621,
+      meanCurvatureMean: data?.statistics?.meanCurvatureMean ?? 0.024214,
+      meanCurvatureStd: data?.statistics?.meanCurvatureStd ?? 6.684292
     },
     thresholds: {
-      profileCurvatureThreshold: 7.433913,
-      planCurvatureThreshold: 7.257242,
-      gaussianCurvatureThreshold: 770.219933,
-      tangentialCurvatureThreshold: 7.257242,
-      meanCurvatureThreshold: 13.368584
+      profileCurvatureThreshold: data?.thresholds?.profileCurvatureThreshold ?? 7.433913,
+      planCurvatureThreshold: data?.thresholds?.planCurvatureThreshold ?? 7.257242,
+      gaussianCurvatureThreshold: data?.thresholds?.gaussianCurvatureThreshold ?? 770.219933,
+      tangentialCurvatureThreshold: data?.thresholds?.tangentialCurvatureThreshold ?? 7.257242,
+      meanCurvatureThreshold: data?.thresholds?.meanCurvatureThreshold ?? 13.368584
     }
+  };
+
+  const curvatureData = safeData;
+
+  // Helper function to safely format numbers
+  const safeFormat = (value, decimals = 6) => {
+    if (value === undefined || value === null || isNaN(value)) {
+      return '0.000000';
+    }
+    return Number(value).toFixed(decimals);
   };
 
   const getRiskColor = (level) => {
@@ -71,15 +81,15 @@ const CurvatureAnalysis = ({ data }) => {
           <div className="space-y-2">
             <div className="flex justify-between">
               <span className="text-gray-400">Mean:</span>
-              <span className="text-blue-400 font-mono">{curvatureData.statistics.profileCurvatureMean.toFixed(6)}</span>
+              <span className="text-blue-400 font-mono">{safeFormat(curvatureData.statistics.profileCurvatureMean)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400">Std Dev:</span>
-              <span className="text-orange-400 font-mono">{curvatureData.statistics.profileCurvatureStd.toFixed(6)}</span>
+              <span className="text-orange-400 font-mono">{safeFormat(curvatureData.statistics.profileCurvatureStd)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400">Threshold:</span>
-              <span className="text-purple-400 font-mono">{curvatureData.thresholds.profileCurvatureThreshold.toFixed(6)}</span>
+              <span className="text-purple-400 font-mono">{safeFormat(curvatureData.thresholds.profileCurvatureThreshold)}</span>
             </div>
           </div>
           <p className="text-xs text-gray-500 mt-2">Affects flow acceleration/deceleration</p>
@@ -90,15 +100,15 @@ const CurvatureAnalysis = ({ data }) => {
           <div className="space-y-2">
             <div className="flex justify-between">
               <span className="text-gray-400">Mean:</span>
-              <span className="text-blue-400 font-mono">{curvatureData.statistics.planCurvatureMean.toFixed(6)}</span>
+              <span className="text-blue-400 font-mono">{safeFormat(curvatureData.statistics.planCurvatureMean)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400">Std Dev:</span>
-              <span className="text-orange-400 font-mono">{curvatureData.statistics.planCurvatureStd.toFixed(6)}</span>
+              <span className="text-orange-400 font-mono">{safeFormat(curvatureData.statistics.planCurvatureStd)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400">Threshold:</span>
-              <span className="text-purple-400 font-mono">{curvatureData.thresholds.planCurvatureThreshold.toFixed(6)}</span>
+              <span className="text-purple-400 font-mono">{safeFormat(curvatureData.thresholds.planCurvatureThreshold)}</span>
             </div>
           </div>
           <p className="text-xs text-gray-500 mt-2">Controls flow divergence/convergence</p>
@@ -109,15 +119,15 @@ const CurvatureAnalysis = ({ data }) => {
           <div className="space-y-2">
             <div className="flex justify-between">
               <span className="text-gray-400">Mean:</span>
-              <span className="text-blue-400 font-mono">{curvatureData.statistics.gaussianCurvatureMean.toFixed(6)}</span>
+              <span className="text-blue-400 font-mono">{safeFormat(curvatureData.statistics.gaussianCurvatureMean)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400">Std Dev:</span>
-              <span className="text-orange-400 font-mono">{curvatureData.statistics.gaussianCurvatureStd.toFixed(6)}</span>
+              <span className="text-orange-400 font-mono">{safeFormat(curvatureData.statistics.gaussianCurvatureStd)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400">Threshold:</span>
-              <span className="text-purple-400 font-mono">{curvatureData.thresholds.gaussianCurvatureThreshold.toFixed(6)}</span>
+              <span className="text-purple-400 font-mono">{safeFormat(curvatureData.thresholds.gaussianCurvatureThreshold)}</span>
             </div>
           </div>
           <p className="text-xs text-gray-500 mt-2">Describes local convexity/concavity</p>
@@ -128,15 +138,15 @@ const CurvatureAnalysis = ({ data }) => {
           <div className="space-y-2">
             <div className="flex justify-between">
               <span className="text-gray-400">Mean:</span>
-              <span className="text-blue-400 font-mono">{curvatureData.statistics.meanCurvatureMean.toFixed(6)}</span>
+              <span className="text-blue-400 font-mono">{safeFormat(curvatureData.statistics.meanCurvatureMean)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400">Std Dev:</span>
-              <span className="text-orange-400 font-mono">{curvatureData.statistics.meanCurvatureStd.toFixed(6)}</span>
+              <span className="text-orange-400 font-mono">{safeFormat(curvatureData.statistics.meanCurvatureStd)}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400">Threshold:</span>
-              <span className="text-purple-400 font-mono">{curvatureData.thresholds.meanCurvatureThreshold.toFixed(6)}</span>
+              <span className="text-purple-400 font-mono">{safeFormat(curvatureData.thresholds.meanCurvatureThreshold)}</span>
             </div>
           </div>
           <p className="text-xs text-gray-500 mt-2">Average of principal curvatures</p>
@@ -173,7 +183,7 @@ const CurvatureAnalysis = ({ data }) => {
           Risk Factors
         </h5>
         <ul className="text-gray-300 space-y-1">
-          {curvatureData.riskFactors.map((factor, index) => (
+          {(curvatureData.riskFactors || []).map((factor, index) => (
             <li key={index} className="flex items-center">
               <span className="w-2 h-2 bg-orange-400 rounded-full mr-3"></span>
               {factor}
