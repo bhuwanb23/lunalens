@@ -2,22 +2,30 @@ import React from 'react';
 
 const AspectAnalysis = ({ data }) => {
   // Default data based on lunar_aspect_analysis_report.txt
-  const aspectData = data || {
+  const safeData = {
     statistics: {
-      min: 0.00,
-      max: 359.9999,
-      mean: 189.4721,
-      stdDev: 89.5053
+      min: data?.statistics?.min ?? 0.00,
+      max: data?.statistics?.max ?? 359.9999,
+      mean: data?.statistics?.mean ?? 189.4721,
+      stdDev: data?.statistics?.stdDev ?? 89.5053
     },
     analysis: {
-      flatAreas: -1.0,
-      southFacingAspects: "Higher landslide risk",
-      northFacingAspects: "Lower landslide risk",
-      gentleSlopes: "Low landslide risk",
-      moderateSlopes: "Moderate risk",
-      steepSlopes: "High landslide risk",
-      verySteepSlopes: "Very high risk"
+      flatAreas: data?.analysis?.flatAreas ?? -1.0,
+      southFacingAspects: data?.analysis?.southFacingAspects ?? 'Higher landslide risk',
+      northFacingAspects: data?.analysis?.northFacingAspects ?? 'Lower landslide risk',
+      gentleSlopes: data?.analysis?.gentleSlopes ?? 'Low landslide risk',
+      moderateSlopes: data?.analysis?.moderateSlopes ?? 'Moderate risk',
+      steepSlopes: data?.analysis?.steepSlopes ?? 'High landslide risk',
+      verySteepSlopes: data?.analysis?.verySteepSlopes ?? 'Very high risk'
     }
+  };
+
+  // Helper function to safely format numbers
+  const safeFormat = (value, decimals = 1) => {
+    if (value === undefined || value === null || isNaN(value)) {
+      return '0.0';
+    }
+    return Number(value).toFixed(decimals);
   };
 
   const getAspectDirection = (degrees) => {
@@ -59,20 +67,20 @@ const AspectAnalysis = ({ data }) => {
       {/* Statistics Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600 text-center">
-          <div className="text-2xl font-bold text-blue-400">{aspectData.statistics.min}°</div>
+          <div className="text-2xl font-bold text-blue-400">{safeFormat(safeData.statistics.min)}°</div>
           <div className="text-sm text-gray-400">Minimum</div>
         </div>
         <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600 text-center">
-          <div className="text-2xl font-bold text-orange-400">{aspectData.statistics.max}°</div>
+          <div className="text-2xl font-bold text-orange-400">{safeFormat(safeData.statistics.max)}°</div>
           <div className="text-sm text-gray-400">Maximum</div>
         </div>
         <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600 text-center">
-          <div className="text-2xl font-bold text-green-400">{aspectData.statistics.mean.toFixed(1)}°</div>
+          <div className="text-2xl font-bold text-green-400">{safeFormat(safeData.statistics.mean)}°</div>
           <div className="text-sm text-gray-400">Mean</div>
-          <div className="text-xs text-gray-500 mt-1">{getAspectDirection(aspectData.statistics.mean)}</div>
+          <div className="text-xs text-gray-500 mt-1">{getAspectDirection(safeData.statistics.mean)}</div>
         </div>
         <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600 text-center">
-          <div className="text-2xl font-bold text-purple-400">{aspectData.statistics.stdDev.toFixed(1)}</div>
+          <div className="text-2xl font-bold text-purple-400">{safeFormat(safeData.statistics.stdDev)}</div>
           <div className="text-sm text-gray-400">Std Dev</div>
         </div>
       </div>
@@ -89,7 +97,6 @@ const AspectAnalysis = ({ data }) => {
               'South': '135° - 225°',
               'West': '225° - 315°'
             };
-            
             return (
               <div key={direction} className="bg-gray-600/50 rounded-lg p-3 border border-gray-500">
                 <div className="flex items-center justify-between mb-2">
@@ -98,12 +105,9 @@ const AspectAnalysis = ({ data }) => {
                     {risk.level}
                   </div>
                 </div>
-                <div className="text-sm text-gray-400">{degrees[direction]}</div>
-                <div className={`text-xs mt-1 ${risk.color}`}>
-                  {direction === 'North' && 'Lower landslide risk'}
-                  {direction === 'East' && 'Moderate landslide risk'}
-                  {direction === 'South' && 'Higher landslide risk'}
-                  {direction === 'West' && 'Moderate landslide risk'}
+                <div className="flex items-center justify-between text-xs text-gray-400">
+                  <span>{degrees[direction]}</span>
+                  <span>{safeData.analysis[direction.toLowerCase() + 'FacingAspects'] || '-'}</span>
                 </div>
               </div>
             );
@@ -153,11 +157,14 @@ const AspectAnalysis = ({ data }) => {
       <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
         <h5 className="text-md font-bold text-gray-200 mb-3">Analysis Notes</h5>
         <div className="text-sm text-gray-400 space-y-2">
-          <p>• Aspect values range from 0-360 degrees (0° = North, 90° = East, etc.)</p>
-          <p>• Flat areas are assigned -1 (no aspect)</p>
-          <p>• South-facing aspects (135-225°) have higher landslide risk</p>
-          <p>• North-facing aspects (315-45°) have lower landslide risk</p>
-          <p>• Mean aspect of {aspectData.statistics.mean.toFixed(1)}° indicates predominant orientation</p>
+          <p>• Min: {safeFormat(safeData.statistics.min)}°, Max: {safeFormat(safeData.statistics.max)}°</p>
+          <p>• Mean: {safeFormat(safeData.statistics.mean)}°, Std Dev: {safeFormat(safeData.statistics.stdDev)}°</p>
+          <p>• South-facing: {safeData.analysis.southFacingAspects}</p>
+          <p>• North-facing: {safeData.analysis.northFacingAspects}</p>
+          <p>• Gentle slopes: {safeData.analysis.gentleSlopes}</p>
+          <p>• Moderate slopes: {safeData.analysis.moderateSlopes}</p>
+          <p>• Steep slopes: {safeData.analysis.steepSlopes}</p>
+          <p>• Very steep slopes: {safeData.analysis.verySteepSlopes}</p>
         </div>
       </div>
     </div>

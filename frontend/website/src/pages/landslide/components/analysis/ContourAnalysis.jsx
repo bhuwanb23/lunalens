@@ -2,15 +2,18 @@ import React from 'react';
 
 const ContourAnalysis = ({ data }) => {
   // Default data based on lunar_contour_analysis_report.txt
-  const contourData = data || {
-    terrainComplexity: 'HIGH',
+  const safeData = {
+    terrainComplexity: data?.terrainComplexity ?? 'HIGH',
     statistics: {
-      numberOfContours: 12,
-      numberOfLevels: 14,
-      contourDensity: 0.1211,
-      elevationRange: { min: 0.0, max: 650.0 }
+      numberOfContours: data?.statistics?.numberOfContours ?? 12,
+      numberOfLevels: data?.statistics?.numberOfLevels ?? 14,
+      contourDensity: data?.statistics?.contourDensity ?? 0.1211,
+      elevationRange: {
+        min: data?.statistics?.elevationRange?.min ?? 0.0,
+        max: data?.statistics?.elevationRange?.max ?? 650.0
+      }
     },
-    elevationDistribution: {
+    elevationDistribution: data?.elevationDistribution ?? {
       '0-50m': 1,
       '50-100m': 1,
       '100-150m': 1,
@@ -24,6 +27,14 @@ const ContourAnalysis = ({ data }) => {
       '500-550m': 1,
       '550-600m': 1
     }
+  };
+
+  // Helper function to safely format numbers
+  const safeFormat = (value, decimals = 2) => {
+    if (value === undefined || value === null || isNaN(value)) {
+      return '0.00';
+    }
+    return Number(value).toFixed(decimals);
   };
 
   const getComplexityColor = (complexity) => {
@@ -55,8 +66,8 @@ const ContourAnalysis = ({ data }) => {
             <span className="mr-2">📐</span>
             Contour Analysis
           </h4>
-          <div className={`px-3 py-1 rounded-full ${getComplexityBgColor(contourData.terrainComplexity)} text-white text-xs font-medium`}>
-            {contourData.terrainComplexity} COMPLEXITY
+          <div className={`px-3 py-1 rounded-full ${getComplexityBgColor(safeData.terrainComplexity)} text-white text-xs font-medium`}>
+            {safeData.terrainComplexity} COMPLEXITY
           </div>
         </div>
         <p className="text-gray-400 text-sm">
@@ -67,19 +78,19 @@ const ContourAnalysis = ({ data }) => {
       {/* Statistics Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600 text-center">
-          <div className="text-2xl font-bold text-blue-400">{contourData.statistics.numberOfContours}</div>
+          <div className="text-2xl font-bold text-blue-400">{safeFormat(safeData.statistics.numberOfContours, 0)}</div>
           <div className="text-sm text-gray-400">Contours</div>
         </div>
         <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600 text-center">
-          <div className="text-2xl font-bold text-orange-400">{contourData.statistics.numberOfLevels}</div>
+          <div className="text-2xl font-bold text-orange-400">{safeFormat(safeData.statistics.numberOfLevels, 0)}</div>
           <div className="text-sm text-gray-400">Levels</div>
         </div>
         <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600 text-center">
-          <div className="text-2xl font-bold text-green-400">{contourData.statistics.contourDensity}</div>
+          <div className="text-2xl font-bold text-green-400">{safeFormat(safeData.statistics.contourDensity)}</div>
           <div className="text-sm text-gray-400">Density</div>
         </div>
         <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600 text-center">
-          <div className="text-2xl font-bold text-purple-400">{contourData.statistics.elevationRange.max - contourData.statistics.elevationRange.min} m</div>
+          <div className="text-2xl font-bold text-purple-400">{safeFormat(safeData.statistics.elevationRange.max - safeData.statistics.elevationRange.min)} m</div>
           <div className="text-sm text-gray-400">Range</div>
         </div>
       </div>
@@ -89,15 +100,15 @@ const ContourAnalysis = ({ data }) => {
         <h5 className="text-md font-bold text-gray-200 mb-3">Elevation Range</h5>
         <div className="flex items-center justify-between p-3 bg-gray-600/30 rounded-lg">
           <div className="text-center">
-            <div className="text-lg font-bold text-blue-400">{contourData.statistics.elevationRange.min} m</div>
+            <div className="text-lg font-bold text-blue-400">{safeFormat(safeData.statistics.elevationRange.min)} m</div>
             <div className="text-sm text-gray-400">Minimum</div>
           </div>
           <div className="text-center">
-            <div className="text-lg font-bold text-green-400">{contourData.statistics.elevationRange.max} m</div>
+            <div className="text-lg font-bold text-green-400">{safeFormat(safeData.statistics.elevationRange.max)} m</div>
             <div className="text-sm text-gray-400">Maximum</div>
           </div>
           <div className="text-center">
-            <div className="text-lg font-bold text-orange-400">{contourData.statistics.elevationRange.max - contourData.statistics.elevationRange.min} m</div>
+            <div className="text-lg font-bold text-orange-400">{safeFormat(safeData.statistics.elevationRange.max - safeData.statistics.elevationRange.min)} m</div>
             <div className="text-sm text-gray-400">Total Range</div>
           </div>
         </div>
@@ -107,10 +118,10 @@ const ContourAnalysis = ({ data }) => {
       <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
         <h5 className="text-md font-bold text-gray-200 mb-4">Elevation Distribution</h5>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {Object.entries(contourData.elevationDistribution).map(([range, count]) => (
+          {Object.entries(safeData.elevationDistribution || {}).map(([range, count]) => (
             <div key={range} className="bg-gray-600/30 rounded-lg p-3 text-center">
               <div className="text-sm font-medium text-gray-200">{range}</div>
-              <div className="text-lg font-bold text-blue-400">{count}</div>
+              <div className="text-lg font-bold text-blue-400">{safeFormat(count, 0)}</div>
               <div className="text-xs text-gray-400">contours</div>
             </div>
           ))}
@@ -123,15 +134,15 @@ const ContourAnalysis = ({ data }) => {
         <div className="space-y-3">
           <div className="flex items-center justify-between p-3 bg-gray-600/30 rounded-lg">
             <span className="text-gray-300">Density Value</span>
-            <span className="text-blue-400 font-mono">{contourData.statistics.contourDensity}</span>
+            <span className="text-blue-400 font-mono">{safeFormat(safeData.statistics.contourDensity)}</span>
           </div>
           <div className="flex items-center justify-between p-3 bg-gray-600/30 rounded-lg">
             <span className="text-gray-300">Contours per Level</span>
-            <span className="text-green-400 font-mono">{(contourData.statistics.numberOfContours / contourData.statistics.numberOfLevels).toFixed(2)}</span>
+            <span className="text-green-400 font-mono">{safeFormat(safeData.statistics.numberOfContours / safeData.statistics.numberOfLevels)}</span>
           </div>
           <div className="flex items-center justify-between p-3 bg-gray-600/30 rounded-lg">
             <span className="text-gray-300">Average Elevation Interval</span>
-            <span className="text-orange-400 font-mono">{((contourData.statistics.elevationRange.max - contourData.statistics.elevationRange.min) / contourData.statistics.numberOfLevels).toFixed(1)} m</span>
+            <span className="text-orange-400 font-mono">{safeFormat((safeData.statistics.elevationRange.max - safeData.statistics.elevationRange.min) / safeData.statistics.numberOfLevels, 1)} m</span>
           </div>
         </div>
       </div>
@@ -143,11 +154,11 @@ const ContourAnalysis = ({ data }) => {
           Terrain Complexity Assessment
         </h5>
         <div className="text-sm text-gray-300 space-y-2">
-          <p>• <strong className="text-orange-400">{contourData.terrainComplexity}</strong> terrain complexity detected</p>
-          <p>• {contourData.statistics.numberOfContours} contour lines indicate varied topography</p>
-          <p>• {contourData.statistics.numberOfLevels} elevation levels show significant relief</p>
-          <p>• Contour density of {contourData.statistics.contourDensity} suggests complex terrain features</p>
-          <p>• Elevation range of {contourData.statistics.elevationRange.max - contourData.statistics.elevationRange.min} meters indicates substantial relief</p>
+          <p>• <strong className="text-orange-400">{safeData.terrainComplexity}</strong> terrain complexity detected</p>
+          <p>• {safeFormat(safeData.statistics.numberOfContours, 0)} contour lines indicate varied topography</p>
+          <p>• {safeFormat(safeData.statistics.numberOfLevels, 0)} elevation levels show significant relief</p>
+          <p>• Contour density of {safeFormat(safeData.statistics.contourDensity)} suggests complex terrain features</p>
+          <p>• Elevation range of {safeFormat(safeData.statistics.elevationRange.max - safeData.statistics.elevationRange.min)} meters indicates substantial relief</p>
         </div>
       </div>
 

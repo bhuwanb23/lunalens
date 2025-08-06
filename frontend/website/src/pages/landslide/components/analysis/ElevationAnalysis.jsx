@@ -2,26 +2,43 @@ import React from 'react';
 
 const ElevationAnalysis = ({ data }) => {
   // Default data based on lunar_elevation_analysis_report.txt
-  const elevationData = data || {
-    riskLevel: 'HIGH',
-    riskFactors: ['High terrain variability', 'Extreme elevation differences'],
+  const safeData = {
+    riskLevel: data?.riskLevel ?? 'HIGH',
+    riskFactors: data?.riskFactors ?? ['High terrain variability', 'Extreme elevation differences'],
     statistics: {
-      min: -3641.00,
-      max: 205.00,
-      mean: -1977.48,
-      stdDev: 625.98,
-      range: 3846.00
+      min: data?.statistics?.min ?? -3641.00,
+      max: data?.statistics?.max ?? 205.00,
+      mean: data?.statistics?.mean ?? -1977.48,
+      stdDev: data?.statistics?.stdDev ?? 625.98,
+      range: data?.statistics?.range ?? 3846.00
     },
     thresholds: {
-      lowElevation: -2679.50,
-      mediumElevation: -1718.00,
-      highElevation: -756.50
+      lowElevation: data?.thresholds?.lowElevation ?? -2679.50,
+      mediumElevation: data?.thresholds?.mediumElevation ?? -1718.00,
+      highElevation: data?.thresholds?.highElevation ?? -756.50
     },
     elevationDistribution: {
-      low: { pixels: 1000000, percentage: 20.0 },
-      medium: { pixels: 3000000, percentage: 60.0 },
-      high: { pixels: 1000000, percentage: 20.0 }
+      low: {
+        pixels: data?.elevationDistribution?.low?.pixels ?? 1000000,
+        percentage: data?.elevationDistribution?.low?.percentage ?? 20.0
+      },
+      medium: {
+        pixels: data?.elevationDistribution?.medium?.pixels ?? 3000000,
+        percentage: data?.elevationDistribution?.medium?.percentage ?? 60.0
+      },
+      high: {
+        pixels: data?.elevationDistribution?.high?.pixels ?? 1000000,
+        percentage: data?.elevationDistribution?.high?.percentage ?? 20.0
+      }
     }
+  };
+
+  // Helper function to safely format numbers
+  const safeFormat = (value, decimals = 2) => {
+    if (value === undefined || value === null || isNaN(value)) {
+      return '0.00';
+    }
+    return Number(value).toFixed(decimals);
   };
 
   const getRiskColor = (level) => {
@@ -53,8 +70,8 @@ const ElevationAnalysis = ({ data }) => {
             <span className="mr-2">🏔️</span>
             Elevation Analysis
           </h4>
-          <div className={`px-3 py-1 rounded-full ${getRiskBgColor(elevationData.riskLevel)} text-white text-xs font-medium`}>
-            {elevationData.riskLevel} RISK
+          <div className={`px-3 py-1 rounded-full ${getRiskBgColor(safeData.riskLevel)} text-white text-xs font-medium`}>
+            {safeData.riskLevel} RISK
           </div>
         </div>
         <p className="text-gray-400 text-sm">
@@ -65,19 +82,19 @@ const ElevationAnalysis = ({ data }) => {
       {/* Statistics Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600 text-center">
-          <div className="text-2xl font-bold text-blue-400">{elevationData.statistics.min} m</div>
+          <div className="text-2xl font-bold text-blue-400">{safeFormat(safeData.statistics.min)} m</div>
           <div className="text-sm text-gray-400">Minimum</div>
         </div>
         <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600 text-center">
-          <div className="text-2xl font-bold text-orange-400">{elevationData.statistics.max} m</div>
+          <div className="text-2xl font-bold text-orange-400">{safeFormat(safeData.statistics.max)} m</div>
           <div className="text-sm text-gray-400">Maximum</div>
         </div>
         <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600 text-center">
-          <div className="text-2xl font-bold text-green-400">{elevationData.statistics.mean.toFixed(2)} m</div>
+          <div className="text-2xl font-bold text-green-400">{safeFormat(safeData.statistics.mean)} m</div>
           <div className="text-sm text-gray-400">Mean</div>
         </div>
         <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600 text-center">
-          <div className="text-2xl font-bold text-purple-400">{elevationData.statistics.range} m</div>
+          <div className="text-2xl font-bold text-purple-400">{safeFormat(safeData.statistics.range)} m</div>
           <div className="text-sm text-gray-400">Range</div>
         </div>
       </div>
@@ -87,19 +104,22 @@ const ElevationAnalysis = ({ data }) => {
         <h5 className="text-md font-bold text-gray-200 mb-4">Elevation Distribution</h5>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="text-center">
-            <div className="text-lg font-bold text-blue-400">{elevationData.thresholds.lowElevation} m</div>
+            <div className="text-lg font-bold text-blue-400">{safeFormat(safeData.thresholds.lowElevation)} m</div>
             <div className="text-sm text-gray-400">Low Elevation</div>
             <div className="text-xs text-blue-400 mt-1">Below Sea Level</div>
+            <div className="text-xs text-gray-400 mt-1">{safeFormat(safeData.elevationDistribution.low.pixels, 0)} px ({safeFormat(safeData.elevationDistribution.low.percentage)}%)</div>
           </div>
           <div className="text-center">
-            <div className="text-lg font-bold text-yellow-400">{elevationData.thresholds.mediumElevation} m</div>
+            <div className="text-lg font-bold text-yellow-400">{safeFormat(safeData.thresholds.mediumElevation)} m</div>
             <div className="text-sm text-gray-400">Medium Elevation</div>
             <div className="text-xs text-yellow-400 mt-1">Mid-Range</div>
+            <div className="text-xs text-gray-400 mt-1">{safeFormat(safeData.elevationDistribution.medium.pixels, 0)} px ({safeFormat(safeData.elevationDistribution.medium.percentage)}%)</div>
           </div>
           <div className="text-center">
-            <div className="text-lg font-bold text-green-400">{elevationData.thresholds.highElevation} m</div>
+            <div className="text-lg font-bold text-green-400">{safeFormat(safeData.thresholds.highElevation)} m</div>
             <div className="text-sm text-gray-400">High Elevation</div>
             <div className="text-xs text-green-400 mt-1">Above Sea Level</div>
+            <div className="text-xs text-gray-400 mt-1">{safeFormat(safeData.elevationDistribution.high.pixels, 0)} px ({safeFormat(safeData.elevationDistribution.high.percentage)}%)</div>
           </div>
         </div>
       </div>
@@ -115,14 +135,14 @@ const ElevationAnalysis = ({ data }) => {
             ></div>
           </div>
           <div className="flex justify-between text-xs text-gray-400">
-            <span>{elevationData.statistics.min} m</span>
-            <span>{elevationData.statistics.mean.toFixed(0)} m (mean)</span>
-            <span>{elevationData.statistics.max} m</span>
+            <span>{safeFormat(safeData.statistics.min)} m</span>
+            <span>{safeFormat(safeData.statistics.mean)} m (mean)</span>
+            <span>{safeFormat(safeData.statistics.max)} m</span>
           </div>
         </div>
         <div className="mt-3 text-sm text-gray-400">
-          <p>• Total elevation range: {elevationData.statistics.range} meters</p>
-          <p>• Standard deviation: {elevationData.statistics.stdDev.toFixed(2)} meters</p>
+          <p>• Total elevation range: {safeFormat(safeData.statistics.range)} meters</p>
+          <p>• Standard deviation: {safeFormat(safeData.statistics.stdDev)} meters</p>
         </div>
       </div>
 
@@ -133,7 +153,7 @@ const ElevationAnalysis = ({ data }) => {
           Risk Factors
         </h5>
         <ul className="text-gray-300 space-y-1">
-          {elevationData.riskFactors.map((factor, index) => (
+          {(safeData.riskFactors || []).map((factor, index) => (
             <li key={index} className="flex items-center">
               <span className="w-2 h-2 bg-orange-400 rounded-full mr-3"></span>
               {factor}
@@ -146,11 +166,13 @@ const ElevationAnalysis = ({ data }) => {
       <div className="bg-gray-700/50 rounded-xl p-4 border border-gray-600">
         <h5 className="text-md font-bold text-gray-200 mb-3">Analysis Notes</h5>
         <div className="text-sm text-gray-400 space-y-2">
-          <p>• Elevation range of {elevationData.statistics.range} meters indicates terrain complexity</p>
-          <p>• Standard deviation of {elevationData.statistics.stdDev.toFixed(2)} meters shows surface roughness</p>
-          <p>• Mean elevation of {elevationData.statistics.mean.toFixed(2)} meters provides regional context</p>
-          <p>• Risk assessment based on terrain variability and elevation differences</p>
-          <p>• Negative elevations indicate areas below lunar reference level</p>
+          <p>• Elevation range: {safeFormat(safeData.statistics.min)} m to {safeFormat(safeData.statistics.max)} m</p>
+          <p>• Mean elevation: {safeFormat(safeData.statistics.mean)} m</p>
+          <p>• Std deviation: {safeFormat(safeData.statistics.stdDev)} m</p>
+          <p>• Range: {safeFormat(safeData.statistics.range)} m</p>
+          <p>• Low: {safeFormat(safeData.elevationDistribution.low.pixels, 0)} px ({safeFormat(safeData.elevationDistribution.low.percentage)}%)</p>
+          <p>• Medium: {safeFormat(safeData.elevationDistribution.medium.pixels, 0)} px ({safeFormat(safeData.elevationDistribution.medium.percentage)}%)</p>
+          <p>• High: {safeFormat(safeData.elevationDistribution.high.pixels, 0)} px ({safeFormat(safeData.elevationDistribution.high.percentage)}%)</p>
         </div>
       </div>
 
