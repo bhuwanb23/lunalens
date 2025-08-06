@@ -32,163 +32,127 @@ class LunarRiskAnalyzer:
         }
         self.analysis_results = {}
         
-    def parse_report_file(self, report_path: str) -> Dict[str, Any]:
+    def _extract_stat(self, data, *keys, default=0.0):
         """
-        Parse any lunar terrain analysis report file and extract relevant data
+        Try to extract a statistic from multiple possible keys in the data dict.
+        """
+        for key in keys:
+            # Try nested 'statistics' dict first
+            if 'statistics' in data and key in data['statistics']:
+                return data['statistics'][key]
+            # Try top-level
+            if key in data:
+                return data[key]
+        return default
+
+    def _normalize_analysis_type(self, analysis_type):
+        """
+        Map various analysis_type strings to canonical risk component names.
+        """
+        mapping = {
+            'slope': 'slope',
+            'slope_analysis': 'slope',
+            'slope_analysis_results': 'slope',
+            'elevation': 'elevation',
+            'elevation_statistics': 'elevation',
+            'curvature': 'curvature',
+            'curvature_statistics': 'curvature',
+            'terrain_ruggedness_pipeline_summary': 'roughness',
+            'roughness': 'roughness',
+            'contour': 'contour',
+            'contour_analysis': 'contour',
+            'hillshade': 'hillshade',
+            'hillshade_calculation': 'hillshade',
+            'aspect': 'aspect',
+            'aspect_analysis': 'aspect',
+            'crater': 'crater',
+            'crater_edges': 'crater',
+            'debris_flow_pipeline_summary': 'debris_flow',
+            'tif_loading': None,
+        }
+        return mapping.get(analysis_type, analysis_type)
+
+    def parse_json_file(self, json_path: str) -> Dict[str, Any]:
+        """
+        Load and parse a JSON analysis result file
         """
         try:
-            with open(report_path, 'r', encoding='utf-8') as f:
-                content = f.read()
-            
-            # Initialize data structure
-            report_data = {
-                'timestamp': None,
-                'layer_name': None,
-                'risk_level': None,
-                'risk_factors': [],
-                'statistics': {},
-                'thresholds': {},
-                'analysis_type': None
-            }
-            
-            # Extract timestamp
-            timestamp_match = re.search(r'Generated:\s*(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})', content)
-            if timestamp_match:
-                report_data['timestamp'] = timestamp_match.group(1)
-            
-            # Extract layer name
-            layer_match = re.search(r'Layer:\s*([^\n]+)', content)
-            if layer_match:
-                report_data['layer_name'] = layer_match.group(1).strip()
-            
-            # Extract risk level
-            risk_match = re.search(r'Risk Level:\s*([^\n]+)', content)
-            if risk_match:
-                report_data['risk_level'] = risk_match.group(1).strip()
-            
-            # Extract risk factors
-            risk_factors_match = re.search(r'Risk Factors:\s*([^\n]+)', content)
-            if risk_factors_match:
-                factors = risk_factors_match.group(1).strip()
-                report_data['risk_factors'] = [f.strip() for f in factors.split(',')]
-            
-            # Extract statistics - improved parsing
-            stats_section = re.search(r'Statistics:(.*?)(?=\n\n|\n[A-Z]|$)', content, re.DOTALL)
-            if stats_section:
-                stats_text = stats_section.group(1)
-                # Parse various statistics with improved regex
-                for line in stats_text.split('\n'):
-                    line = line.strip()
-                    if ':' in line and not line.startswith('-') and not line.startswith('•'):
-                        key, value = line.split(':', 1)
-                        key = key.strip().lower().replace(' ', '_').replace('-', '_')
-                        value = value.strip()
-                        
-                        # Try to extract numeric values with improved regex
-                        numeric_match = re.search(r'([+-]?\d*\.?\d+)', value)
-                        if numeric_match:
-                            try:
-                                report_data['statistics'][key] = float(numeric_match.group(1))
-                            except ValueError:
-                                report_data['statistics'][key] = value
-                        else:
-                            report_data['statistics'][key] = value
-            
-            # Also look for statistics in bullet point format
-            bullet_stats = re.findall(r'•\s*([^:]+):\s*([^\n]+)', content)
-            for key, value in bullet_stats:
-                key = key.strip().lower().replace(' ', '_').replace('-', '_')
-                value = value.strip()
-                
-                # Try to extract numeric values
-                numeric_match = re.search(r'([+-]?\d*\.?\d+)', value)
-                if numeric_match:
-                    try:
-                        report_data['statistics'][key] = float(numeric_match.group(1))
-                    except ValueError:
-                        report_data['statistics'][key] = value
-                else:
-                    report_data['statistics'][key] = value
-            
-            # Parse statistics in dash format (e.g., "  - Min: 0.00")
-            dash_stats = re.findall(r'\s*-\s*([^:]+):\s*([^\n]+)', content)
-            for key, value in dash_stats:
-                key = key.strip().lower().replace(' ', '_').replace('-', '_')
-                value = value.strip()
-                
-                # Try to extract numeric values
-                numeric_match = re.search(r'([+-]?\d*\.?\d+)', value)
-                if numeric_match:
-                    try:
-                        report_data['statistics'][key] = float(numeric_match.group(1))
-                    except ValueError:
-                        report_data['statistics'][key] = value
-                else:
-                    report_data['statistics'][key] = value
-            
-            # Extract thresholds
-            thresholds_section = re.search(r'Thresholds:(.*?)(?=\n\n|\n[A-Z]|$)', content, re.DOTALL)
-            if thresholds_section:
-                thresholds_text = thresholds_section.group(1)
-                for line in thresholds_text.split('\n'):
-                    line = line.strip()
-                    if ':' in line and not line.startswith('-'):
-                        key, value = line.split(':', 1)
-                        key = key.strip().lower().replace(' ', '_')
-                        value = value.strip()
-                        
-                        numeric_match = re.search(r'([+-]?\d*\.?\d+)', value)
-                        if numeric_match:
-                            try:
-                                report_data['thresholds'][key] = float(numeric_match.group(1))
-                            except ValueError:
-                                report_data['thresholds'][key] = value
-                        else:
-                            report_data['thresholds'][key] = value
-            
-            # Determine analysis type based on filename or content
-            if 'slope' in report_path.lower():
-                report_data['analysis_type'] = 'slope'
-            elif 'aspect' in report_path.lower():
-                report_data['analysis_type'] = 'aspect'
-            elif 'curvature' in report_path.lower():
-                report_data['analysis_type'] = 'curvature'
-            elif 'elevation' in report_path.lower():
-                report_data['analysis_type'] = 'elevation'
-            elif 'hillshade' in report_path.lower():
-                report_data['analysis_type'] = 'hillshade'
-            elif 'contour' in report_path.lower():
-                report_data['analysis_type'] = 'contour'
-            elif 'tri' in report_path.lower() or 'ruggedness' in report_path.lower():
-                report_data['analysis_type'] = 'roughness'
-            elif 'crater' in report_path.lower():
-                report_data['analysis_type'] = 'crater'
-            elif 'landslide' in report_path.lower():
-                report_data['analysis_type'] = 'landslide'
-            elif 'scarps' in report_path.lower() or 'headwalls' in report_path.lower():
-                report_data['analysis_type'] = 'scarps_headwalls'
-            
-            print(f"✅ Successfully parsed report: {os.path.basename(report_path)}")
-            print(f"   - Analysis Type: {report_data['analysis_type']}")
-            print(f"   - Risk Level: {report_data['risk_level']}")
-            print(f"   - Statistics: {len(report_data['statistics'])} values extracted")
-            if report_data['statistics']:
-                print(f"   - Sample stats: {list(report_data['statistics'].keys())[:3]}")
-            
-            return report_data
-            
+            with open(json_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            # Try to infer analysis_type if not present
+            if 'analysis_type' not in data:
+                for k in ['slope', 'elevation', 'curvature', 'contour', 'hillshade', 'aspect', 'crater', 'roughness']:
+                    if k in json_path.lower():
+                        data['analysis_type'] = k
+                        break
+            print(f"✅ Loaded JSON: {os.path.basename(json_path)} as {data.get('analysis_type')}")
+            return data
         except Exception as e:
-            print(f"❌ Error parsing report file {report_path}: {e}")
+            print(f"❌ Error loading JSON file {json_path}: {e}")
             return {}
+
+    def process_analysis_jsons(self, json_paths: List[str]) -> Dict[str, Any]:
+        """
+        Process multiple analysis JSON files and generate comprehensive risk assessment
+        """
+        print("🚀 Starting comprehensive lunar terrain risk analysis (JSON mode)...")
+        all_risk_scores = {}
+        parsed_reports = {}
+        # Parse all JSONs
+        for json_path in json_paths:
+            report_data = self.parse_json_file(json_path)
+            if report_data:
+                analysis_type = report_data.get('analysis_type')
+                canonical = self._normalize_analysis_type(analysis_type)
+                if canonical:
+                    parsed_reports[canonical] = report_data
+        # Calculate individual risk scores (same as before)
+        if 'slope' in parsed_reports:
+            all_risk_scores['slope'] = self.calculate_slope_risk_score(parsed_reports['slope'])
+        if 'aspect' in parsed_reports:
+            all_risk_scores['aspect'] = self.calculate_aspect_risk_score(parsed_reports['aspect'])
+        if 'hillshade' in parsed_reports:
+            all_risk_scores['hillshade'] = self.calculate_hillshade_risk_score(parsed_reports['hillshade'])
+        if 'contour' in parsed_reports:
+            all_risk_scores['contour_density'] = self.calculate_contour_density_risk_score(parsed_reports['contour'])
+        if 'elevation' in parsed_reports:
+            all_risk_scores['elevation'] = self.calculate_elevation_risk_score(parsed_reports['elevation'])
+        if 'roughness' in parsed_reports:
+            all_risk_scores['roughness'] = self.calculate_roughness_risk_score(parsed_reports['roughness'])
+        if 'curvature' in parsed_reports:
+            all_risk_scores['profile_gradient'] = self.calculate_curvature_risk_score(parsed_reports['curvature'])
+        # Set default values for missing components
+        missing_components = set(self.risk_weights.keys()) - set(all_risk_scores.keys())
+        for component in missing_components:
+            all_risk_scores[component] = 0.0
+            print(f"⚠️  No data for {component}, using default risk score: 0.0")
+        # Calculate composite risk score
+        composite_score = self.calculate_composite_risk_score(all_risk_scores)
+        risk_level, risk_description = self.determine_risk_level(composite_score)
+        # Generate comprehensive results
+        results = {
+            'timestamp': datetime.now().isoformat(),
+            'composite_risk_score': composite_score,
+            'risk_level': risk_level,
+            'risk_description': risk_description,
+            'individual_risk_scores': all_risk_scores,
+            'parsed_reports': parsed_reports,
+            'analysis_summary': {
+                'total_reports_processed': len(parsed_reports),
+                'available_components': list(all_risk_scores.keys()),
+                'missing_components': list(missing_components)
+            }
+        }
+        self.analysis_results = results
+        return results
     
     def calculate_slope_risk_score(self, slope_data: Dict[str, Any]) -> float:
         """
         Calculate slope risk score using the formula: (slope / 60.0) * 100.0
         """
         try:
-            # Extract slope values from statistics
-            mean_slope = slope_data.get('statistics', {}).get('mean', 0.0)
-            max_slope = slope_data.get('statistics', {}).get('max', 0.0)
+            mean_slope = self._extract_stat(slope_data, 'mean', 'mean_value', 'mean_slope', default=0.0)
+            max_slope = self._extract_stat(slope_data, 'max', 'max_value', 'max_slope', default=0.0)
             
             # Use maximum slope for worst-case scenario
             slope_value = max_slope if max_slope > 0 else mean_slope
@@ -196,9 +160,8 @@ class LunarRiskAnalyzer:
             # Apply the formula: (slope / 60.0) * 100.0
             risk_score = min((slope_value / 60.0) * 100.0, 100.0)
             
-            print(f"🌙 Slope Risk Calculation:")
-            print(f"   - Input slope: {slope_value:.2f}°")
-            print(f"   - Risk score: {risk_score:.2f}/100")
+            print(f"[DEBUG] Slope: mean={mean_slope}, max={max_slope}, used={slope_value}")
+            print(f"🌙 Slope Risk Calculation:\n   - Input slope: {slope_value:.2f}°\n   - Risk score: {risk_score:.2f}/100")
             
             return risk_score
             
@@ -211,8 +174,7 @@ class LunarRiskAnalyzer:
         Calculate aspect risk score using the complex formula for distance from 315°
         """
         try:
-            # Extract aspect values from statistics
-            mean_aspect = aspect_data.get('statistics', {}).get('mean', 315.0)
+            mean_aspect = self._extract_stat(aspect_data, 'mean', 'mean_aspect', default=315.0)
             
             # Calculate distance from 315° (safe direction)
             aspect_diff = abs(mean_aspect - 315.0)
@@ -224,10 +186,8 @@ class LunarRiskAnalyzer:
             # Apply the formula: (distance / 180.0) * 100.0
             risk_score = (aspect_diff / 180.0) * 100.0
             
-            print(f"🌙 Aspect Risk Calculation:")
-            print(f"   - Input aspect: {mean_aspect:.2f}°")
-            print(f"   - Distance from 315°: {aspect_diff:.2f}°")
-            print(f"   - Risk score: {risk_score:.2f}/100")
+            print(f"[DEBUG] Aspect: mean={mean_aspect}, diff={aspect_diff}")
+            print(f"🌙 Aspect Risk Calculation:\n   - Input aspect: {mean_aspect:.2f}°\n   - Distance from 315°: {aspect_diff:.2f}°\n   - Risk score: {risk_score:.2f}/100")
             
             return risk_score
             
@@ -240,15 +200,13 @@ class LunarRiskAnalyzer:
         Calculate hillshade risk score using the formula: (128.0 - hillshade) / 128.0 * 100.0
         """
         try:
-            # Extract hillshade values from statistics
-            mean_hillshade = hillshade_data.get('statistics', {}).get('mean', 128.0)
+            mean_hillshade = self._extract_stat(hillshade_data, 'mean', 'mean_hillshade', default=128.0)
             
             # Apply the formula: (128.0 - hillshade) / 128.0 * 100.0
             risk_score = max((128.0 - mean_hillshade) / 128.0 * 100.0, 0.0)
             
-            print(f"🌙 Hillshade Risk Calculation:")
-            print(f"   - Input hillshade: {mean_hillshade:.2f}")
-            print(f"   - Risk score: {risk_score:.2f}/100")
+            print(f"[DEBUG] Hillshade: mean={mean_hillshade}")
+            print(f"🌙 Hillshade Risk Calculation:\n   - Input hillshade: {mean_hillshade:.2f}\n   - Risk score: {risk_score:.2f}/100")
             
             return risk_score
             
@@ -261,15 +219,13 @@ class LunarRiskAnalyzer:
         Calculate contour density risk score using the formula: (density / 10.0) * 100.0
         """
         try:
-            # Extract contour density from statistics
-            contour_density = contour_data.get('statistics', {}).get('contour_density', 0.0)
+            contour_density = self._extract_stat(contour_data, 'contour_density', default=0.0)
             
             # Apply the formula: (density / 10.0) * 100.0
             risk_score = min((contour_density / 10.0) * 100.0, 100.0)
             
-            print(f"🌙 Contour Density Risk Calculation:")
-            print(f"   - Input density: {contour_density:.4f}")
-            print(f"   - Risk score: {risk_score:.2f}/100")
+            print(f"[DEBUG] Contour Density: {contour_density}")
+            print(f"🌙 Contour Density Risk Calculation:\n   - Input density: {contour_density:.4f}\n   - Risk score: {risk_score:.2f}/100")
             
             return risk_score
             
@@ -282,8 +238,7 @@ class LunarRiskAnalyzer:
         Calculate elevation risk score using the formula: (elevation - 1000.0) / 1000.0 * 100.0
         """
         try:
-            # Extract elevation values from statistics
-            mean_elevation = elevation_data.get('statistics', {}).get('mean', 0.0)
+            mean_elevation = self._extract_stat(elevation_data, 'mean', 'mean_elevation', default=0.0)
             
             # Apply the formula with bounds
             if mean_elevation < 1000.0:
@@ -293,9 +248,8 @@ class LunarRiskAnalyzer:
             else:
                 risk_score = (mean_elevation - 1000.0) / 1000.0 * 100.0
             
-            print(f"🌙 Elevation Risk Calculation:")
-            print(f"   - Input elevation: {mean_elevation:.2f} m")
-            print(f"   - Risk score: {risk_score:.2f}/100")
+            print(f"[DEBUG] Elevation: mean={mean_elevation}")
+            print(f"🌙 Elevation Risk Calculation:\n   - Input elevation: {mean_elevation:.2f} m\n   - Risk score: {risk_score:.2f}/100")
             
             return risk_score
             
@@ -303,15 +257,31 @@ class LunarRiskAnalyzer:
             print(f"❌ Error calculating elevation risk: {e}")
             return 0.0
     
+    def _extract_roughness_stat(self, data, *keys, default=0.0):
+        # Try top-level first
+        for key in keys:
+            if key in data:
+                return data[key]
+            if 'statistics' in data and key in data['statistics']:
+                return data['statistics'][key]
+        # Try nested in 'results.ruggedness_analysis'
+        for parent in ['results', 'calculation_results']:
+            if parent in data and 'ruggedness_analysis' in data[parent]:
+                nested = data[parent]['ruggedness_analysis']
+                for key in keys:
+                    if key in nested:
+                        return nested[key]
+        return default
+    
     def calculate_roughness_risk_score(self, roughness_data: Dict[str, Any]) -> float:
         """
         Calculate terrain roughness risk score using the formula: (roughness / 10.0) * 100.0
         """
         try:
-            # Extract roughness values from statistics
-            mean_roughness = roughness_data.get('statistics', {}).get('mean', 0.0)
-            std_roughness = roughness_data.get('statistics', {}).get('std', 0.0)
-            tri_mean = roughness_data.get('statistics', {}).get('mean_tri', 0.0)
+            # Try TRI mean, std, or other roughness metrics
+            tri_mean = self._extract_roughness_stat(roughness_data, 'mean_tri', 'mean', default=0.0)
+            std_roughness = self._extract_roughness_stat(roughness_data, 'std_tri', 'std', default=0.0)
+            mean_roughness = self._extract_roughness_stat(roughness_data, 'mean_roughness', default=0.0)
             
             # Use the most relevant roughness metric
             roughness_value = 0.0
@@ -325,9 +295,8 @@ class LunarRiskAnalyzer:
             # Apply the formula: (roughness / 10.0) * 100.0
             risk_score = min((roughness_value / 10.0) * 100.0, 100.0)
             
-            print(f"🌙 Roughness Risk Calculation:")
-            print(f"   - Input roughness: {roughness_value:.2f}")
-            print(f"   - Risk score: {risk_score:.2f}/100")
+            print(f"[DEBUG] Roughness: tri_mean={tri_mean}, std={std_roughness}, mean_roughness={mean_roughness}, used={roughness_value}")
+            print(f"🌙 Roughness Risk Calculation:\n   - Input roughness: {roughness_value:.2f}\n   - Risk score: {risk_score:.2f}/100")
             
             return risk_score
             
@@ -340,10 +309,10 @@ class LunarRiskAnalyzer:
         Calculate curvature risk score using profile gradient approximation
         """
         try:
-            # Extract curvature values from statistics
-            profile_curvature_std = curvature_data.get('statistics', {}).get('profile_curvature_std', 0.0)
-            mean_curvature_std = curvature_data.get('statistics', {}).get('mean_curvature_std', 0.0)
-            gaussian_curvature_std = curvature_data.get('statistics', {}).get('gaussian_curvature_std', 0.0)
+            # Try all possible std keys for curvature
+            profile_curvature_std = self._extract_stat(curvature_data, 'profile_std', 'profile_curvature_std', default=0.0)
+            mean_curvature_std = self._extract_stat(curvature_data, 'mean_std', 'mean_curvature_std', default=0.0)
+            gaussian_curvature_std = self._extract_stat(curvature_data, 'gaussian_std', 'gaussian_curvature_std', default=0.0)
             
             # Use the most relevant curvature metric
             gradient_value = 0.0
@@ -357,9 +326,8 @@ class LunarRiskAnalyzer:
             # Apply the formula: (gradient / 50.0) * 100.0
             risk_score = min((gradient_value / 50.0) * 100.0, 100.0)
             
-            print(f"🌙 Curvature Risk Calculation:")
-            print(f"   - Input gradient: {gradient_value:.2f}")
-            print(f"   - Risk score: {risk_score:.2f}/100")
+            print(f"[DEBUG] Curvature: profile_std={profile_curvature_std}, mean_std={mean_curvature_std}, gaussian_std={gaussian_curvature_std}, used={gradient_value}")
+            print(f"🌙 Curvature Risk Calculation:\n   - Input gradient: {gradient_value:.2f}\n   - Risk score: {risk_score:.2f}/100")
             
             return risk_score
             
@@ -413,75 +381,6 @@ class LunarRiskAnalyzer:
             return "VERY HIGH", "Very high risk - extreme caution"
         else:
             return "EXTREME", "Extreme risk - avoid if possible"
-    
-    def process_analysis_reports(self, report_paths: List[str]) -> Dict[str, Any]:
-        """
-        Process multiple analysis reports and generate comprehensive risk assessment
-        """
-        print("🚀 Starting comprehensive lunar terrain risk analysis...")
-        
-        all_risk_scores = {}
-        parsed_reports = {}
-        
-        # Parse all reports
-        for report_path in report_paths:
-            report_data = self.parse_report_file(report_path)
-            if report_data:
-                analysis_type = report_data.get('analysis_type')
-                if analysis_type:
-                    parsed_reports[analysis_type] = report_data
-        
-        # Calculate individual risk scores
-        if 'slope' in parsed_reports:
-            all_risk_scores['slope'] = self.calculate_slope_risk_score(parsed_reports['slope'])
-        
-        if 'aspect' in parsed_reports:
-            all_risk_scores['aspect'] = self.calculate_aspect_risk_score(parsed_reports['aspect'])
-        
-        if 'hillshade' in parsed_reports:
-            all_risk_scores['hillshade'] = self.calculate_hillshade_risk_score(parsed_reports['hillshade'])
-        
-        if 'contour' in parsed_reports:
-            all_risk_scores['contour_density'] = self.calculate_contour_density_risk_score(parsed_reports['contour'])
-        
-        if 'elevation' in parsed_reports:
-            all_risk_scores['elevation'] = self.calculate_elevation_risk_score(parsed_reports['elevation'])
-        
-        if 'roughness' in parsed_reports:
-            all_risk_scores['roughness'] = self.calculate_roughness_risk_score(parsed_reports['roughness'])
-        
-        if 'curvature' in parsed_reports:
-            all_risk_scores['profile_gradient'] = self.calculate_curvature_risk_score(parsed_reports['curvature'])
-        
-        # Set default values for missing components
-        missing_components = set(self.risk_weights.keys()) - set(all_risk_scores.keys())
-        for component in missing_components:
-            all_risk_scores[component] = 0.0
-            print(f"⚠️  No data for {component}, using default risk score: 0.0")
-        
-        # Calculate composite risk score
-        composite_score = self.calculate_composite_risk_score(all_risk_scores)
-        risk_level, risk_description = self.determine_risk_level(composite_score)
-        
-        # Generate comprehensive results
-        results = {
-            'timestamp': datetime.now().isoformat(),
-            'composite_risk_score': composite_score,
-            'risk_level': risk_level,
-            'risk_description': risk_description,
-            'individual_risk_scores': all_risk_scores,
-            'parsed_reports': parsed_reports,
-            'analysis_summary': {
-                'total_reports_processed': len(parsed_reports),
-                'available_components': list(all_risk_scores.keys()),
-                'missing_components': list(missing_components)
-            }
-        }
-        
-        # Store results
-        self.analysis_results = results
-        
-        return results
     
     def generate_risk_report(self, results: Dict[str, Any], output_path: str = None) -> str:
         """
@@ -562,38 +461,33 @@ Where weights sum to 1.0 and individual risks are normalized to 0-100 scale.
 
 def main():
     """
-    Main function to run lunar terrain risk analysis
+    Main function to run lunar terrain risk analysis (JSON mode)
     """
     analyzer = LunarRiskAnalyzer()
-    
-    # List of all available report files
-    report_files = [
-        "lunar_slope_analysis_report.txt",
-        "lunar_aspect_analysis_report.txt",
-        "lunar_curvature_analysis_report.txt",
-        "lunar_elevation_analysis_report.txt",
-        "lunar_contour_analysis_report.txt",
-        "terrain_ruggedness_analysis_report.txt",
-        "lunar_landslide_analysis_report.txt",
-        "scarps_headwalls_analysis_report.txt"
+    # List of all available JSON files
+    json_dir = os.path.join(os.path.dirname(__file__), 'json_results')
+    json_files = [
+        'slope_analysis_results.json',
+        'elevation_statistics_results.json',
+        'curvature_statistics_results.json',
+        'terrain_ruggedness_pipeline_summary.json',
+        'contour_analysis_results.json',
+        'crater_edges_analysis.json',
+        'debris_flow_pipeline_summary.json',
+        'hillshade_calculation_results.json',
+        'tif_loading_results.json'
     ]
-    
-    # Filter to only existing files
-    existing_reports = [path for path in report_files if os.path.exists(path)]
-    
-    if existing_reports:
-        print(f"📊 Processing {len(existing_reports)} analysis reports...")
-        print("📁 Available reports:")
-        for report in existing_reports:
-            print(f"   - {report}")
-        
-        # Process reports and generate risk assessment
-        results = analyzer.process_analysis_reports(existing_reports)
-        
+    json_paths = [os.path.join(json_dir, f) for f in json_files if os.path.exists(os.path.join(json_dir, f))]
+    if json_paths:
+        print(f"📊 Processing {len(json_paths)} analysis JSON files...")
+        print("📁 Available JSONs:")
+        for path in json_paths:
+            print(f"   - {os.path.basename(path)}")
+        # Process JSONs and generate risk assessment
+        results = analyzer.process_analysis_jsons(json_paths)
         # Generate and display report
         report_content = analyzer.generate_risk_report(results, "comprehensive_lunar_risk_report.txt")
         print("\n" + report_content)
-        
         # Save detailed results as JSON
         try:
             with open("lunar_risk_analysis_results.json", "w", encoding="utf-8") as f:
@@ -601,13 +495,12 @@ def main():
             print("✅ Detailed results saved to: lunar_risk_analysis_results.json")
         except Exception as e:
             print(f"❌ Error saving JSON results: {e}")
-        
     else:
-        print("❌ No analysis reports found!")
-        print("📝 Expected report files:")
-        for path in report_files:
-            print(f"   - {path}")
-        print("\n💡 Please ensure analysis reports exist before running risk assessment")
+        print("❌ No analysis JSON files found!")
+        print("📝 Expected JSON files:")
+        for f in json_files:
+            print(f"   - {f}")
+        print("\n💡 Please ensure analysis JSON files exist before running risk assessment")
 
 if __name__ == "__main__":
     main() 

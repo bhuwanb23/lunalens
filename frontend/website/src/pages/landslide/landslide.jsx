@@ -11,7 +11,7 @@ const sampleAnalysisData = {
         statistics: { min: 0.00, max: 11.54, mean: 5.01, stdDev: 2.00 },
         thresholds: { gentleSlopes: 3.01, moderateSlopes: 5.01, steepSlopes: 7.01 }
     },
-    aspect: {
+    aspect: { 
         statistics: { min: 0.00, max: 359.9999, mean: 189.4721, stdDev: 89.5053 }
     },
     elevation: {
