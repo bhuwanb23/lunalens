@@ -13,7 +13,7 @@ const ImageUpload = ({ uploadedImage, handleImageUpload }) => {
             </i>
           </div>
           <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 bg-gradient-to-r from-gray-200 to-orange-300 bg-clip-text text-transparent">Upload Lunar Image</h3>
-          <p className="text-gray-300 mb-4 sm:mb-5 text-sm sm:text-base leading-relaxed">Upload a lunar surface image for boulder and crater detection analysis</p>
+          <p className="text-gray-300 mb-4 sm:mb-5 text-sm sm:text-base leading-relaxed">Upload a lunar surface image for boulder detection analysis</p>
           <input
             type="file"
             accept="image/*"

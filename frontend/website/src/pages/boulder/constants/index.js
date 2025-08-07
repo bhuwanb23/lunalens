@@ -2,7 +2,7 @@ export const BOULDER_ANALYSIS_TYPES = [
   {
     id: 'basic',
     title: 'Basic Detection',
-    description: 'Standard YOLO-based boulder and crater detection with physical measurements.',
+    description: 'Standard YOLO-based boulder detection with physical measurements.',
     icon: 'mountain',
     color: 'orange',
     features: ['Object Detection', 'Size Measurement', 'Density Analysis'],
@@ -24,7 +24,7 @@ export const BOULDER_ANALYSIS_TYPES = [
   {
     id: 'depth',
     title: 'Depth Estimation',
-    description: 'Crater depth estimation using shadow analysis and solar incidence angle.',
+    description: 'Boulder depth estimation using shadow analysis and solar incidence angle.',
     icon: 'layer-group',
     color: 'green',
     features: ['Shadow Analysis', 'Depth Calculation', 'Solar Angle'],
@@ -63,7 +63,7 @@ export const BOULDER_DETECTION_FEATURES = [
   {
     id: 'depth-estimation',
     title: 'Depth Estimation',
-    description: 'Estimate crater depth using shadow analysis and solar incidence angle.',
+    description: 'Estimate boulder depth using shadow analysis and solar incidence angle.',
     icon: 'layer-group',
     color: 'purple'
   },
@@ -77,7 +77,7 @@ export const BOULDER_DETECTION_FEATURES = [
   {
     id: 'degradation-assessment',
     title: 'Degradation Assessment',
-    description: 'Qualitative assessment of crater freshness based on confidence levels.',
+    description: 'Qualitative assessment of boulder freshness based on confidence levels.',
     icon: 'star',
     color: 'yellow'
   },
@@ -119,7 +119,7 @@ export const BOULDER_DETECTION_MODELS = {
     file: 'best.pt',
     size: '6.0MB',
     accuracy: '85-90%',
-    classes: ['crater', 'boulder'],
+    classes: ['boulder'],
     inputSize: '640x640'
   },
   vit: {
@@ -127,7 +127,7 @@ export const BOULDER_DETECTION_MODELS = {
     file: 'vit_model.pth',
     size: '327MB',
     accuracy: '92-95%',
-    classes: ['crater', 'rille'],
+    classes: ['boulder'],
     inputSize: '224x224'
   }
 };
@@ -160,7 +160,7 @@ export const BOULDER_DETECTION_OUTPUTS = {
     'Volume',
     'Circularity',
     'Elongation',
-    'Depth (craters only)'
+    'Depth (boulders only)'
   ],
   degradationState: [
     'Fresh (confidence ≥ 0.8)',
@@ -168,7 +168,6 @@ export const BOULDER_DETECTION_OUTPUTS = {
     'Highly degraded (confidence < 0.6)'
   ],
   densityAnalysis: [
-    'Crater density (craters per square meter)',
     'Boulder density (boulders per square meter)'
   ]
 }; 

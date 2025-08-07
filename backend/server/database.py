@@ -79,7 +79,6 @@ def create_analysis_record(user_id, analysis_data):
             status='completed',
             total_objects=analysis_data.get('total_objects', 0),
             boulder_count=analysis_data.get('boulder_count', 0),
-            crater_count=analysis_data.get('crater_count', 0),
             average_confidence=analysis_data.get('average_confidence', 0.0),
             average_diameter=analysis_data.get('average_diameter', 0.0),
             average_area=analysis_data.get('average_area', 0.0),
@@ -128,7 +127,6 @@ def create_analysis_record(user_id, analysis_data):
             density_analysis = DensityAnalysis(
                 analysis_id=analysis.id,
                 total_area=density_data.get('total_area', 0.0),
-                crater_density=density_data.get('crater_density', 0.0),
                 boulder_density=density_data.get('boulder_density', 0.0),
                 overall_density=density_data.get('density', 0.0)
             )

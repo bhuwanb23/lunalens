@@ -42,7 +42,7 @@ class DataTransforms:
         ])
         
         # Class names for ViT
-        self.class_names_vit = ['crater', 'rille']
+        self.class_names_vit = ['boulder']
     
     def get_vit_transform(self, mode: str = 'val') -> transforms.Compose:
         """

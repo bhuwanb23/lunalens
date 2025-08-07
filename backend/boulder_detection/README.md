@@ -1,4 +1,4 @@
-# 🪨 Boulder and Crater Detection System
+# 🪨 Boulder Detection System
 
 <div align="center">
 
@@ -13,9 +13,9 @@
 
 <div style="background: linear-gradient(45deg, #ff6b35, #f7931e); padding: 20px; border-radius: 15px; margin: 20px 0;">
 
-# 🚀 **Advanced Lunar Boulder & Crater Detection**
+# 🚀 **Advanced Lunar Boulder Detection**
 
-*A comprehensive Python package for detecting and analyzing boulders and craters in lunar images using YOLO and Vision Transformer models with Grad-CAM visualization.*
+*A comprehensive Python package for detecting and analyzing boulders in lunar images using YOLO and Vision Transformer models with Grad-CAM visualization.*
 
 </div>
 
@@ -45,7 +45,7 @@
 - 📦 **Volume Estimation**: 3D volume calculations
 - 🔄 **Circularity**: Shape analysis metrics
 - 📏 **Elongation**: Object elongation assessment
-- 🌑 **Depth Estimation**: Crater depth from shadows
+- 🌑 **Depth Estimation**: Boulder depth from shadows
 
 ### 🎨 **Advanced Visualization**
 - 👁️ **Grad-CAM Visualization**: Attention map generation
@@ -55,7 +55,7 @@
 
 ### 📈 **Analytics & Assessment**
 - 📊 **Density Analysis**: Objects per unit area
-- 🌙 **Degradation Assessment**: Crater freshness evaluation
+- 🌙 **Degradation Assessment**: Boulder freshness evaluation
 - 📈 **Statistical Analysis**: Comprehensive metrics
 - 📋 **Quality Reports**: Detailed analysis summaries
 

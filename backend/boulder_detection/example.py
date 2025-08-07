@@ -70,8 +70,8 @@ def example_depth_estimation():
     
     # Print results with depth information
     for obj in detected_objects:
-        if obj.class_name == 'crater' and obj.estimated_depth is not None:
-            print(f"Crater depth: {obj.estimated_depth:.2f}m")
+        if obj.class_name == 'boulder' and obj.estimated_depth is not None:
+            print(f"Boulder depth: {obj.estimated_depth:.2f}m")
 
 
 def example_visualization():

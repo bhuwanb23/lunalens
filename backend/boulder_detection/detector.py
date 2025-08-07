@@ -250,18 +250,14 @@ class BoulderDetector:
         total_area_real = total_area_px * (self.scale ** 2)
         
         # Count objects by type
-        crater_count = sum(1 for obj in detected_objects if obj.class_name == 'crater')
         boulder_count = sum(1 for obj in detected_objects if obj.class_name == 'boulder')
         
         # Calculate densities
-        crater_density = self.calculator.calculate_density(crater_count, total_area_real)
         boulder_density = self.calculator.calculate_density(boulder_count, total_area_real)
         
         return {
             'total_area_real': total_area_real,
-            'crater_count': crater_count,
             'boulder_count': boulder_count,
-            'crater_density': crater_density,
             'boulder_density': boulder_density
         }
     
@@ -294,7 +290,5 @@ class BoulderDetector:
         
         print("\n--- Density Analysis ---")
         print(f"Total Image Area: {density_analysis['total_area_real']:.2f} square meters")
-        print(f"Crater Count: {density_analysis['crater_count']}")
-        print(f"Crater Density: {density_analysis['crater_density']:.6f} craters per square meter")
         print(f"Boulder Count: {density_analysis['boulder_count']}")
         print(f"Boulder Density: {density_analysis['boulder_density']:.6f} boulders per square meter") 

@@ -95,10 +95,7 @@ const ResultsSection = ({ analysisResults, handleProceed }) => {
                   <span className="text-orange-200 font-medium text-xs sm:text-sm">Boulders:</span>
                   <span className="text-base sm:text-lg font-bold text-orange-300">{analysisResults.boulders}</span>
                 </div>
-                <div className="flex justify-between items-center p-2 bg-white/10 rounded-lg">
-                  <span className="text-yellow-200 font-medium text-xs sm:text-sm">Craters:</span>
-                  <span className="text-base sm:text-lg font-bold text-yellow-300">{analysisResults.craters}</span>
-                </div>
+                
               </div>
             </div>
 
@@ -489,10 +486,6 @@ const ResultsSection = ({ analysisResults, handleProceed }) => {
                           <div className="flex justify-between items-center p-4 bg-gray-800/50 rounded-lg border border-gray-700/50 hover:border-cyan-500/30 transition-all duration-300">
                             <span className="text-gray-300 text-sm font-medium">Total Image Area:</span>
                             <span className="text-cyan-300 font-semibold">{(analysisResults.densityAnalysis.total_area || 0).toFixed(2)} m²</span>
-                          </div>
-                          <div className="flex justify-between items-center p-4 bg-gray-800/50 rounded-lg border border-gray-700/50 hover:border-cyan-500/30 transition-all duration-300">
-                            <span className="text-gray-300 text-sm font-medium">Crater Density:</span>
-                            <span className="text-cyan-300 font-semibold">{(analysisResults.densityAnalysis.crater_density || 0).toFixed(6)} craters/m²</span>
                           </div>
                           <div className="flex justify-between items-center p-4 bg-gray-800/50 rounded-lg border border-gray-700/50 hover:border-cyan-500/30 transition-all duration-300">
                             <span className="text-gray-300 text-sm font-medium">Boulder Density:</span>

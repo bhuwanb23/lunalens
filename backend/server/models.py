@@ -52,7 +52,6 @@ class Analysis(db.Model):
     # Analysis results
     total_objects = db.Column(db.Integer, default=0)
     boulder_count = db.Column(db.Integer, default=0)
-    crater_count = db.Column(db.Integer, default=0)
     average_confidence = db.Column(db.Float, default=0.0)
     average_diameter = db.Column(db.Float, default=0.0)
     average_area = db.Column(db.Float, default=0.0)
@@ -79,7 +78,6 @@ class Analysis(db.Model):
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'total_objects': self.total_objects,
             'boulder_count': self.boulder_count,
-            'crater_count': self.crater_count,
             'average_confidence': self.average_confidence,
             'average_diameter': self.average_diameter,
             'average_area': self.average_area,
@@ -104,7 +102,7 @@ class DetectedObject(db.Model):
     object_index = db.Column(db.Integer, nullable=False)  # Order in detection
     
     # Object properties
-    class_name = db.Column(db.String(50), nullable=False)  # boulder, crater, etc.
+    class_name = db.Column(db.String(50), nullable=False)  # boulder, etc.
     confidence = db.Column(db.Float, nullable=False)
     degradation_state = db.Column(db.String(50), default='N/A')
     
@@ -177,7 +175,6 @@ class DensityAnalysis(db.Model):
     
     # Density calculations
     total_area = db.Column(db.Float, default=0.0)  # Total image area in m²
-    crater_density = db.Column(db.Float, default=0.0)  # craters per m²
     boulder_density = db.Column(db.Float, default=0.0)  # boulders per m²
     overall_density = db.Column(db.Float, default=0.0)  # objects per m²
     
@@ -186,7 +183,6 @@ class DensityAnalysis(db.Model):
         return {
             'id': self.id,
             'total_area': self.total_area,
-            'crater_density': self.crater_density,
             'boulder_density': self.boulder_density,
             'overall_density': self.overall_density
         }

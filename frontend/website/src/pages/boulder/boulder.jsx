@@ -112,7 +112,6 @@ const Boulder = () => {
           // Basic counts
           totalObjects: analysisResult.analysis_summary?.total_objects || analysisResult.detected_objects.length,
           boulders: analysisResult.analysis_summary?.boulder_count || analysisResult.detected_objects.filter(obj => obj.class_name === 'boulder').length,
-          craters: analysisResult.analysis_summary?.crater_count || analysisResult.detected_objects.filter(obj => obj.class_name === 'crater').length,
           
           // Analysis metrics
           density: analysisResult.density_analysis?.density || 0,
@@ -182,7 +181,7 @@ const Boulder = () => {
     {
       id: 'basic',
       title: 'Basic Detection',
-      description: 'Standard YOLO-based boulder and crater detection with physical measurements.',
+      description: 'Standard YOLO-based boulder detection with physical measurements.',
       icon: 'mountain',
       color: 'orange',
       features: ['Object Detection', 'Size Measurement', 'Density Analysis']
@@ -198,7 +197,7 @@ const Boulder = () => {
     {
       id: 'depth',
       title: 'Depth Estimation',
-      description: 'Crater depth estimation using shadow analysis and solar incidence angle.',
+      description: 'Boulder depth estimation using shadow analysis and solar incidence angle.',
       icon: 'layer-group',
       color: 'green',
       features: ['Shadow Analysis', 'Depth Calculation', 'Solar Angle']

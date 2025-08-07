@@ -206,7 +206,7 @@ class PhysicalCalculator:
         
         # Depth estimation (only for craters)
         estimated_depth = None
-        if class_name == 'crater' and image_gray is not None and solar_incidence_angle is not None:
+        if class_name == 'boulder' and image_gray is not None and solar_incidence_angle is not None:
             estimated_depth = self.estimate_crater_depth(image_gray, bbox, solar_incidence_angle)
         
         return ObjectMeasurements(

@@ -445,13 +445,11 @@ def analyze_boulder():
         # Add comprehensive analysis summary
         total_objects = len(results["detected_objects"])  # Use filtered results
         boulders = [obj for obj in results["detected_objects"] if obj.get('class_name', '') == 'boulder']
-        craters = [obj for obj in results["detected_objects"] if obj.get('class_name', '') == 'crater']
         
         try:
             results["analysis_summary"] = {
                 "total_objects": total_objects,
                 "boulder_count": len(boulders),
-                "crater_count": len(craters),
                 "average_confidence": float(sum(obj.get('confidence', 0.0) for obj in results["detected_objects"]) / total_objects) if total_objects > 0 else 0,
                 "average_diameter": float(sum(obj.get('diameter_real', 0.0) for obj in results["detected_objects"]) / total_objects) if total_objects > 0 else 0,
                 "average_area": float(sum(obj.get('area_real', 0.0) for obj in results["detected_objects"]) / total_objects) if total_objects > 0 else 0,
@@ -467,7 +465,6 @@ def analyze_boulder():
             results["analysis_summary"] = {
                 "total_objects": total_objects,
                 "boulder_count": len(boulders),
-                "crater_count": len(craters),
                 "average_confidence": 0.0,
                 "average_diameter": 0.0,
                 "average_area": 0.0,
@@ -578,7 +575,6 @@ def analyze_boulder():
                     'processing_time': results["analysis_summary"]["processing_time"],
                     'total_objects': results["analysis_summary"]["total_objects"],
                     'boulder_count': results["analysis_summary"]["boulder_count"],
-                    'crater_count': results["analysis_summary"]["crater_count"],
                     'average_confidence': results["analysis_summary"]["average_confidence"],
                     'average_diameter': results["analysis_summary"]["average_diameter"],
                     'average_area': results["analysis_summary"]["average_area"],

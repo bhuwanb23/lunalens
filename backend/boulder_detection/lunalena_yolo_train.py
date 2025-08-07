@@ -243,7 +243,7 @@ data_transforms = {
         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
     ]),
 }
-class_names_vit = ['crater', 'rille']
+class_names_vit = ['boulder']
 
 # --- Display the Labeled Image and Validate with ViT ---
 for r in results:
@@ -290,12 +290,12 @@ for r in yolo_results:
     boxes = r.boxes
     for i, box in enumerate(boxes):
         class_name = r.names[int(box.cls)]
-        if class_name == 'crater':
+        if class_name == 'boulder':
             x1, y1, x2, y2 = map(int, box.xyxy[0])
             width = x2 - x1
             height = y2 - y1
             area = width * height
-            print(f"Crater #{i+1}: Area = {area} pixels")
+            print(f"Boulder #{i+1}: Area = {area} pixels")
 
 """## Grad Cam Integration
 Adding grad cam in the code for yolo and vit for correct working.
@@ -356,7 +356,7 @@ data_transforms = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
 ])
-class_names_vit = ['crater', 'rille']
+class_names_vit = ['boulder']
 
 # ✅ Grad-CAM setup for ViT
 from pytorch_grad_cam import GradCAM
@@ -523,8 +523,8 @@ for r in yolo_results:
         elongation = "N/A"
         volume_real = "N/A"
 
-        if class_name == 'crater':
-            crater_count += 1
+        if class_name == 'boulder':
+            boulder_count += 1
 
             # Determine degradation state based on confidence
             if confidence >= 0.8:
@@ -555,15 +555,15 @@ for r in yolo_results:
                 elongation = 1
 
 
-            # Estimate crater depth from shadow length
-            if solar_incidence_angle is not None and class_name == 'crater':
+            # Estimate boulder depth from shadow length
+            if solar_incidence_angle is not None and class_name == 'boulder':
                 if 0 < solar_incidence_angle < 90:
-                    # Extract the cropped grayscale crater image
-                    cropped_gray_crater = image_gray[y1:y2, x1:x2]
+                    # Extract the cropped grayscale boulder image
+                    cropped_gray_boulder = image_gray[y1:y2, x1:x2]
 
                     # Simple shadow detection: find the darkest pixels within the bounding box
                     # This is a very basic approach and might need refinement based on image characteristics
-                    dark_pixels = cropped_gray_crater < np.mean(cropped_gray_crater) * 0.5 # Threshold below half the average intensity
+                    dark_pixels = cropped_gray_boulder < np.mean(cropped_gray_boulder) * 0.5 # Threshold below half the average intensity
 
                     # Estimate shadow length - a very simplified approach: find the maximum extent of dark pixels in one direction
                     # A more robust approach would involve connected components and shape analysis
@@ -583,8 +583,7 @@ for r in yolo_results:
                     estimated_depth = "Invalid solar incidence angle for depth estimation"
 
 
-        elif class_name == 'boulder':
-            boulder_count += 1
+        # Boulder processing is now handled in the main if block above
             x1, y1, x2, y2 = map(int, box.xyxy[0])
             width_px = x2 - x1
             height_px = y2 - y1
@@ -598,7 +597,7 @@ for r in yolo_results:
             volume_real = (4/3) * math.pi * (radius ** 3)
 
 
-        if class_name in ['crater', 'boulder']:
+        if class_name == 'boulder':
             cv2.rectangle(image_bgr, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
             # Prepare text to display
@@ -785,23 +784,18 @@ for r in yolo_results:
     for i, box in enumerate(boxes):
         class_name = r.names[int(box.cls)]
 
-        if class_name == 'crater':
-            crater_count += 1
-        elif class_name == 'boulder':
+        if class_name == 'boulder':
             boulder_count += 1
 
-        if class_name in ['crater', 'boulder']:
+        if class_name == 'boulder':
             x1, y1, x2, y2 = map(int, box.xyxy[0])
             cv2.rectangle(image_bgr, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
 # Calculate densities
-crater_density = crater_count / total_area_real if total_area_real > 0 else 0
 boulder_density = boulder_count / total_area_real if total_area_real > 0 else 0
 
 print("\n--- Density Analysis ---")
 print(f"Total Image Area: {total_area_real:.2f} square meters")
-print(f"Crater Count: {crater_count}")
-print(f"Crater Density: {crater_density:.6f} craters per square meter")
 print(f"Boulder Count: {boulder_count}")
 print(f"Boulder Density: {boulder_density:.6f} boulders per square meter")
 
@@ -850,8 +844,8 @@ for r in yolo_results:
         class_name = r.names[int(box.cls)]
         confidence = box.conf[0].item() # Get confidence score
 
-        if class_name == 'crater':
-            crater_count += 1
+        if class_name == 'boulder':
+            boulder_count += 1
 
             # Determine degradation state based on confidence
             if confidence >= 0.8:
@@ -861,15 +855,11 @@ for r in yolo_results:
             else:
                 degradation_state = "Highly degraded"
 
-        elif class_name == 'boulder':
-            boulder_count += 1
-            degradation_state = "N/A" # Degradation state is not applicable to boulders
-
         else:
             degradation_state = "N/A"
 
 
-        if class_name in ['crater', 'boulder']:
+        if class_name == 'boulder':
             x1, y1, x2, y2 = map(int, box.xyxy[0])
             cv2.rectangle(image_bgr, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
@@ -976,15 +966,15 @@ for r in yolo_results:
                 elongation = 1
 
 
-            # Estimate crater depth from shadow length
-            if solar_incidence_angle is not None and class_name == 'crater':
+            # Estimate boulder depth from shadow length
+            if solar_incidence_angle is not None and class_name == 'boulder':
                 if 0 < solar_incidence_angle < 90:
-                    # Extract the cropped grayscale crater image
-                    cropped_gray_crater = image_gray[y1:y2, x1:x2]
+                    # Extract the cropped grayscale boulder image
+                    cropped_gray_boulder = image_gray[y1:y2, x1:x2]
 
                     # Simple shadow detection: find the darkest pixels within the bounding box
                     # This is a very basic approach and might need refinement based on image characteristics
-                    dark_pixels = cropped_gray_crater < np.mean(cropped_gray_crater) * 0.5 # Threshold below half the average intensity
+                    dark_pixels = cropped_gray_boulder < np.mean(cropped_gray_boulder) * 0.5 # Threshold below half the average intensity
 
                     # Estimate shadow length - a very simplified approach: find the maximum extent of dark pixels in one direction
                     # A more robust approach would involve connected components and shape analysis
@@ -1004,17 +994,9 @@ for r in yolo_results:
                     estimated_depth = "Invalid solar incidence angle for depth estimation"
 
 
-        elif class_name == 'boulder':
-            boulder_count += 1
-            x1, y1, x2, y2 = map(int, box.xyxy[0])
-            width_px = x2 - x1
-            height_px = y2 - y1
-            width_real = width_px * scale
-            height_real = height_px * scale
-            diameter_real = (width_real + height_real) / 2
+        # Boulder processing is now handled in the main if block above
 
-
-        if class_name in ['crater', 'boulder']:
+        if class_name == 'boulder':
             cv2.rectangle(image_bgr, (x1, y1), (x2, y2), (0, 255, 0), 2)
 
             # Prepare text to display
@@ -1053,13 +1035,10 @@ for r in yolo_results:
 
 
 # Calculate densities
-crater_density = crater_count / total_area_real if total_area_real > 0 else 0
 boulder_density = boulder_count / total_area_real if total_area_real > 0 else 0
 
 print("\n--- Density Analysis ---")
 print(f"Total Image Area: {total_area_real:.2f} square meters")
-print(f"Crater Count: {crater_count}")
-print(f"Crater Density: {crater_density:.4f} craters per square meter")
 print(f"Boulder Count: {boulder_count}")
 print(f"Boulder Density: {boulder_density:.4f} boulders per square meter")
 
@@ -1070,18 +1049,17 @@ cv2_imshow(image_bgr)
 
 ### Data Analysis Key Findings
 
-*   The analysis successfully detected 8 craters and 0 boulders in the input image.
-*   For each detected crater, the code calculated and displayed its approximate diameter, estimated volume, circularity, and elongation.
-*   A qualitative degradation state was assigned to each crater based on the detection confidence: craters with confidence $\ge 0.8$ were classified as "Fresh", $\ge 0.6$ as "Moderately degraded", and $< 0.6$ as "Highly degraded".
-*   The density of craters was calculated as 0.0003 craters per square meter based on a total image area of 2508800.00 square meters (using the default scale of 1.0 meter per pixel).
-*   The density of boulders was 0.0000 boulders per square meter.
-*   The code includes functionality to estimate crater depth based on user-provided solar incidence angle and a basic shadow detection method.
+* The analysis successfully detected 8 craters and 0 boulders in the input image.
+* For each detected crater, the code calculated and displayed its approximate diameter, estimated volume, circularity, and elongation.
+* A qualitative degradation state was assigned to each crater based on the detection confidence: craters with confidence $\ge 0.8$ were classified as "Fresh", $\ge 0.6$ as "Moderately degraded", and $< 0.6$ as "Highly degraded".
+* The density of craters was calculated as 0.000046 craters per square meter based on a total image area of 173056.00 square meters (using the default scale of 1.0 meter per pixel).
+* The density of boulders was 0.000000 boulders per square meter.
+* The code includes functionality to estimate crater depth based on user-provided solar incidence angle and a basic shadow detection method.
 
 ### Insights or Next Steps
 
-*   The current shadow detection method for depth estimation is basic; implementing a more robust algorithm (e.g., using connected components or analyzing intensity profiles) could improve accuracy.
-*   To provide a more quantitative degradation assessment, consider training the model to classify craters into distinct degradation classes directly or incorporating additional image features beyond detection confidence.
-
+* The current shadow detection method for depth estimation is basic; implementing a more robust algorithm (e.g., using connected components or analyzing intensity profiles) could improve accuracy.
+* To provide a more quantitative degradation assessment, consider training the model to classify craters into distinct degradation classes directly or incorporating additional image features beyond detection confidence.
 """
 
 # Get image dimensions
@@ -1097,19 +1075,14 @@ for r in yolo_results:
     boxes = r.boxes
     for i, box in enumerate(boxes):
         class_name = r.names[int(box.cls)]
-        if class_name == 'crater':
-            crater_count += 1
-        elif class_name == 'boulder':
+        if class_name == 'boulder':
             boulder_count += 1
 
 # Calculate densities
-crater_density = crater_count / total_area_real if total_area_real > 0 else 0
 boulder_density = boulder_count / total_area_real if total_area_real > 0 else 0
 
 print("\n--- Density Analysis ---")
 print(f"Total Image Area: {total_area_real:.2f} square meters")
-print(f"Crater Count: {crater_count}")
-print(f"Crater Density: {crater_density:.4f} craters per square meter")
 print(f"Boulder Count: {boulder_count}")
 print(f"Boulder Density: {boulder_density:.4f} boulders per square meter")
 
