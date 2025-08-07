@@ -290,13 +290,13 @@ const ResultsSection = ({ analysisResults, handleProceed }) => {
                         <td className="px-3 py-4 text-center">
                           <div className="flex items-center justify-center">
                             <div className="relative">
-                              <div className="w-12 h-12 rounded-full border-2 border-gray-600 flex items-center justify-center bg-gray-700">
+                              <div className="w-12 h-12 rounded-full border-2 border-gray-600 flex items-center justify-center bg-gray-700 relative z-10">
                                 <span className="text-xs font-bold text-gray-200">
                                   {(obj.confidence * 100).toFixed(0)}%
                                 </span>
                               </div>
                               <div 
-                                className="absolute inset-0 rounded-full border-2 border-transparent"
+                                className="absolute inset-0 rounded-full border-2 border-transparent z-0"
                                 style={{
                                   background: `conic-gradient(${obj.confidence > 0.8 ? '#10b981' : obj.confidence > 0.6 ? '#f59e0b' : '#ef4444'} ${obj.confidence * 360}deg, transparent 0deg)`
                                 }}

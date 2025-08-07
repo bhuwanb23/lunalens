@@ -1,16 +1,5 @@
 export const BOULDER_ANALYSIS_TYPES = [
   {
-    id: 'basic',
-    title: 'Basic Detection',
-    description: 'Standard YOLO-based boulder detection with physical measurements.',
-    icon: 'mountain',
-    color: 'orange',
-    features: ['Object Detection', 'Size Measurement', 'Density Analysis'],
-    processingTime: '1-2 seconds',
-    accuracy: '85-90%',
-    requirements: ['YOLO Model', 'Image Input']
-  },
-  {
     id: 'advanced',
     title: 'Advanced Analysis',
     description: 'Dual-model detection using YOLO and Vision Transformer for enhanced accuracy.',
@@ -20,17 +9,6 @@ export const BOULDER_ANALYSIS_TYPES = [
     processingTime: '2-3 seconds',
     accuracy: '92-95%',
     requirements: ['YOLO Model', 'ViT Model', 'Image Input']
-  },
-  {
-    id: 'depth',
-    title: 'Depth Estimation',
-    description: 'Boulder depth estimation using shadow analysis and solar incidence angle.',
-    icon: 'layer-group',
-    color: 'green',
-    features: ['Shadow Analysis', 'Depth Calculation', 'Solar Angle'],
-    processingTime: '3-4 seconds',
-    accuracy: '88-92%',
-    requirements: ['YOLO Model', 'Solar Angle', 'Image Input']
   },
   {
     id: 'gradcam',

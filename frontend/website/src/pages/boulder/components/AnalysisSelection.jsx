@@ -9,7 +9,7 @@ const AnalysisSelection = ({ analysisTypes, selectedAnalysis, handleAnalysisSele
           <p className="text-gray-300 text-sm sm:text-base leading-relaxed max-w-lg sm:max-w-xl mx-auto">Select your preferred detection method for lunar surface analysis</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 max-w-2xl mx-auto">
           {analysisTypes.map((analysis) => (
             <div 
               key={analysis.id}

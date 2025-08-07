@@ -14,6 +14,28 @@ from models import db, User, Analysis, DetectedObject, DensityAnalysis, Analysis
 from database import init_db, create_analysis_record, get_user_analyses, get_analysis_with_details, log_system_event, get_analytics_summary
 from config import config
 
+# Import security configuration
+try:
+    from security_config import NETWORK_SECURITY, SECURITY_HEADERS, get_server_config, print_security_status
+except ImportError:
+    # Fallback security configuration if security_config.py is not available
+    NETWORK_SECURITY = {
+        'allow_external_access': False,
+        'allowed_hosts': ['127.0.0.1', 'localhost', '::1'],
+        'blocked_ips': set(),
+        'require_https': False,
+        'host': '127.0.0.1',
+        'port': 5000,
+        'allowed_origins': ["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000"]
+    }
+    SECURITY_HEADERS = {}
+    
+    def get_server_config():
+        return {'host': '127.0.0.1', 'port': 5000}
+    
+    def print_security_status():
+        print("✅ Server configured for localhost-only access (fallback config)")
+
 # Add boulder_detection to path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'boulder_detection'))
 
@@ -34,6 +56,8 @@ except ImportError as e:
 # Load environment variables
 load_dotenv()
 
+
+
 # Create Flask app
 app = Flask(__name__)
 
@@ -44,8 +68,31 @@ app.config.from_object(config[config_name])
 # Initialize database
 init_db(app)
 
-# Initialize CORS
-CORS(app, supports_credentials=True, origins=["http://localhost:5173", "http://127.0.0.1:5173", "http://localhost:3000"])
+# Initialize CORS with security-aware origins
+CORS(app, supports_credentials=True, origins=NETWORK_SECURITY['allowed_origins'])
+
+# Security middleware to enforce localhost-only access
+@app.before_request
+def enforce_localhost_access():
+    """Enforce localhost-only access for security"""
+    # Skip check for login endpoint to allow initial access
+    if request.path == '/login':
+        return None
+    
+    # Check if external access is explicitly allowed
+    if NETWORK_SECURITY['allow_external_access']:
+        return None
+    
+    # Enforce localhost-only access
+    if not is_localhost_request():
+        print(f"🚫 Blocked external access from {request.remote_addr} to {request.path}")
+        return jsonify({
+            "success": False,
+            "message": "Access denied. This server only accepts localhost connections.",
+            "error": "EXTERNAL_ACCESS_BLOCKED"
+        }), 403
+    
+    return None
 
 # Store active tokens (in production, use Redis or database)
 ACTIVE_TOKENS = set()
@@ -88,6 +135,25 @@ def init_boulder_detection():
                 pass
     else:
         print("⚠️ Boulder detection modules not available")
+
+def is_localhost_request():
+    """Check if request is from localhost"""
+    client_ip = request.remote_addr
+    host_header = request.headers.get('Host', '')
+    
+    # Check if IP is localhost
+    if client_ip in ['127.0.0.1', '::1', 'localhost']:
+        return True
+    
+    # Check if Host header contains localhost
+    if 'localhost' in host_header or '127.0.0.1' in host_header:
+        return True
+    
+    # Check if request is from allowed hosts
+    if client_ip in NETWORK_SECURITY['allowed_hosts']:
+        return True
+    
+    return False
 
 def allowed_file(filename):
     """Check if file extension is allowed"""
@@ -868,4 +934,18 @@ if __name__ == '__main__':
     # Initialize boulder detection system
     init_boulder_detection()
     
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # Get server configuration from security settings
+    server_config = get_server_config()
+    
+    # Print security status
+    print_security_status()
+    
+    # Start server with security configuration
+    print(f"🚀 Starting Flask server on {server_config['host']}:{server_config['port']}")
+    print(f"🔒 Access URL: http://localhost:{server_config['port']}")
+    
+    app.run(
+        host=server_config['host'], 
+        port=server_config['port'], 
+        debug=True
+    )

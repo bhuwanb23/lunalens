@@ -8,6 +8,7 @@ import {
   ResultsSection,
   Footer
 } from './components';
+import { BOULDER_ANALYSIS_TYPES } from './constants';
 import './boulder.css';
 
 const Boulder = () => {
@@ -177,40 +178,7 @@ const Boulder = () => {
     }
   };
 
-  const analysisTypes = [
-    {
-      id: 'basic',
-      title: 'Basic Detection',
-      description: 'Standard YOLO-based boulder detection with physical measurements.',
-      icon: 'mountain',
-      color: 'orange',
-      features: ['Object Detection', 'Size Measurement', 'Density Analysis']
-    },
-    {
-      id: 'advanced',
-      title: 'Advanced Analysis',
-      description: 'Dual-model detection using YOLO and Vision Transformer for enhanced accuracy.',
-      icon: 'brain',
-      color: 'blue',
-      features: ['ViT Fallback', 'High Accuracy', 'Confidence Validation']
-    },
-    {
-      id: 'depth',
-      title: 'Depth Estimation',
-      description: 'Boulder depth estimation using shadow analysis and solar incidence angle.',
-      icon: 'layer-group',
-      color: 'green',
-      features: ['Shadow Analysis', 'Depth Calculation', 'Solar Angle']
-    },
-    {
-      id: 'gradcam',
-      title: 'Grad-CAM Visualization',
-      description: 'Model interpretability with attention maps and visualization.',
-      icon: 'eye',
-      color: 'purple',
-      features: ['Attention Maps', 'Model Interpretability', 'Visualization']
-    }
-  ];
+
 
   return (
     <div className="bg-gray-900 text-white overflow-x-hidden">
@@ -223,7 +191,7 @@ const Boulder = () => {
         />
 
         <AnalysisSelection 
-          analysisTypes={analysisTypes}
+          analysisTypes={BOULDER_ANALYSIS_TYPES}
           selectedAnalysis={selectedAnalysis}
           handleAnalysisSelect={handleAnalysisSelect}
         />
