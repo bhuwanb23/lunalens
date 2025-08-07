@@ -223,10 +223,19 @@ class LunarRiskAnalyzer:
             elif gaussian_std is not None and gaussian_std > 0:
                 gradient_value = gaussian_std / 100.0
             all_risk_scores['profile_gradient'] = min((gradient_value / 50.0) * 100.0, 100.0)
-        # Crater ratio: look for 'crater_ratio' in any crater report
+        # Crater ratio: look for 'crater_ratio' in any crater report, else use 'stats.density_percent'
         if 'crater' in parsed_reports:
-            crater_ratio = find_stat_in_reports(parsed_reports['crater'], 'crater_ratio', default=0.0)
-            all_risk_scores['crater_ratio'] = crater_ratio if crater_ratio is not None else 0.0
+            crater_ratio = find_stat_in_reports(parsed_reports['crater'], 'crater_ratio', default=None)
+            if crater_ratio is None:
+                # Try stats.density_percent
+                for rep in parsed_reports['crater']:
+                    if 'stats' in rep and 'density_percent' in rep['stats']:
+                        crater_ratio = rep['stats']['density_percent']
+                        print(f"[INFO] Using stats.density_percent from {rep.get('source_file', 'unknown')} as crater_ratio: {crater_ratio}")
+                        break
+            if crater_ratio is None:
+                crater_ratio = 0.0
+            all_risk_scores['crater_ratio'] = crater_ratio
         # Set default values for missing components
         missing_components = set(self.risk_weights.keys()) - set(all_risk_scores.keys())
         for component in missing_components:

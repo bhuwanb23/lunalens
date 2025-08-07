@@ -70,7 +70,7 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
     }
   };
 
-      return (
+  return (
         <div className="relative rounded-xl sm:rounded-2xl p-4 sm:p-6 border-2 border-transparent bg-gradient-to-br from-gray-800/90 to-gray-900/90 shadow-2xl overflow-hidden group">
       {/* Subtle animated background pattern */}
       <div className="absolute inset-0 pointer-events-none z-0 bg-[radial-gradient(circle_at_60%_40%,rgba(255,255,255,0.04)_0%,transparent_70%)] animate-pulse" />
@@ -87,21 +87,21 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
                         </svg>
                     </span>
                     Add Lunar DEM Path
-                </h3>
+        </h3>
                 <p className="text-gray-400 text-sm sm:text-base max-w-lg sm:max-w-xl mx-auto">
                     Enter the file path to your Digital Elevation Model (DEM) for terrain analysis
-                </p>
-            </div>
+        </p>
+      </div>
 
         <div className="space-y-4 sm:space-y-5">
           {/* Hidden file input for browse functionality */}
-          <input
-            ref={fileInputRef}
-            type="file"
+        <input
+          ref={fileInputRef}
+          type="file"
             accept=".tif,.tiff,.asc,.dem,.geotiff"
-            onChange={handleFileSelect}
-            className="hidden"
-          />
+          onChange={handleFileSelect}
+          className="hidden"
+        />
 
                       {/* File Path Input */}
             <div className="space-y-2">
@@ -112,7 +112,7 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-orange-400">
                         <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v4a1 1 0 001 1h3m10 0h3a1 1 0 001-1V7a2 2 0 00-2-2H5a2 2 0 00-2 2zm0 0V5a2 2 0 00-2-2H7a2 2 0 00-2 2v2" />
-                        </svg>
+              </svg>
                     </span>
                     <input
                         id="file-path-input"
@@ -131,25 +131,25 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
                         </div>
                     )}
                 </div>
-            </div>
+          </div>
 
-                      {/* Supported Formats */}
+          {/* Supported Formats */}
             <div className="bg-gray-700/60 rounded-lg p-3 sm:p-4 flex flex-wrap items-center gap-2 shadow">
                 <span className="text-xs sm:text-sm font-semibold text-gray-200 mr-2">Supported formats:</span>
                 {['GeoTIFF (.tif, .tiff)', 'ASC (.asc)', 'DEM (.dem)'].map((format) => (
                     <span key={format} className="px-2 sm:px-3 py-1 bg-gradient-to-r from-orange-500/60 to-red-500/60 rounded text-xs text-white font-semibold shadow">
-                        {format}
-                    </span>
-                ))}
-            </div>
+                  {format}
+                </span>
+              ))}
+          </div>
 
           {/* Action Buttons */}
           <div className="flex gap-3">
-            <button
+          <button
               onClick={handlePathSubmit}
               disabled={isUploading || isValidating || !filePath.trim()}
               className={`flex-1 px-6 py-3 rounded-lg font-bold transition-all duration-300 shadow-lg shadow-orange-500/10 border-2 border-transparent ${isUploading || isValidating || !filePath.trim()
-                  ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
                   : 'bg-gradient-to-r from-orange-500 via-red-500 to-yellow-400 hover:from-orange-600 hover:to-yellow-500 text-white hover:shadow-xl hover:scale-105 border-orange-400/40'
                 }`}
             >
@@ -160,13 +160,13 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
                 </div>
               ) : isUploading ? (
                 <div className="flex items-center justify-center space-x-2">
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   <span>Processing...</span>
-                </div>
-              ) : (
+              </div>
+            ) : (
                 <span className="tracking-wide">Process DEM</span>
-              )}
-            </button>
+            )}
+          </button>
 
             <button
               onClick={handleBrowseClick}
@@ -183,9 +183,9 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
                 Browse
               </span>
             </button>
-          </div>
+        </div>
 
-          {/* Error Message */}
+        {/* Error Message */}
           {pathError && (
             <div className="p-3 bg-gradient-to-r from-red-500/20 to-orange-500/10 border border-red-500/30 rounded-lg shadow animate-pulse mt-2">
               <p className="text-red-400 text-sm font-semibold text-center flex items-center justify-center">
@@ -194,21 +194,21 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
                 </svg>
                 {pathError}
               </p>
-            </div>
-          )}
+          </div>
+        )}
 
           {/* Processing Progress */}
-          {isUploading && (
+        {isUploading && (
             <div className="space-y-2 mt-2">
               <div className="w-full bg-gray-600 rounded-full h-2 overflow-hidden">
                 <div className="bg-gradient-to-r from-orange-500 via-red-500 to-yellow-400 h-2 rounded-full animate-pulse" style={{ width: '60%' }}></div>
               </div>
               <p className="text-xs text-orange-300 text-center font-semibold animate-pulse">Processing DEM file...</p>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
+      </div>
 
-        {/* Tips */}
+      {/* Tips */}
         <div className="mt-7 p-5 bg-gradient-to-br from-gray-700/80 to-gray-800/80 rounded-xl shadow flex flex-col gap-2 border-l-4 border-orange-400/40">
           <h4 className="text-sm font-bold text-orange-200 mb-1 flex items-center">
             <svg className="w-4 h-4 mr-2 text-orange-300 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -217,12 +217,12 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
             Tips for better analysis:
           </h4>
           <ul className="text-xs text-orange-100 space-y-1 pl-2">
-            <li>• Use high-resolution DEM files (GeoTIFF, TIF, or ASC format)</li>
-            <li>• Ensure proper coordinate system (Lunar coordinate system)</li>
-            <li>• Include complete terrain coverage for accurate analysis</li>
-            <li>• Minimum resolution: 30m/pixel for detailed analysis</li>
+          <li>• Use high-resolution DEM files (GeoTIFF, TIF, or ASC format)</li>
+          <li>• Ensure proper coordinate system (Lunar coordinate system)</li>
+          <li>• Include complete terrain coverage for accurate analysis</li>
+          <li>• Minimum resolution: 30m/pixel for detailed analysis</li>
             <li>• Large files (GB+) are supported - processing may take time</li>
-          </ul>
+        </ul>
         </div>
 
                    {/* Example Paths */}
