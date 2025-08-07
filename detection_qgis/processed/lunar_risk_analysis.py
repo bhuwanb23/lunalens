@@ -202,14 +202,14 @@ class LunarRiskAnalyzer:
                 nested_keys=[['results', 'ruggedness_analysis', 'std_tri'], ['results', 'tri_calculator', 'stats', 'std'], ['stats', 'std'], ['statistics', 'std']]
             )
             mean_roughness = find_stat_in_reports(parsed_reports['roughness'], 'mean_roughness', default=None)
-            roughness_value = 0.0
-            if tri_mean is not None and tri_mean > 0:
-                roughness_value = tri_mean
-            elif std_roughness is not None and std_roughness > 0:
+            # Use std_roughness for normalized risk: std=0 -> 0, std=50 -> 100
+            if std_roughness is not None and std_roughness >= 0:
                 roughness_value = std_roughness
-            elif mean_roughness is not None and mean_roughness > 0:
-                roughness_value = mean_roughness
-            all_risk_scores['roughness'] = min((roughness_value / 10.0) * 100.0, 100.0)
+                risk_score = min(max((roughness_value / 50.0) * 100.0, 0.0), 100.0)
+                print(f"[INFO] Roughness std={roughness_value}, risk_score={risk_score}")
+            else:
+                risk_score = 0.0
+            all_risk_scores['roughness'] = risk_score
         # Curvature: search all curvature reports for profile_std, profile_curvature_std, mean_std, mean_curvature_std, gaussian_std, gaussian_curvature_std
         if 'curvature' in parsed_reports:
             profile_std = find_stat_in_reports(parsed_reports['curvature'], 'profile_std', 'profile_curvature_std', default=None)
@@ -223,6 +223,10 @@ class LunarRiskAnalyzer:
             elif gaussian_std is not None and gaussian_std > 0:
                 gradient_value = gaussian_std / 100.0
             all_risk_scores['profile_gradient'] = min((gradient_value / 50.0) * 100.0, 100.0)
+        # Crater ratio: look for 'crater_ratio' in any crater report
+        if 'crater' in parsed_reports:
+            crater_ratio = find_stat_in_reports(parsed_reports['crater'], 'crater_ratio', default=0.0)
+            all_risk_scores['crater_ratio'] = crater_ratio if crater_ratio is not None else 0.0
         # Set default values for missing components
         missing_components = set(self.risk_weights.keys()) - set(all_risk_scores.keys())
         for component in missing_components:
