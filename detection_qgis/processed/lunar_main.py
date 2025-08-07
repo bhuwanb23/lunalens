@@ -4,6 +4,9 @@ import numpy as np
 import json
 from datetime import datetime
 import importlib.util
+import time
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # ✅ 1. QGIS installation path (update if needed)
 QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.40.9"
@@ -14,6 +17,11 @@ os.environ["QGIS_PREFIX_PATH"] = f"{OSGEO4W_ROOT.replace('\\', '/')}/apps/qgis-l
 os.environ["GDAL_FILENAME_IS_UTF8"] = "YES"
 os.environ["VSI_CACHE"] = "TRUE"
 os.environ["VSI_CACHE_SIZE"] = "1000000"
+
+# Optimize for large files
+os.environ["GDAL_CACHEMAX"] = "2048"  # 2GB cache
+os.environ["GDAL_DISABLE_READDIR_ON_OPEN"] = "EMPTY_DIR"
+os.environ["GDAL_USE_SSE"] = "YES"
 
 # Set QT_PLUGIN_PATH - this is crucial for PyQt5 DLL loading
 os.environ["QT_PLUGIN_PATH"] = f"{OSGEO4W_ROOT}\\apps\\qgis-ltr\\qtplugins;{OSGEO4W_ROOT}\\apps\\qt5\\plugins"
@@ -98,6 +106,94 @@ except ImportError:
     print("WARNING: PyQt5.QtCore not available, using fallback QVariant")
 
 # Try to import processing
+
+class ProgressTracker:
+    """Track progress of large file processing"""
+    
+    def __init__(self, total_analyses=11):
+        self.total_analyses = total_analyses
+        self.completed_analyses = 0
+        self.start_time = time.time()
+        self.analysis_times = {}
+        self.lock = threading.Lock()
+    
+    def start_analysis(self, analysis_name):
+        """Start timing an analysis"""
+        with self.lock:
+            self.analysis_times[analysis_name] = {
+                'start_time': time.time(),
+                'status': 'running'
+            }
+            print(f"🚀 Starting {analysis_name}...")
+    
+    def complete_analysis(self, analysis_name):
+        """Mark an analysis as complete"""
+        with self.lock:
+            if analysis_name in self.analysis_times:
+                self.analysis_times[analysis_name]['end_time'] = time.time()
+                self.analysis_times[analysis_name]['status'] = 'completed'
+                duration = self.analysis_times[analysis_name]['end_time'] - self.analysis_times[analysis_name]['start_time']
+                self.analysis_times[analysis_name]['duration'] = duration
+            
+            self.completed_analyses += 1
+            progress = (self.completed_analyses / self.total_analyses) * 100
+            
+            # Calculate estimated time remaining
+            elapsed_time = time.time() - self.start_time
+            if self.completed_analyses > 0:
+                avg_time_per_analysis = elapsed_time / self.completed_analyses
+                remaining_analyses = self.total_analyses - self.completed_analyses
+                estimated_remaining = avg_time_per_analysis * remaining_analyses
+                
+                print(f"✅ {analysis_name} completed in {duration:.1f}s")
+                print(f"📊 Progress: {progress:.1f}% ({self.completed_analyses}/{self.total_analyses})")
+                print(f"⏱️  Estimated time remaining: {estimated_remaining/60:.1f} minutes")
+                print(f"🕐 Total elapsed: {elapsed_time/60:.1f} minutes")
+            else:
+                print(f"✅ {analysis_name} completed")
+                print(f"📊 Progress: {progress:.1f}% ({self.completed_analyses}/{self.total_analyses})")
+    
+    def get_summary(self):
+        """Get processing summary"""
+        total_time = time.time() - self.start_time
+        return {
+            'total_analyses': self.total_analyses,
+            'completed_analyses': self.completed_analyses,
+            'total_time_minutes': total_time / 60,
+            'analysis_times': self.analysis_times,
+            'average_time_per_analysis': total_time / self.completed_analyses if self.completed_analyses > 0 else 0
+        }
+
+def estimate_processing_time(file_size_gb):
+    """Estimate processing time based on file size"""
+    # Base estimates for 1GB file
+    base_times = {
+        'slope': 4,  # minutes
+        'elevation': 3,
+        'curvature': 6,
+        'terrain_ruggedness': 4,
+        'contour': 3,
+        'debris_flow': 2,
+        'crater': 3,
+        'aspect': 2,
+        'hillshade': 2,
+        'counter': 2,
+        'tif_processor': 1
+    }
+    
+    # Scale by file size (non-linear scaling for very large files)
+    scale_factor = file_size_gb ** 0.8  # Sub-linear scaling
+    
+    total_minutes = sum(base_times.values()) * scale_factor
+    hours = total_minutes // 60
+    minutes = total_minutes % 60
+    
+    return {
+        'total_minutes': total_minutes,
+        'hours': hours,
+        'minutes': minutes,
+        'breakdown': {k: v * scale_factor for k, v in base_times.items()}
+    }
 try:
     import processing
     PROCESSING_AVAILABLE = True
@@ -126,6 +222,16 @@ print("✅ QGIS setup completed successfully!")
 
 class LunarMainController:
     def __init__(self, output_dir="lunar_analysis_output"):
+        self.output_dir = output_dir
+        self.analysis_results = {}
+        self.available_modules = {}
+        self.progress_tracker = ProgressTracker()
+        
+        # Create output directory
+        os.makedirs(self.output_dir, exist_ok=True)
+        
+        # Initialize modules
+        self.initialize_modules()
         """
         Initialize the Lunar Main Controller
         
@@ -1038,7 +1144,7 @@ class LunarMainController:
     
     def run_complete_analysis_pipeline(self, dem_path, analysis_types=None):
         """
-        Run complete lunar analysis pipeline
+        Run complete lunar analysis pipeline with progress tracking
         
         Args:
             dem_path (str): Path to input DEM file
@@ -1052,15 +1158,29 @@ class LunarMainController:
         print(f"📊 Input DEM: {os.path.basename(dem_path)}")
         print(f"📁 Output Directory: {self.output_dir}")
         
+        # Estimate file size and processing time
+        try:
+            file_size_gb = os.path.getsize(dem_path) / (1024**3)
+            time_estimate = estimate_processing_time(file_size_gb)
+            print(f"📏 File Size: {file_size_gb:.1f} GB")
+            print(f"⏱️  Estimated Processing Time: {time_estimate['hours']}h {time_estimate['minutes']:.0f}m")
+            print(f"📊 Estimated Breakdown:")
+            for analysis, minutes in time_estimate['breakdown'].items():
+                print(f"   - {analysis}: {minutes:.1f} minutes")
+        except Exception as e:
+            print(f"⚠️  Could not estimate processing time: {e}")
+        
         # Step 1: Load DEM
         print("\n📊 Step 1: Loading DEM...")
+        self.progress_tracker.start_analysis('dem_loading')
         if not self.load_dem(dem_path):
             return False
+        self.progress_tracker.complete_analysis('dem_loading')
         
         # Step 2: Run analyses
         print("\n🔬 Step 2: Running Analysis Modules...")
         
-        # Define analysis sequence
+        # Define analysis sequence with estimated times
         analysis_sequence = [
             ('tif_processor', self.run_tif_processor_analysis),
             ('elevation_statistics', self.run_elevation_statistics_analysis),
@@ -1075,28 +1195,64 @@ class LunarMainController:
             ('terrain_ruggedness', self.run_terrain_ruggedness_analysis)
         ]
         
-        # Run requested analyses
+        # Run requested analyses with progress tracking
         for analysis_name, analysis_func in analysis_sequence:
             if analysis_types is None or analysis_name in analysis_types:
                 if analysis_name in self.available_modules:
-                    print(f"\n🎯 Running {analysis_name.upper()} analysis...")
-                    analysis_func(dem_path)
+                    self.progress_tracker.start_analysis(analysis_name)
+                    try:
+                        analysis_func(dem_path)
+                        self.progress_tracker.complete_analysis(analysis_name)
+                    except Exception as e:
+                        print(f"❌ Error in {analysis_name}: {e}")
+                        self.progress_tracker.complete_analysis(analysis_name)
                 else:
                     print(f"\n⚠️  Skipping {analysis_name.upper()} (module not available)")
         
         # Step 3: Generate summary report
         print("\n📋 Step 3: Generating Summary Report...")
+        self.progress_tracker.start_analysis('summary_generation')
         self.generate_summary_report()
+        self.progress_tracker.complete_analysis('summary_generation')
         
+        # Final summary
+        summary = self.progress_tracker.get_summary()
         print("\n✅ Complete Lunar Analysis Pipeline Finished!")
         print("=" * 60)
         print(f"📁 All outputs saved to: {self.output_dir}")
+        print(f"⏱️  Total Processing Time: {summary['total_time_minutes']:.1f} minutes")
+        print(f"📊 Average Time per Analysis: {summary['average_time_per_analysis']:.1f} seconds")
+        
         print("\n🎯 Analysis Summary:")
         for analysis_name, result in self.analysis_results.items():
             status = result.get('status', 'unknown')
             print(f"   - {analysis_name}: {status}")
         
         return True
+    
+    def save_progress_info(self):
+        """Save progress information to JSON for frontend monitoring"""
+        try:
+            summary = self.progress_tracker.get_summary()
+            progress_data = {
+                'timestamp': datetime.now().isoformat(),
+                'total_analyses': summary['total_analyses'],
+                'completed_analyses': summary['completed_analyses'],
+                'progress_percentage': (summary['completed_analyses'] / summary['total_analyses']) * 100,
+                'total_time_minutes': summary['total_time_minutes'],
+                'average_time_per_analysis': summary['average_time_per_analysis'],
+                'analysis_times': summary['analysis_times'],
+                'status': 'completed' if summary['completed_analyses'] == summary['total_analyses'] else 'running'
+            }
+            
+            progress_file = os.path.join(self.output_dir, 'progress_info.json')
+            with open(progress_file, 'w') as f:
+                json.dump(progress_data, f, indent=2, default=str)
+            
+            return progress_data
+        except Exception as e:
+            print(f"Error saving progress info: {e}")
+            return None
     
     def generate_summary_report(self):
         """
@@ -1202,8 +1358,18 @@ if __name__ == "__main__":
     # Check if DEM path was provided as command line argument
     dem_path = None
     if len(sys.argv) > 1:
-        dem_path = sys.argv[1]
+        # Handle paths with spaces by joining all arguments after the script name
+        dem_path = ' '.join(sys.argv[1:])
         print(f"Using DEM path from command line: {dem_path}")
+        
+        # Remove any surrounding quotes that might have been added
+        dem_path = dem_path.strip('"\'')
+        
+        # Convert to absolute path if it's not already
+        if not os.path.isabs(dem_path):
+            dem_path = os.path.abspath(dem_path)
+        
+        print(f"Processed DEM path: {dem_path}")
     
     def validate_dem_file(file_path):
         """

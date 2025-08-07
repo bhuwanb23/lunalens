@@ -17,22 +17,12 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
     if (!path.trim()) {
       return 'Please enter a file path';
     }
+    
+    // Only validate file extension - let the backend handle path validation
     const validExtensions = ['.tif', '.tiff', '.asc', '.geotiff', '.dem'];
     const hasValidExtension = validExtensions.some(ext => path.toLowerCase().endsWith(ext));
     if (!hasValidExtension) {
-      return 'Please enter a valid DEM file path (.tif, .tiff, .asc, .geotiff, .dem)';
-    }
-    
-    // Check if we're in a web browser (no full path available)
-    const isWebBrowser = !window.electronAPI && !window.require;
-    if (isWebBrowser && !path.includes('/') && !path.includes('\\')) {
-      // In web browser, we might only have filename, which is okay for demo/testing
-      return null;
-    }
-    
-    // For desktop apps or manual path entry, require full path
-    if (!isWebBrowser && !path.includes('/') && !path.includes('\\')) {
-      return 'Please enter a valid file path with directory structure';
+      return 'Please enter a path with supported extension (.tif, .tiff, .asc, .geotiff, .dem)';
     }
     
     return null;
@@ -47,7 +37,8 @@ const ImageUpload = ({ onImageUpload, isUploading }) => {
     setIsValidating(true);
     setTimeout(() => {
       setIsValidating(false);
-      onImageUpload({ type: 'path', path: filePath });
+      // Send the exact path that the user provided - no manipulation
+      onImageUpload({ type: 'path', path: filePath.trim() });
     }, 1000);
   };
 
