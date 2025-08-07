@@ -39,7 +39,9 @@ class ModelLoader:
             raise FileNotFoundError(f"YOLO model not found at: {self.yolo_model_path}")
             
         self.yolo_model = YOLO(self.yolo_model_path)
+        
         print("✅ YOLOv8 model loaded successfully in inference mode.")
+        print(f"✅ YOLO model names: {self.yolo_model.names}")
         return self.yolo_model
     
     def load_vit_model(self, num_classes: int = 2) -> torch.nn.Module:

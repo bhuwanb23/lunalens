@@ -50,6 +50,21 @@ class BoulderDetector:
         
         # Class names
         self.class_names_vit = self.transforms.get_class_names()
+        
+        # Class name mapping for YOLO results
+        self.class_name_mapping = {0: 'boulder'}
+    
+    def _get_class_name(self, class_id: int) -> str:
+        """
+        Get the mapped class name for a given class ID.
+        
+        Args:
+            class_id: The class ID from YOLO model
+            
+        Returns:
+            The mapped class name
+        """
+        return self.class_name_mapping.get(class_id, 'unknown')
     
     def detect_objects(self, image_path: str) -> List[ObjectMeasurements]:
         """
@@ -74,7 +89,8 @@ class BoulderDetector:
         for r in results:
             boxes = r.boxes
             for i, box in enumerate(boxes):
-                class_name = r.names[int(box.cls)]
+                class_id = int(box.cls)
+                class_name = self._get_class_name(class_id)
                 confidence = box.conf[0].item()
                 bbox = tuple(map(int, box.xyxy[0]))
                 
@@ -110,7 +126,8 @@ class BoulderDetector:
         for r in results:
             boxes = r.boxes
             for i, box in enumerate(boxes):
-                class_name = r.names[int(box.cls)]
+                class_id = int(box.cls)
+                class_name = self._get_class_name(class_id)
                 confidence = box.conf[0].item()
                 bbox = tuple(map(int, box.xyxy[0]))
                 
@@ -172,7 +189,8 @@ class BoulderDetector:
         for r in results:
             boxes = r.boxes
             for i, box in enumerate(boxes):
-                class_name = r.names[int(box.cls)]
+                class_id = int(box.cls)
+                class_name = self._get_class_name(class_id)
                 confidence = box.conf[0].item()
                 bbox = tuple(map(int, box.xyxy[0]))
                 
