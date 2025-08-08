@@ -47,8 +47,8 @@ class BoulderDetectionController:
         return True
     
     def detect_boulders(self, image_path: str, use_vit_fallback: bool = True, 
-                       confidence_threshold: float = 0.6) -> List[ObjectMeasurements]:
-        """Detect boulders in the image."""
+                       confidence_threshold: float = 0.6, use_enhanced: bool = True) -> List[ObjectMeasurements]:
+        """Detect boulders in the image with enhanced sensitivity."""
         print(f"🔍 Detecting boulders in: {image_path}")
         
         if not os.path.exists(image_path):
@@ -56,7 +56,10 @@ class BoulderDetectionController:
             return []
         
         try:
-            if use_vit_fallback:
+            if use_enhanced:
+                print("🚀 Using enhanced detection with multiple strategies...")
+                detected_objects = self.detector.detect_with_enhanced_sensitivity(image_path)
+            elif use_vit_fallback:
                 detected_objects = self.detector.detect_with_vit_fallback(
                     image_path, confidence_threshold
                 )

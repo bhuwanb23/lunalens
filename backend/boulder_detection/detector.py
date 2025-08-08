@@ -66,12 +66,13 @@ class BoulderDetector:
         """
         return self.class_name_mapping.get(class_id, 'unknown')
     
-    def detect_objects(self, image_path: str) -> List[ObjectMeasurements]:
+    def detect_objects(self, image_path: str, confidence_threshold: float = 0.1) -> List[ObjectMeasurements]:
         """
-        Detect objects in an image.
+        Detect objects in an image with improved sensitivity.
         
         Args:
             image_path: Path to the image
+            confidence_threshold: Lower confidence threshold to detect more objects
             
         Returns:
             List of detected objects with measurements
@@ -81,8 +82,8 @@ class BoulderDetector:
         image_np = np.array(original_image)
         image_gray = cv2.cvtColor(image_np, cv2.COLOR_RGB2GRAY)
         
-        # Run YOLO inference
-        results = self.yolo_model(image_path)
+        # Run YOLO inference with lower confidence threshold
+        results = self.yolo_model(image_path, conf=confidence_threshold, iou=0.3)
         
         detected_objects = []
         
@@ -102,7 +103,7 @@ class BoulderDetector:
         
         return detected_objects
     
-    def detect_with_vit_fallback(self, image_path: str, confidence_threshold: float = 0.6) -> List[ObjectMeasurements]:
+    def detect_with_vit_fallback(self, image_path: str, confidence_threshold: float = 0.3) -> List[ObjectMeasurements]:
         """
         Detect objects with ViT fallback for low confidence detections.
         
@@ -118,8 +119,8 @@ class BoulderDetector:
         image_np = np.array(original_image)
         image_gray = cv2.cvtColor(image_np, cv2.COLOR_RGB2GRAY)
         
-        # Run YOLO inference
-        results = self.yolo_model(image_path)
+        # Run YOLO inference with lower confidence threshold
+        results = self.yolo_model(image_path, conf=0.1, iou=0.3)
         
         detected_objects = []
         
@@ -165,6 +166,192 @@ class BoulderDetector:
         
         return detected_objects
     
+    def detect_with_enhanced_sensitivity(self, image_path: str) -> List[ObjectMeasurements]:
+        """
+        Detect objects with enhanced sensitivity using multiple strategies.
+        
+        Args:
+            image_path: Path to the image
+            
+        Returns:
+            List of detected objects with measurements
+        """
+        print("🔍 Running enhanced detection with multiple strategies...")
+        
+        # Strategy 1: Very low confidence threshold
+        results_low = self.yolo_model(image_path, conf=0.05, iou=0.2)
+        
+        # Strategy 2: Medium confidence threshold
+        results_medium = self.yolo_model(image_path, conf=0.2, iou=0.3)
+        
+        # Strategy 3: Higher confidence threshold
+        results_high = self.yolo_model(image_path, conf=0.4, iou=0.4)
+        
+        # Combine all results
+        all_boxes = []
+        all_confidences = []
+        all_class_ids = []
+        
+        # Collect from all strategies
+        for results in [results_low, results_medium, results_high]:
+            for r in results:
+                boxes = r.boxes
+                for box in boxes:
+                    all_boxes.append(box.xyxy[0])
+                    all_confidences.append(box.conf[0].item())
+                    all_class_ids.append(int(box.cls))
+        
+        # Remove duplicates using non-maximum suppression
+        detected_objects = []
+        used_indices = set()
+        
+        for i in range(len(all_boxes)):
+            if i in used_indices:
+                continue
+                
+            current_box = all_boxes[i]
+            current_confidence = all_confidences[i]
+            current_class_id = all_class_ids[i]
+            
+            # Check for overlapping boxes
+            overlapping_indices = []
+            for j in range(i + 1, len(all_boxes)):
+                if j in used_indices:
+                    continue
+                    
+                other_box = all_boxes[j]
+                
+                # Calculate IoU
+                x1 = max(current_box[0], other_box[0])
+                y1 = max(current_box[1], other_box[1])
+                x2 = min(current_box[2], other_box[2])
+                y2 = min(current_box[3], other_box[3])
+                
+                if x2 > x1 and y2 > y1:
+                    intersection = (x2 - x1) * (y2 - y1)
+                    area1 = (current_box[2] - current_box[0]) * (current_box[3] - current_box[1])
+                    area2 = (other_box[2] - other_box[0]) * (other_box[3] - other_box[1])
+                    union = area1 + area2 - intersection
+                    iou = intersection / union if union > 0 else 0
+                    
+                    if iou > 0.5:  # High overlap threshold
+                        overlapping_indices.append(j)
+            
+            # Keep the box with highest confidence
+            best_confidence = current_confidence
+            best_index = i
+            
+            for idx in overlapping_indices:
+                if all_confidences[idx] > best_confidence:
+                    best_confidence = all_confidences[idx]
+                    best_index = idx
+            
+            # Mark all overlapping boxes as used
+            used_indices.add(i)
+            for idx in overlapping_indices:
+                used_indices.add(idx)
+            
+            # Use the best box
+            best_box = all_boxes[best_index]
+            best_class_id = all_class_ids[best_index]
+            
+            class_name = self._get_class_name(best_class_id)
+            bbox = tuple(map(int, best_box))
+            
+            # Load image for measurements
+            original_image = Image.open(image_path).convert('RGB')
+            image_np = np.array(original_image)
+            image_gray = cv2.cvtColor(image_np, cv2.COLOR_RGB2GRAY)
+            
+            # Get measurements
+            measurements = self.calculator.get_complete_measurements(
+                class_name, best_confidence, bbox, image_gray
+            )
+            detected_objects.append(measurements)
+        
+        print(f"✅ Enhanced detection found {len(detected_objects)} objects")
+        
+        # Additional strategy: Look for very small objects that might be missed
+        print("🔍 Running additional small object detection...")
+        small_objects = self._detect_small_objects(image_path, detected_objects)
+        detected_objects.extend(small_objects)
+        
+        print(f"✅ Total objects after small object detection: {len(detected_objects)}")
+        return detected_objects
+    
+    def _detect_small_objects(self, image_path: str, existing_objects: List[ObjectMeasurements]) -> List[ObjectMeasurements]:
+        """
+        Detect very small objects that might be missed by standard detection.
+        
+        Args:
+            image_path: Path to the image
+            existing_objects: Already detected objects
+            
+        Returns:
+            List of additional small objects
+        """
+        try:
+            # Load image
+            original_image = Image.open(image_path).convert('RGB')
+            image_np = np.array(original_image)
+            image_gray = cv2.cvtColor(image_np, cv2.COLOR_RGB2GRAY)
+            
+            # Use very low confidence threshold for small objects
+            results = self.yolo_model(image_path, conf=0.01, iou=0.1)
+            
+            small_objects = []
+            existing_bboxes = [obj.bbox for obj in existing_objects]
+            
+            for r in results:
+                boxes = r.boxes
+                for box in boxes:
+                    class_id = int(box.cls)
+                    class_name = self._get_class_name(class_id)
+                    confidence = box.conf[0].item()
+                    bbox = tuple(map(int, box.xyxy[0]))
+                    
+                    # Check if this is a small object (small area)
+                    x1, y1, x2, y2 = bbox
+                    area = (x2 - x1) * (y2 - y1)
+                    
+                    # Only consider small objects (area < 1000 pixels)
+                    if area < 1000:
+                        # Check if this bbox overlaps significantly with existing detections
+                        is_duplicate = False
+                        for existing_bbox in existing_bboxes:
+                            ex1, ey1, ex2, ey2 = existing_bbox
+                            
+                            # Calculate IoU
+                            ix1 = max(x1, ex1)
+                            iy1 = max(y1, ey1)
+                            ix2 = min(x2, ex2)
+                            iy2 = min(y2, ey2)
+                            
+                            if ix2 > ix1 and iy2 > iy1:
+                                intersection = (ix2 - ix1) * (iy2 - iy1)
+                                area1 = (x2 - x1) * (y2 - y1)
+                                area2 = (ex2 - ex1) * (ey2 - ey1)
+                                union = area1 + area2 - intersection
+                                iou = intersection / union if union > 0 else 0
+                                
+                                if iou > 0.3:  # Lower threshold for small objects
+                                    is_duplicate = True
+                                    break
+                        
+                        if not is_duplicate:
+                            # Get measurements
+                            measurements = self.calculator.get_complete_measurements(
+                                class_name, confidence, bbox, image_gray
+                            )
+                            small_objects.append(measurements)
+            
+            print(f"✅ Small object detection found {len(small_objects)} additional objects")
+            return small_objects
+            
+        except Exception as e:
+            print(f"❌ Small object detection failed: {e}")
+            return []
+    
     def detect_with_depth_estimation(self, image_path: str, solar_incidence_angle: Optional[float] = None) -> List[ObjectMeasurements]:
         """
         Detect objects with depth estimation for craters.
@@ -205,7 +392,7 @@ class BoulderDetector:
     def create_visualization(self, image_path: str, detected_objects: List[ObjectMeasurements], 
                            show_gradcam: bool = False) -> np.ndarray:
         """
-        Create visualization of detected objects.
+        Create visualization of detected objects with only bounding boxes.
         
         Args:
             image_path: Path to the image
@@ -213,39 +400,17 @@ class BoulderDetector:
             show_gradcam: Whether to show Grad-CAM visualizations
             
         Returns:
-            Visualization image
+            Visualization image with only bounding boxes
         """
         # Load image
         original_image = Image.open(image_path).convert('RGB')
         image_np = np.array(original_image)
         image_bgr = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
         
-        # Draw bounding boxes and labels
-        for i, obj in enumerate(detected_objects):
+        # Draw only bounding boxes without any text labels
+        for obj in detected_objects:
             x1, y1, x2, y2 = obj.bbox
             cv2.rectangle(image_bgr, (x1, y1), (x2, y2), (0, 255, 0), 2)
-            
-            # Prepare text lines
-            text_lines = [
-                f"{obj.class_name} #{i+1}",
-                f"Conf: {obj.confidence:.2f}",
-                f"Dia: {obj.diameter_real:.2f}m, Vol: {obj.volume_real:.2f}m³"
-            ]
-            
-            if obj.circularity > 0:
-                text_lines.append(f"Circ: {obj.circularity:.2f}, Elong: {obj.elongation:.2f}")
-            
-            if obj.degradation_state != "N/A":
-                text_lines.append(f"Degradation: {obj.degradation_state}")
-            
-            if obj.estimated_depth is not None:
-                text_lines.append(f"Depth: {obj.estimated_depth:.2f}m")
-            
-            # Put text on image
-            for line_num, text_line in enumerate(text_lines):
-                cv2.putText(image_bgr, text_line, 
-                           (x1, y1 - 10 - line_num * 15), 
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 1)
         
         return image_bgr
     

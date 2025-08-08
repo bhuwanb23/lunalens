@@ -347,14 +347,14 @@ class GradCAMVisualizer:
     
     def _create_bounding_box_visualization(self, image: Image.Image, detected_objects) -> np.ndarray:
         """
-        Create a simple bounding box visualization as fallback.
+        Create a simple bounding box visualization as fallback with only bounding boxes.
         
         Args:
             image: Input image
             detected_objects: List of detected objects
             
         Returns:
-            Visualization with bounding boxes
+            Visualization with only bounding boxes
         """
         try:
             import cv2
@@ -363,17 +363,12 @@ class GradCAMVisualizer:
             image_np = np.array(image)
             image_bgr = cv2.cvtColor(image_np, cv2.COLOR_RGB2BGR)
             
-            # Draw bounding boxes
-            for i, obj in enumerate(detected_objects):
+            # Draw only bounding boxes without any text labels
+            for obj in detected_objects:
                 x1, y1, x2, y2 = obj.bbox
                 
                 # Draw rectangle
                 cv2.rectangle(image_bgr, (x1, y1), (x2, y2), (0, 255, 0), 2)
-                
-                # Add label
-                label = f"{obj.class_name} {obj.confidence:.2f}"
-                cv2.putText(image_bgr, label, (x1, y1 - 10), 
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
             
             # Convert back to RGB
             image_rgb = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2RGB)

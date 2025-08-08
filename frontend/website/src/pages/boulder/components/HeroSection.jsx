@@ -32,14 +32,13 @@ const HeroSection = () => {
         
         {/* Enhanced title with glow effect */}
         <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3 bg-gradient-to-r from-gray-100 via-orange-200 to-red-300 bg-clip-text text-transparent drop-shadow-lg animate-pulse">
-          Boulder &  Detection
+        Chandrayaan 2 OHRC Image based Boulder Detection
         </h2>
         
         {/* Enhanced subtitle */}
         <p className="text-xs sm:text-sm lg:text-base text-gray-300 max-w-lg sm:max-w-xl mx-auto leading-relaxed font-light mb-2 sm:mb-3">
           Advanced AI-powered detection system for lunar boulders
         </p>
-        
         {/* Enhanced animated dots */}
         <div className="flex justify-center space-x-2 sm:space-x-3">
           <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gradient-to-r from-orange-400 to-red-500 rounded-full animate-bounce shadow-lg shadow-orange-400/50"></div>
