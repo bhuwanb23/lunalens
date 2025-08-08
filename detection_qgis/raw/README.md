@@ -5,7 +5,7 @@
 ![Lunar Analysis](https://img.shields.io/badge/Lunar-Analysis-purple?style=for-the-badge&logo=moon)
 ![QGIS](https://img.shields.io/badge/QGIS-3.44.1-green?style=for-the-badge&logo=qgis)
 ![Python](https://img.shields.io/badge/Python-3.7+-blue?style=for-the-badge&logo=python)
-![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
+![License](https://img.shields.io/badge/License-MIT-yellow?style=forw-the-badge)
 
 <br>
 
