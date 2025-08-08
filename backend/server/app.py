@@ -785,9 +785,6 @@ def run_lunar_analysis():
     print(f"🔍 Received data: {data}")
     print(f"🔍 DEM path: {dem_path}")
     
-    # Use the exact path provided by the user - no path manipulation
-    # The frontend sends the complete path, so we use it as-is
-    
     # Path to lunar_main.py (adjust if needed)
     script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'detection_qgis', 'processed', 'lunar_main.py'))
     qgis_python = r'C:\Program Files\QGIS 3.40.9\bin\python-qgis-ltr.bat'
@@ -795,18 +792,52 @@ def run_lunar_analysis():
     # Build command with proper path handling
     cmd = [qgis_python, script_path]
     if dem_path:
-        # Use the exact path provided by the user
-        dem_path = os.path.abspath(dem_path)
-        print(f"🔍 Using exact DEM path: {dem_path}")
-        print(f"🔍 DEM file exists: {os.path.exists(dem_path)}")
+        # Handle different path scenarios
+        original_dem_path = dem_path
         
-        # Simple check - if file doesn't exist, return error
-        if not os.path.exists(dem_path):
-            return jsonify({
-                "success": False,
-                "error": f"DEM file not found at the specified path: {dem_path}",
-                "dem_path": dem_path
-            }), 400
+        # If it's just a filename, try to find it in common locations
+        if not os.path.dirname(dem_path) or os.path.dirname(dem_path) == '.':
+            # It's just a filename, try to find it in common locations
+            possible_paths = [
+                os.path.abspath(dem_path),  # Current directory
+                os.path.join(os.path.dirname(__file__), dem_path),  # Server directory
+                os.path.join(os.path.dirname(__file__), '..', '..', dem_path),  # Project root
+                os.path.join('D:\\', 'moon extract', dem_path),  # Common moon extract location
+                os.path.join('D:\\', 'moon extract', 'data', 'derived', '20250207', dem_path),  # Moon extract derived data
+                os.path.join('D:\\', 'QGIS SOFTWARE', 'moon extract', 'data', 'derived', '20250207', dem_path),  # QGIS moon extract
+                os.path.join('D:\\', 'lunalens', dem_path),  # Lunalens directory
+                os.path.join('C:\\', 'Users', os.getenv('USERNAME', ''), 'Downloads', dem_path),  # Downloads
+                os.path.join('C:\\', 'Users', os.getenv('USERNAME', ''), 'Desktop', dem_path),  # Desktop
+            ]
+            
+            print(f"🔍 Searching for file '{dem_path}' in common locations...")
+            for path in possible_paths:
+                print(f"🔍 Checking: {path}")
+                if os.path.exists(path):
+                    dem_path = path
+                    print(f"✅ Found file at: {dem_path}")
+                    break
+            else:
+                # File not found in common locations
+                return jsonify({
+                    "success": False,
+                    "error": f"DEM file '{original_dem_path}' not found. Please provide the full path to the file.",
+                    "dem_path": original_dem_path,
+                    "searched_locations": possible_paths
+                }), 400
+        else:
+            # It's a full path, use as-is
+            dem_path = os.path.abspath(dem_path)
+            print(f"🔍 Using full DEM path: {dem_path}")
+            print(f"🔍 DEM file exists: {os.path.exists(dem_path)}")
+            
+            # Check if file exists
+            if not os.path.exists(dem_path):
+                return jsonify({
+                    "success": False,
+                    "error": f"DEM file not found at the specified path: {dem_path}",
+                    "dem_path": dem_path
+                }), 400
         
         print(f"✅ File found at: {dem_path}")
         cmd.append(dem_path)
