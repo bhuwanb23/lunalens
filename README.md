@@ -83,6 +83,10 @@ LunaLens is a **comprehensive lunar analysis platform** that integrates advanced
 
 </div>
 
+## ISRO BAH 2025 Final Selected PPT
+Click the link to download the PPT 
+[View the PDF](./Bharatiya%20Antariksh%20Hackathon%202025%20Idea%20Submission.pdf)
+
 ---
 
 ## 🚀 **Quick Start**
