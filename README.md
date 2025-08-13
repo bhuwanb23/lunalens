@@ -467,6 +467,20 @@ python -m boulder_detection.main --debug
 
 </div>
 
+## Contributors
+
+| Name        | Role          | GitHub Profile              |
+|-------------|---------------|-----------------------------|
+| Bhuwan B    | Project Lead  | [@bhuwanb](https://github.com/bhuwanb23)       |
+| Nishanth P  | ML Architect  | [@nishanthp](https://github.com/nishanthp)   |
+| Avinash A   | QGIS Expertise   | [@avinasha](https://github.com/avinasha)     |
+| Mukesh V    | Researcher and Developer   | [@bhuwanb](https://github.com/bhuwanb)       |
+| Padmanaban G  | Developer   | [@nishanthp](https://github.com/nishanthp)   |
+| Dhanush KB   | Data Analyst   | [@avinasha](https://github.com/avinasha)     |
+
+---
+
+
 ---
 
 ## 🤝 **Contributing**
