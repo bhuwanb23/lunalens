@@ -294,12 +294,87 @@ class LunarImageProcessor:
         except Exception as e:
             print(f"⚠️  Metadata saving failed: {e}")
 
+def get_user_choice():
+    """Interactive menu for user to choose processing options"""
+    print("\n" + "="*60)
+    print("🎯 LUNAR IMAGE PROCESSING OPTIONS")
+    print("="*60)
+    print("Choose your processing configuration:")
+    print()
+    print("1️⃣  MAXIMUM QUALITY: 4x zoom + 4x enhancement = 16x total scaling")
+    print("   💡 Best for boulder detection, maximum detail")
+    print("   ⚠️  Requires significant memory and processing time")
+    print()
+    print("2️⃣  HIGH QUALITY: 3x zoom + 3x enhancement = 9x total scaling")
+    print("   💡 Excellent detail with moderate resource usage")
+    print()
+    print("3️⃣  BALANCED: 2x zoom + 2x enhancement = 4x total scaling")
+    print("   💡 Good quality, balanced performance")
+    print()
+    print("4️⃣  ZOOM ONLY: 4x zoom + 1x enhancement = 4x total scaling")
+    print("   💡 Size increase without quality enhancement")
+    print()
+    print("5️⃣  ENHANCEMENT ONLY: 1x zoom + 4x enhancement = 4x total scaling")
+    print("   💡 Quality improvement without size increase")
+    print()
+    print("6️⃣  CLEAN TILING: 1x zoom + 1x enhancement = 1x total scaling")
+    print("   💡 Fastest processing, original resolution")
+    print()
+    print("7️⃣  CUSTOM: Choose your own zoom and enhancement factors")
+    print()
+    
+    while True:
+        try:
+            choice = input("Enter your choice (1-7): ").strip()
+            if choice in ['1', '2', '3', '4', '5', '6', '7']:
+                return choice
+            else:
+                print("❌ Please enter a number between 1 and 7")
+        except KeyboardInterrupt:
+            print("\n⚠️  Exiting...")
+            return None
+
+def get_custom_factors():
+    """Get custom zoom and enhancement factors from user"""
+    print("\n🔧 CUSTOM CONFIGURATION")
+    print("="*40)
+    
+    while True:
+        try:
+            zoom = int(input("Enter zoom factor (1-8): "))
+            if 1 <= zoom <= 8:
+                break
+            else:
+                print("❌ Zoom factor must be between 1 and 8")
+        except ValueError:
+            print("❌ Please enter a valid number")
+        except KeyboardInterrupt:
+            return None, None
+    
+    while True:
+        try:
+            enhance = int(input("Enter enhancement factor (1-8): "))
+            if 1 <= enhance <= 8:
+                break
+            else:
+                print("❌ Enhancement factor must be between 1 and 8")
+        except ValueError:
+            print("❌ Please enter a valid number")
+        except KeyboardInterrupt:
+            return None, None
+    
+    return zoom, enhance
+
 def main():
-    """Main function with argument parsing and error handling"""
-    parser = argparse.ArgumentParser(
-        description='Process lunar images with enhancement, zooming, and tiling',
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
+    """Main function with interactive menu and argument parsing"""
+    
+    # Check if arguments were provided (command line mode)
+    if len(sys.argv) > 1:
+        # Command line mode
+        parser = argparse.ArgumentParser(
+            description='Process lunar images with enhancement, zooming, and tiling',
+            formatter_class=argparse.RawDescriptionHelpFormatter,
+            epilog="""
 Examples:
   # Maximum quality (4x zoom + 4x enhancement = 16x total)
   python process_lunar_images.py input.tif output_dir --zoom 4 --enhance 4
@@ -312,48 +387,133 @@ Examples:
   
   # Clean tiling (no zoom, no enhancement)
   python process_lunar_images.py input.tif output_dir --zoom 1 --enhance 1
-        """
-    )
-    
-    parser.add_argument('input_image', help='Input TIFF image path')
-    parser.add_argument('output_dir', help='Output directory for processed tiles')
-    parser.add_argument('--zoom', '-z', type=int, default=4, 
-                       help='Zoom factor (default: 4)')
-    parser.add_argument('--enhance', '-e', type=int, default=4, 
-                       help='Enhancement factor (default: 4)')
-    parser.add_argument('--tile-size', '-t', type=int, default=640, 
-                       help='Tile size in pixels (default: 640)')
-    parser.add_argument('--overlap', '-o', type=float, default=0.2, 
-                       help='Overlap ratio between tiles (default: 0.2)')
-    parser.add_argument('--method', '-m', choices=['sharpen', 'denoise', 'contrast', 'all'], 
-                       default='all', help='Enhancement method (default: all)')
-    
-    args = parser.parse_args()
-    
-    # Validate arguments
-    if args.zoom < 1 or args.enhance < 1:
-        print("❌ Error: Zoom and enhancement factors must be >= 1")
-        return 1
-    
-    if args.tile_size < 64:
-        print("❌ Error: Tile size must be >= 64 pixels")
-        return 1
-    
-    if not (0 <= args.overlap < 1):
-        print("❌ Error: Overlap must be between 0 and 1")
-        return 1
+            """
+        )
+        
+        parser.add_argument('input_image', help='Input TIFF image path')
+        parser.add_argument('output_dir', help='Output directory for processed tiles')
+        parser.add_argument('--zoom', '-z', type=int, default=4, 
+                           help='Zoom factor (default: 4)')
+        parser.add_argument('--enhance', '-e', type=int, default=4, 
+                           help='Enhancement factor (default: 4)')
+        parser.add_argument('--tile-size', '-t', type=int, default=640, 
+                           help='Tile size in pixels (default: 640)')
+        parser.add_argument('--overlap', '-o', type=float, default=0.2, 
+                           help='Overlap ratio between tiles (default: 0.2)')
+        parser.add_argument('--method', '-m', choices=['sharpen', 'denoise', 'contrast', 'all'], 
+                           default='all', help='Enhancement method (default: all)')
+        
+        args = parser.parse_args()
+        
+        # Validate arguments
+        if args.zoom < 1 or args.enhance < 1:
+            print("❌ Error: Zoom and enhancement factors must be >= 1")
+            return 1
+        
+        if args.tile_size < 64:
+            print("❌ Error: Tile size must be >= 64 pixels")
+            return 1
+        
+        if not (0 <= args.overlap < 1):
+            print("❌ Error: Overlap must be between 0 and 1")
+            return 1
+        
+        zoom_factor = args.zoom
+        enhancement_factor = args.enhance
+        tile_size = args.tile_size
+        overlap = args.overlap
+        enhancement_method = args.method
+        input_image = args.input_image
+        output_dir = args.output_dir
+        
+    else:
+        # Interactive mode
+        print("🚀 LUNAR IMAGE PROCESSOR - INTERACTIVE MODE")
+        print("="*50)
+        
+        # Get input file
+        while True:
+            input_image = input("Enter input image path: ").strip().strip('"')
+            if Path(input_image).exists():
+                break
+            else:
+                print(f"❌ File not found: {input_image}")
+                print("💡 Please check the path and try again")
+        
+        # Get output directory
+        output_dir = input("Enter output directory (default: enhanced_lunar_tiles): ").strip().strip('"')
+        if not output_dir:
+            output_dir = "enhanced_lunar_tiles"
+        
+        # Get processing choice
+        choice = get_user_choice()
+        if choice is None:
+            return 1
+        
+        # Set factors based on choice
+        if choice == '1':  # Maximum quality
+            zoom_factor, enhancement_factor = 4, 4
+            print("\n✅ Selected: MAXIMUM QUALITY (4x zoom + 4x enhancement = 16x total)")
+        elif choice == '2':  # High quality
+            zoom_factor, enhancement_factor = 3, 3
+            print("\n✅ Selected: HIGH QUALITY (3x zoom + 3x enhancement = 9x total)")
+        elif choice == '3':  # Balanced
+            zoom_factor, enhancement_factor = 2, 2
+            print("\n✅ Selected: BALANCED (2x zoom + 2x enhancement = 4x total)")
+        elif choice == '4':  # Zoom only
+            zoom_factor, enhancement_factor = 4, 1
+            print("\n✅ Selected: ZOOM ONLY (4x zoom + 1x enhancement = 4x total)")
+        elif choice == '5':  # Enhancement only
+            zoom_factor, enhancement_factor = 1, 4
+            print("\n✅ Selected: ENHANCEMENT ONLY (1x zoom + 4x enhancement = 4x total)")
+        elif choice == '6':  # Clean tiling
+            zoom_factor, enhancement_factor = 1, 1
+            print("\n✅ Selected: CLEAN TILING (1x zoom + 1x enhancement = 1x total)")
+        elif choice == '7':  # Custom
+            zoom_factor, enhancement_factor = get_custom_factors()
+            if zoom_factor is None or enhancement_factor is None:
+                return 1
+            total_scale = zoom_factor * enhancement_factor
+            print(f"\n✅ Selected: CUSTOM ({zoom_factor}x zoom + {enhancement_factor}x enhancement = {total_scale}x total)")
+        
+        # Default values for other parameters
+        tile_size = 640
+        overlap = 0.2
+        enhancement_method = 'all'
+        
+        # Ask for tile size
+        tile_input = input(f"Enter tile size in pixels (default: {tile_size}): ").strip()
+        if tile_input:
+            try:
+                tile_size = int(tile_input)
+                if tile_size < 64:
+                    print("⚠️  Tile size too small, using minimum of 64 pixels")
+                    tile_size = 64
+            except ValueError:
+                print(f"⚠️  Invalid tile size, using default: {tile_size}")
+        
+        # Ask for overlap
+        overlap_input = input(f"Enter overlap ratio 0.0-0.5 (default: {overlap}): ").strip()
+        if overlap_input:
+            try:
+                overlap = float(overlap_input)
+                if not (0 <= overlap <= 0.5):
+                    print("⚠️  Overlap must be between 0.0 and 0.5, using default")
+                    overlap = 0.2
+            except ValueError:
+                print(f"⚠️  Invalid overlap, using default: {overlap}")
     
     try:
         # Process the image
         processor = LunarImageProcessor()
         success = processor.process_image(
-            args.input_image,
-            args.output_dir,
-            args.zoom,
-            args.enhance,
-            args.tile_size,
-            args.overlap,
-            args.method
+            input_image,
+            output_dir,
+            zoom_factor,
+            enhancement_factor,
+            tile_size,
+            overlap,
+            enhancement_method
         )
         
         return 0 if success else 1
