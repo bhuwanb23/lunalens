@@ -15,6 +15,9 @@ import time
 import warnings
 warnings.filterwarnings('ignore')
 
+# Default input directory for images on Windows
+DEFAULT_INPUT_DIR = Path(r"D:\projects\website\input")
+
 class LunarImageProcessor:
     def __init__(self):
         Image.MAX_IMAGE_PIXELS = None  # Remove PIL limit
@@ -405,6 +408,16 @@ Examples:
         
         args = parser.parse_args()
         
+        # Allow passing just a filename; resolve against default input directory
+        try:
+            provided_path = Path(args.input_image)
+            if not provided_path.exists():
+                candidate = DEFAULT_INPUT_DIR / args.input_image
+                if candidate.exists():
+                    args.input_image = str(candidate)
+        except Exception:
+            pass
+
         # Validate arguments
         if args.zoom < 1 or args.enhance < 1:
             print("❌ Error: Zoom and enhancement factors must be >= 1")
@@ -431,13 +444,31 @@ Examples:
         print("🚀 LUNAR IMAGE PROCESSOR - INTERACTIVE MODE")
         print("="*50)
         
-        # Get input file
-        while True:
-            input_image = input("Enter input image path: ").strip().strip('"')
-            if Path(input_image).exists():
-                break
+        # Get input file: try default directory first, then ask for full path
+        default_dir = DEFAULT_INPUT_DIR
+        print(f"Default input directory: {default_dir}")
+
+        input_image = None
+        # Only try default dir prompt if it exists
+        if default_dir.exists() and default_dir.is_dir():
+            image_name = input("Enter image file name in the default directory (e.g., myimage.tif). Press Enter to provide a full path instead: ").strip().strip('"')
+            if image_name:
+                candidate = default_dir / image_name
+                if candidate.is_file():
+                    input_image = str(candidate)
+                else:
+                    print(f"❌ Not found in default directory: {candidate}")
+
+        # Fallback to asking for full path until a valid file is provided
+        while not input_image:
+            raw_path = input("Enter full input image path: ").strip().strip('"')
+            if not raw_path:
+                print("❌ Path cannot be empty. Please provide a valid image file path.")
+                continue
+            if Path(raw_path).is_file():
+                input_image = raw_path
             else:
-                print(f"❌ File not found: {input_image}")
+                print(f"❌ File not found: {raw_path}")
                 print("💡 Please check the path and try again")
         
         # Get output directory
