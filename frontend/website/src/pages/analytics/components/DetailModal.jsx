@@ -1,5 +1,6 @@
 import React from 'react';
 import { ANALYSIS_TYPES } from '../constants';
+import { apiUrl } from '../../../config/api';
 
 const DetailModal = ({ record, isOpen, onClose }) => {
   if (!isOpen || !record) return null;
@@ -139,7 +140,7 @@ const DetailModal = ({ record, isOpen, onClose }) => {
                     <div>
                       <div className="text-sm text-gray-400 mb-2">Detection Visualization</div>
                       <img 
-                        src={`http://localhost:5000${record.visualizationImage}`}
+                        src={apiUrl(record.visualizationImage)}
                         alt="Detection Visualization"
                         className="w-full h-32 object-cover rounded-lg border border-gray-600"
                       />
@@ -149,7 +150,7 @@ const DetailModal = ({ record, isOpen, onClose }) => {
                     <div>
                       <div className="text-sm text-gray-400 mb-2">Grad-CAM Visualization</div>
                       <img 
-                        src={`http://localhost:5000${record.gradcamImage}`}
+                        src={apiUrl(record.gradcamImage)}
                         alt="Grad-CAM Visualization"
                         className="w-full h-32 object-cover rounded-lg border border-gray-600"
                       />

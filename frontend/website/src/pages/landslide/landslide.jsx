@@ -3,6 +3,7 @@ import HeroSection from './components/HeroSection';
 import ImageUpload from './components/ImageUpload';
 import ImagePreview from './components/ImagePreview';
 import AnalysisResults from './components/AnalysisResults';
+import { apiUrl } from '../../config/api';
 
 // Helper to map backend JSON results to frontend analysisData structure
 function mapBackendResultsToAnalysisData(results) {
@@ -147,7 +148,7 @@ const LandslideDetection = () => {
     setError(null);
     setShowResults(false);
     try {
-      const response = await fetch('http://localhost:5000/api/lunar-analysis', {
+      const response = await fetch(apiUrl('/api/lunar-analysis'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ dem_path: image.path })  

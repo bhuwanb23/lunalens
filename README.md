@@ -21,10 +21,10 @@
 
 <br>
 
-[![Stars](https://img.shields.io/github/stars/your-repo/lunalens?style=social)](https://github.com/your-repo/lunalens)
-[![Forks](https://img.shields.io/github/forks/your-repo/lunalens?style=social)](https://github.com/your-repo/lunalens)
-[![Issues](https://img.shields.io/github/issues/your-repo/lunalens)](https://github.com/your-repo/lunalens/issues)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Stars](https://img.shields.io/github/stars/bhuwanb23/lunalens?style=social)](https://github.com/bhuwanb23/lunalens)
+[![Forks](https://img.shields.io/github/forks/bhuwanb23/lunalens?style=social)](https://github.com/bhuwanb23/lunalens)
+[![Issues](https://img.shields.io/github/issues/bhuwanb23/lunalens)](https://github.com/bhuwanb23/lunalens/issues)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
 </div>
 
@@ -102,32 +102,57 @@ Click the link to download the PPT
 ### 🎯 **Installation**
 
 ```bash
-# Clone the repository
-git clone https://github.com/your-repo/lunalens.git
+# 1) Clone the repository
+git clone https://github.com/bhuwanb23/lunalens.git
 cd lunalens
 
-# Frontend Setup
+# 2) Frontend setup
 cd frontend/website
+cp .env.example .env          # adjust VITE_API_URL if your backend isn't on :5000
 npm install
 npm run dev
 
-# Backend Setup (in new terminal)
-cd backend/server
-pip install -r ../requirements.txt
-python setup_database.py
+# 3) Backend setup (in a new terminal, from the repo root)
+cd backend
+pip install -r requirements.txt
+cd server
+cp env.example .env           # set SECRET_KEY / JWT_SECRET_KEY before deploying
+python setup_database.py      # creates SQLite DB and seeds demo users
 python app.py
 ```
 
 🌐 **Frontend**: `http://localhost:5173` | 🔌 **Backend**: `http://localhost:5000`
 
+> **Note:** Boulder detection requires two model files (`best.pt`, `vit_model.pth`) that are *not* committed to the repo — see the [Model Files](#-model-files) section below. The server will still start and the QGIS / analytics endpoints will work without them; only `/api/boulder/*` will return `503` until the models are present.
+
 ### 🔐 **Demo Access**
 | 🚀 Mission ID | 🔑 Access Code | 👤 Role |
 |---------------|----------------|---------|
-| `isro123` | `moon@2024` | 👑 Admin |
-| `mission001` | `lunar@2024` | 👤 User |
-| `research002` | `research@2024` | 🔬 Researcher |
+| `isro123` | `isro123@2024` | 👑 Admin |
+| `mission001` | `mission001@2024` | 👤 User |
+| `research002` | `research002@2024` | 🔬 Researcher |
+| `test001` | `test001@2024` | 🧪 Test User |
+
+> Access codes follow the pattern `<missionId>@2024`. Change them before deploying — see [backend/server/database.py](backend/server/database.py) and [backend/server/app.py](backend/server/app.py).
 
 </div>
+
+---
+
+## 📦 **Model Files**
+
+The boulder-detection pipeline needs two model artefacts that are **not** stored in git (they're large and gitignored):
+
+| File | Path | Purpose |
+|------|------|---------|
+| `best.pt` | `backend/boulder_detection/best.pt` | YOLOv8 weights (primary detector) |
+| `vit_model.pth` | `backend/boulder_detection/vit_model.pth` | Vision Transformer weights (fallback validator) |
+
+You have three options:
+
+1. **Train from scratch** — see [`backend/boulder_detection/lunalena_yolo_train.py`](backend/boulder_detection/lunalena_yolo_train.py). Set `ROBOFLOW_API_KEY` in your environment before running.
+2. **Download the pre-trained release artefacts** from this repo's GitHub Releases page (once published) and drop them into `backend/boulder_detection/`.
+3. **Skip them** — the rest of the platform (QGIS terrain risk, analytics, dashboards) works without the boulder models. `/api/boulder/status` will report `models_loaded: false`.
 
 ---
 
@@ -471,12 +496,12 @@ python -m boulder_detection.main --debug
 
 | Name        | Role          | GitHub Profile              |
 |-------------|---------------|-----------------------------|
-| Bhuwan B    | Project Lead  | [@bhuwanb](https://github.com/bhuwanb23)       |
-| Nishanth P  | ML Architect  | [@nishanthp](https://github.com/nishanthp)   |
-| Avinash A   | QGIS Expertise   | [@avinasha](https://github.com/avinasha)     |
-| Mukesh V    | Researcher and Developer   | [@bhuwanb](https://github.com/bhuwanb)       |
-| Padmanaban G  | Developer   | [@nishanthp](https://github.com/nishanthp)   |
-| Dhanush KB   | Data Analyst   | [@avinasha](https://github.com/avinasha)     |
+| Bhuwan B    | Project Lead  | [@bhuwanb23](https://github.com/bhuwanb23)       |
+| Nishanth P  | ML Architect  | _add GitHub handle_   |
+| Avinash A   | QGIS Expertise   | _add GitHub handle_     |
+| Mukesh V    | Researcher and Developer   | _add GitHub handle_       |
+| Padmanaban G  | Developer   | _add GitHub handle_   |
+| Dhanush KB   | Data Analyst   | _add GitHub handle_     |
 
 ---
 
@@ -562,8 +587,8 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 
 <br>
 
-[![Made with Love](https://img.shields.io/badge/Made%20with-Love-red?style=for-the-badge)](https://github.com/your-repo/lunalens)
+[![Made with Love](https://img.shields.io/badge/Made%20with-Love-red?style=for-the-badge)](https://github.com/bhuwanb23/lunalens)
 [![Powered by React](https://img.shields.io/badge/Powered%20by-React-blue?style=for-the-badge)](https://reactjs.org/)
-[![Lunar Science](https://img.shields.io/badge/Lunar-Science-purple?style=for-the-badge)](https://github.com/your-repo/lunalens)
+[![Lunar Science](https://img.shields.io/badge/Lunar-Science-purple?style=for-the-badge)](https://github.com/bhuwanb23/lunalens)
 
 </div>

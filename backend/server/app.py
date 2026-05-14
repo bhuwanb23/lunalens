@@ -11,7 +11,14 @@ import traceback
 
 # Import database components
 from models import db, User, Analysis, DetectedObject, DensityAnalysis, AnalysisSession, SystemLog
-from database import init_db, create_analysis_record, get_user_analyses, get_analysis_with_details, log_system_event, get_analytics_summary
+from database import (
+    init_db,
+    create_analysis_record,
+    get_user_analyses,
+    get_analysis_with_details,
+    log_system_event,
+    get_analytics_summary as db_get_analytics_summary,
+)
 from config import config
 
 # Import security configuration
@@ -283,10 +290,10 @@ def verify_token():
 # Database API Endpoints
 
 @app.route('/api/analytics/summary', methods=['GET'])
-def get_analytics_summary():
+def analytics_summary():
     """Get analytics summary for dashboard"""
     try:
-        summary = get_analytics_summary()
+        summary = db_get_analytics_summary()
         return jsonify({
             "success": True,
             "data": summary

@@ -19,10 +19,10 @@
 
 <br>
 
-[![Stars](https://img.shields.io/github/stars/your-repo/lunar-analysis?style=social)](https://github.com/your-repo/lunar-analysis)
-[![Forks](https://img.shields.io/github/forks/your-repo/lunar-analysis?style=social)](https://github.com/your-repo/lunar-analysis)
-[![Issues](https://img.shields.io/github/issues/your-repo/lunar-analysis)](https://github.com/your-repo/lunar-analysis/issues)
-[![Pull Requests](https://img.shields.io/github/issues-pr/your-repo/lunar-analysis)](https://github.com/your-repo/lunar-analysis/pulls)
+[![Stars](https://img.shields.io/github/stars/bhuwanb23/lunalens?style=social)](https://github.com/bhuwanb23/lunalens)
+[![Forks](https://img.shields.io/github/forks/bhuwanb23/lunalens?style=social)](https://github.com/bhuwanb23/lunalens)
+[![Issues](https://img.shields.io/github/issues/bhuwanb23/lunalens)](https://github.com/bhuwanb23/lunalens/issues)
+[![Pull Requests](https://img.shields.io/github/issues-pr/bhuwanb23/lunalens)](https://github.com/bhuwanb23/lunalens/pulls)
 
 </div>
 
@@ -754,8 +754,8 @@ For issues and questions:
 
 <br>
 
-[![Made with Love](https://img.shields.io/badge/Made%20with-Love-red?style=for-the-badge)](https://github.com/your-repo/lunar-analysis)
+[![Made with Love](https://img.shields.io/badge/Made%20with-Love-red?style=for-the-badge)](https://github.com/bhuwanb23/lunalens)
 [![Powered by QGIS](https://img.shields.io/badge/Powered%20by-QGIS-green?style=for-the-badge)](https://qgis.org/)
-[![Lunar Science](https://img.shields.io/badge/Lunar-Science-purple?style=for-the-badge)](https://github.com/your-repo/lunar-analysis)
+[![Lunar Science](https://img.shields.io/badge/Lunar-Science-purple?style=for-the-badge)](https://github.com/bhuwanb23/lunalens)
 
 </div>

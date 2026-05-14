@@ -1,5 +1,6 @@
 import React from 'react';
 import PdfExportButton from './PdfExportButton';
+import { apiUrl } from '../../../config/api';
 
 const ResultsSection = ({ analysisResults, handleProceed }) => {
   if (!analysisResults) return null;
@@ -46,7 +47,7 @@ const ResultsSection = ({ analysisResults, handleProceed }) => {
                 <div className="relative group">
                   <div className="max-w-full overflow-hidden rounded-lg sm:rounded-xl border-2 border-gray-600 shadow-lg">
                   <img 
-                    src={`http://localhost:5000${analysisResults.visualizationImage}`}
+                    src={apiUrl(analysisResults.visualizationImage)}
                     alt="Detection Visualization"
                       className="w-full h-auto max-h-96 object-contain transition-all duration-300 transform group-hover:scale-[1.02]"
                       onError={(e) => {
@@ -177,7 +178,7 @@ const ResultsSection = ({ analysisResults, handleProceed }) => {
               {console.log('Grad-CAM image path:', analysisResults.gradcamImage)}
               <div className="max-w-full overflow-hidden rounded-lg sm:rounded-xl border border-gray-600 shadow-lg">
               <img 
-                src={`http://localhost:5000${analysisResults.gradcamImage}`}
+                src={apiUrl(analysisResults.gradcamImage)}
                 alt="Grad-CAM Visualization"
                   className="w-full h-auto max-h-80 object-contain"
                   onError={(e) => {

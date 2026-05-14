@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { LOGIN_CONSTANTS } from '../constants';
+import { apiUrl } from '../../../config/api';
 
 export const useLoginForm = (onLoginSuccess) => {
   const [formData, setFormData] = useState({
@@ -72,7 +73,7 @@ export const useLoginForm = (onLoginSuccess) => {
     setIsSuccess(false);
 
     try {
-      const response = await fetch('http://localhost:5000/login', {
+      const response = await fetch(apiUrl('/login'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

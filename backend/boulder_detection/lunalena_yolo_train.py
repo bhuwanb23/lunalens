@@ -20,11 +20,18 @@ drive.mount('/content/drive')
 
 !pip install roboflow ultralytics
 
+import os
 from roboflow import Roboflow
 from ultralytics import YOLO
 
-# Roboflow API key
-rf = Roboflow(api_key="YOUR_ROBOFLOW_API_KEY")
+# Roboflow API key (set ROBOFLOW_API_KEY in your environment)
+ROBOFLOW_API_KEY = os.environ.get("ROBOFLOW_API_KEY")
+if not ROBOFLOW_API_KEY:
+    raise RuntimeError(
+        "ROBOFLOW_API_KEY environment variable is not set. "
+        "Get a key from https://app.roboflow.com/settings/api and export it before running this script."
+    )
+rf = Roboflow(api_key=ROBOFLOW_API_KEY)
 
 # Download the dataset
 project = rf.workspace("roboflow-jvuqo").project("football-players-detection-3bmdr")
@@ -217,7 +224,14 @@ from google.colab.patches import cv2_imshow
 from torchvision import transforms
 
 # --- Download test images from Roboflow ---
-rf = Roboflow(api_key="qcgDp0XebdnSbb5qHXtQ")
+# Set ROBOFLOW_API_KEY in your environment (or Colab secret) before running.
+ROBOFLOW_API_KEY = os.environ.get("ROBOFLOW_API_KEY")
+if not ROBOFLOW_API_KEY:
+    raise RuntimeError(
+        "ROBOFLOW_API_KEY environment variable is not set. "
+        "Get a key from https://app.roboflow.com/settings/api and export it before running this script."
+    )
+rf = Roboflow(api_key=ROBOFLOW_API_KEY)
 project = rf.workspace("trial-m86h3").project("mission-mangal-ebl9t-k5aiw")
 version = project.version(1)
 dataset = version.download("yolov8")

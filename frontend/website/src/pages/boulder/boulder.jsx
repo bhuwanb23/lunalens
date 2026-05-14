@@ -9,6 +9,7 @@ import {
   Footer
 } from './components';
 import { BOULDER_ANALYSIS_TYPES } from './constants';
+import { apiUrl } from '../../config/api';
 import './boulder.css';
 
 const Boulder = () => {
@@ -47,7 +48,7 @@ const Boulder = () => {
     formData.append('image', file);
 
     try {
-      const response = await fetch('http://localhost:5000/api/boulder/upload', {
+      const response = await fetch(apiUrl('/api/boulder/upload'), {
         method: 'POST',
         body: formData,
       });
@@ -67,7 +68,7 @@ const Boulder = () => {
 
   const analyzeImage = async (filepath, analysisType) => {
     try {
-      const response = await fetch('http://localhost:5000/api/boulder/analyze', {
+      const response = await fetch(apiUrl('/api/boulder/analyze'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -142,10 +143,10 @@ const Boulder = () => {
         
         // Test image URLs
         if (results.visualizationImage) {
-          console.log('Testing visualization URL:', `http://localhost:5000${results.visualizationImage}`);
+          console.log('Testing visualization URL:', apiUrl(results.visualizationImage));
         }
         if (results.gradcamImage) {
-          console.log('Testing Grad-CAM URL:', `http://localhost:5000${results.gradcamImage}`);
+          console.log('Testing Grad-CAM URL:', apiUrl(results.gradcamImage));
         }
         
         setAnalysisResults(results);
