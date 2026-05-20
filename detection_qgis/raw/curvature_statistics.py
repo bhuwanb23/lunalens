@@ -4,7 +4,7 @@ import numpy as np
 from datetime import datetime
 
 # QGIS setup
-QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.44.1"
+QGIS_PREFIX_PATH = os.environ.get('QGIS_PREFIX_PATH', r'C:\Program Files\QGIS 3.40.9')
 os.environ["QGIS_PREFIX_PATH"] = QGIS_PREFIX_PATH
 os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = os.path.join(QGIS_PREFIX_PATH, "qt5", "plugins")
 os.environ["PATH"] += ";" + os.path.join(QGIS_PREFIX_PATH, "bin")
@@ -203,7 +203,8 @@ Analysis:
         print("✅ QGIS cleanup completed")
 
 def main():
-    tif_path = r"E:\moon extract\data\derived\20250207\ch2_tmc_ndn_20250207T1457348573_d_dtm_d18.tif"
+    # Example: tif_path = r"E:\moon extract\data\derived\20250207\ch2_tmc_ndn_20250207T1457348573_d_dtm_d18.tif"
+    tif_path = sys.argv[1] if len(sys.argv) > 1 else None
     stats = CurvatureStats()
     
     # Load TIF file

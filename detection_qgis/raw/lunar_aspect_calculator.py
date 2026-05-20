@@ -302,7 +302,8 @@ def main():
     show_aspect_parameters()
     
     # DEM file path - UPDATE THIS WITH YOUR ACTUAL PATH
-    dem_path = r"D:\moon extract\data\derived\20250207\ch2_tmc_ndn_20250207T1457348573_d_dtm_d18.tif"
+    # Example: dem_path = r"D:\moon extract\data\derived\20250207\ch2_tmc_ndn_20250207T1457348573_d_dtm_d18.tif"
+    dem_path = sys.argv[1] if len(sys.argv) > 1 else None
     
     # Check if file exists
     if not os.path.exists(dem_path):

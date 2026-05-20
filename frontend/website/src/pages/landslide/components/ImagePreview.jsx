@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const riskColors = {
     high: 'bg-red-500',
@@ -18,6 +18,14 @@ const ImagePreview = ({ image, results, isAnalyzing }) => {
     const [showOverlay, setShowOverlay] = useState(true);
     const [zoom, setZoom] = useState(1);
     const [objectUrl, setObjectUrl] = useState(null);
+
+    useEffect(() => {
+        return () => {
+            if (objectUrl) {
+                URL.revokeObjectURL(objectUrl);
+            }
+        };
+    }, [objectUrl]);
 
     if (!image) return null;
 
@@ -45,15 +53,6 @@ const ImagePreview = ({ image, results, isAnalyzing }) => {
         const fileName = image?.name || image?.path || '';
         return fileName.toLowerCase().includes('.tif') || fileName.toLowerCase().includes('.tiff');
     };
-
-    // Cleanup object URL on unmount
-    React.useEffect(() => {
-        return () => {
-            if (objectUrl) {
-                URL.revokeObjectURL(objectUrl);
-            }
-        };
-    }, [objectUrl]);
 
     const handleZoomIn = () => {
         setZoom(Math.min(zoom + 0.2, 3));

@@ -4,7 +4,7 @@ import numpy as np
 from datetime import datetime
 
 # ✅ 1. QGIS installation path
-QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.44.1"
+QGIS_PREFIX_PATH = os.environ.get('QGIS_PREFIX_PATH', r'C:\Program Files\QGIS 3.40.9')
 
 # ✅ 2. Set required environment variables
 os.environ["QGIS_PREFIX_PATH"] = QGIS_PREFIX_PATH
@@ -433,8 +433,10 @@ def main():
     calculator = MoonSlopeCalculator()
     
     # 🔧 CONFIGURE YOUR PATHS HERE
-    tif_path = r"E:\moon extract\data\derived\20250207\PIA12927.tif"
-    slope_output = r"E:\moon extract\data\derived\20250207\moon_slope.tif"
+    # Example: tif_path = r"E:\moon extract\data\derived\20250207\PIA12927.tif"
+    tif_path = sys.argv[1] if len(sys.argv) > 1 else None
+    # Example: slope_output = r"E:\moon extract\data\derived\20250207\moon_slope.tif"
+    slope_output = sys.argv[1] if len(sys.argv) > 1 else None
     
     print("📁 Step 1: Loading moon TIF file...")
     

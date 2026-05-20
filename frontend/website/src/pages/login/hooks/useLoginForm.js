@@ -96,7 +96,7 @@ export const useLoginForm = (onLoginSuccess) => {
         setIsSuccess(false);
         setServerError(data.message || 'Login failed.');
       }
-    } catch (error) {
+    } catch {
       setIsSuccess(false);
       setServerError('Could not connect to server.');
     } finally {

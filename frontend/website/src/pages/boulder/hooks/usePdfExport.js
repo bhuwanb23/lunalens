@@ -475,11 +475,11 @@ export const usePdfExport = () => {
                   // If html2pdf is not available, use fallback
                   fallbackToPrintMethod(htmlContent, resolve, reject);
                 });
-              } catch (error) {
+              } catch {
                 fallbackToPrintMethod(htmlContent, resolve, reject);
               }
             }, 1000);
-          } catch (error) {
+          } catch {
             fallbackToPrintMethod(htmlContent, resolve, reject);
           }
         };
@@ -487,7 +487,7 @@ export const usePdfExport = () => {
         iframe.onerror = () => {
           fallbackToPrintMethod(htmlContent, resolve, reject);
         };
-      } catch (error) {
+      } catch {
         fallbackToPrintMethod(htmlContent, resolve, reject);
       }
     });

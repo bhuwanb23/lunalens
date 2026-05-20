@@ -47,15 +47,6 @@ const ScarpsHeadwallsAnalysis = ({ data }) => {
     }
   };
 
-  const getRiskColor = (level) => {
-    const colors = {
-      'LOW': 'text-green-400',
-      'MODERATE': 'text-yellow-400',
-      'HIGH': 'text-orange-400',
-      'VERY HIGH': 'text-red-400'
-    };
-    return colors[level] || 'text-gray-400';
-  };
 
   const getRiskBgColor = (level) => {
     const colors = {

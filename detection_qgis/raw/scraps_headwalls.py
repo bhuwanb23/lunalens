@@ -4,7 +4,7 @@ import numpy as np
 from datetime import datetime
 
 # ✅ 1. QGIS installation path (update if needed)
-QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.44.1"
+QGIS_PREFIX_PATH = os.environ.get('QGIS_PREFIX_PATH', r'C:\Program Files\QGIS 3.40.9')
 
 # Add processing module path
 PROCESSING_PATH = os.path.join(QGIS_PREFIX_PATH, "apps", "qgis", "python", "plugins")

@@ -1,32 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-const riskIcons = {
-  slope: (
-    <svg className="w-5 h-5 text-orange-400 mr-1 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 17l6-6 4 4 8-8" /></svg>
-  ),
-  aspect: (
-    <svg className="w-5 h-5 text-blue-400 mr-1 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth={2} /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6l4 2" /></svg>
-  ),
-  contour_density: (
-    <svg className="w-5 h-5 text-purple-400 mr-1 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" strokeWidth={2} /></svg>
-  ),
-  elevation: (
-    <svg className="w-5 h-5 text-green-400 mr-1 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 17l6-6 4 4 8-8" /></svg>
-  ),
-  roughness: (
-    <svg className="w-5 h-5 text-pink-400 mr-1 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
-  ),
-  profile_gradient: (
-    <svg className="w-5 h-5 text-yellow-400 mr-1 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-  ),
-  hillshade: (
-    <svg className="w-5 h-5 text-gray-400 mr-1 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth={2} /></svg>
-  ),
-  crater_ratio: (
-    <svg className="w-5 h-5 text-red-400 mr-1 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth={2} /><circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth={2} /></svg>
-  ),
-};
-
 const LunarParametersDisplay = ({ isVisible }) => {
   const [lunarData, setLunarData] = useState(null);
   const [loading, setLoading] = useState(false);

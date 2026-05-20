@@ -7,7 +7,7 @@ from datetime import datetime
 from typing import Dict, List, Tuple, Optional, Any
 
 # ✅ 1. QGIS installation path
-QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.44.1"
+QGIS_PREFIX_PATH = os.environ.get('QGIS_PREFIX_PATH', r'C:\Program Files\QGIS 3.40.9')
 
 # ✅ 2. Set required environment variables
 os.environ["QGIS_PREFIX_PATH"] = QGIS_PREFIX_PATH

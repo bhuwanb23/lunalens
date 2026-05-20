@@ -56,7 +56,9 @@ def check_database_connection():
         
         with app.app_context():
             # Try to connect to database
-            db.engine.execute('SELECT 1')
+            from sqlalchemy import text
+            with db.engine.connect() as conn:
+                conn.execute(text("SELECT 1"))
             print("✅ Database connection successful!")
             return True
     except Exception as e:

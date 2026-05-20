@@ -124,7 +124,11 @@ def init_boulder_detection():
             # Initialize controller
             print("🚀 Creating BoulderDetectionController...")
             boulder_controller = BoulderDetectionController()
-            print("✅ Boulder detection system initialized successfully!")
+            if not getattr(boulder_controller, 'is_ready', False):
+                print("⚠️ Boulder detection models not loaded; /api/boulder/* will return 503 until models are available.")
+                boulder_controller = None
+            else:
+                print("✅ Boulder detection system initialized successfully!")
             
             # Change back to server directory
             os.chdir(original_dir)
@@ -702,11 +706,6 @@ def serve_upload(filename):
     # Set proper headers for images
     response = send_from_directory(uploads_dir, filename)
     
-    # Set CORS headers for images
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
-    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-    
     # Set proper content type for images
     if filename.lower().endswith('.png'):
         response.headers['Content-Type'] = 'image/png'
@@ -758,7 +757,6 @@ def test_image(filename):
     
     if os.path.exists(file_path):
         response = send_from_directory(uploads_dir, filename)
-        response.headers['Access-Control-Allow-Origin'] = '*'
         if filename.lower().endswith('.png'):
             response.headers['Content-Type'] = 'image/png'
         return response
@@ -771,12 +769,7 @@ def run_lunar_analysis():
     
     # Handle preflight OPTIONS request
     if request.method == 'OPTIONS':
-        print("🔍 Handling OPTIONS preflight request")
-        response = jsonify({'status': 'ok'})
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
-        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-        return response, 200
+        return ('', 204)
     
     # Handle actual POST request
     print("🔍 Handling POST request for lunar analysis")
@@ -794,7 +787,11 @@ def run_lunar_analysis():
     
     # Path to lunar_main.py (adjust if needed)
     script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'detection_qgis', 'processed', 'lunar_main.py'))
-    qgis_python = r'C:\Program Files\QGIS 3.40.9\bin\python-qgis-ltr.bat'
+    qgis_python = os.environ.get('QGIS_PYTHON', r'C:\Program Files\QGIS 3.40.9\bin\python-qgis-ltr.bat')
+    lunalens_dem_dir = os.environ.get(
+        'LUNALENS_DEM_DIR',
+        os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'dem'))
+    )
     
     # Build command with proper path handling
     cmd = [qgis_python, script_path]
@@ -804,17 +801,12 @@ def run_lunar_analysis():
         
         # If it's just a filename, try to find it in common locations
         if not os.path.dirname(dem_path) or os.path.dirname(dem_path) == '.':
-            # It's just a filename, try to find it in common locations
             possible_paths = [
-                os.path.abspath(dem_path),  # Current directory
-                os.path.join(os.path.dirname(__file__), dem_path),  # Server directory
-                os.path.join(os.path.dirname(__file__), '..', '..', dem_path),  # Project root
-                os.path.join('D:\\', 'moon extract', dem_path),  # Common moon extract location
-                os.path.join('D:\\', 'moon extract', 'data', 'derived', '20250207', dem_path),  # Moon extract derived data
-                os.path.join('D:\\', 'QGIS SOFTWARE', 'moon extract', 'data', 'derived', '20250207', dem_path),  # QGIS moon extract
-                os.path.join('D:\\', 'lunalens', dem_path),  # Lunalens directory
-                os.path.join('C:\\', 'Users', os.getenv('USERNAME', ''), 'Downloads', dem_path),  # Downloads
-                os.path.join('C:\\', 'Users', os.getenv('USERNAME', ''), 'Desktop', dem_path),  # Desktop
+                os.path.abspath(dem_path),
+                os.path.join(os.path.dirname(__file__), dem_path),
+                os.path.join(os.path.dirname(__file__), '..', '..', dem_path),
+                os.path.join(lunalens_dem_dir, dem_path),
+                os.path.join(os.getcwd(), dem_path),
             ]
             
             print(f"🔍 Searching for file '{dem_path}' in common locations...")
@@ -857,12 +849,7 @@ def run_lunar_analysis():
         # Change to the script directory so it can find the modules
         script_dir = os.path.dirname(script_path)
         
-        # Build command string for shell execution to handle paths with spaces
-        cmd_str = f'"{qgis_python}" "{script_path}"'
-        if dem_path:
-            cmd_str += f' "{dem_path}"'
-        
-        print(f"🔍 Running command: {cmd_str}")
+        print(f"🔍 Running command: {cmd}")
         print(f"🔍 This may take several hours for a 15GB file...")
         
         # For large files, run in background and provide progress updates
@@ -873,33 +860,33 @@ def run_lunar_analysis():
                 print(f"🔍 Estimated time: 3-6 hours based on file size")
                 print(f"🔍 Progress will be saved to progress_info.json")
         
-        result = subprocess.run(cmd_str, capture_output=True, encoding='utf-8', check=True, env=env, cwd=script_dir, shell=True)
+        result = subprocess.run(
+            cmd,
+            capture_output=True,
+            encoding='utf-8',
+            check=True,
+            env=env,
+            cwd=script_dir,
+            shell=False,
+        )
         print(f"Script stdout: {result.stdout}")
         print(f"Script stderr: {result.stderr}")
     except subprocess.CalledProcessError as e:
         print(f"Script stdout: {e.stdout}")
         print(f"Script stderr: {e.stderr}")
-        response = jsonify({
+        return jsonify({
             "success": False, 
             "error": e.stderr or "Script failed with no error message",
             "stdout": e.stdout,
             "stderr": e.stderr,
             "traceback": traceback.format_exc()
-        })
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
-        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-        return response, 500
+        }), 500
     except Exception as e:
-        response = jsonify({
+        return jsonify({
             "success": False, 
             "error": str(e), 
             "traceback": traceback.format_exc()
-        })
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
-        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-        return response, 500
+        }), 500
 
     # Read all JSON results
     try:
@@ -913,21 +900,13 @@ def run_lunar_analysis():
                         results[fname] = pyjson.load(f)
                 except Exception as ex:
                     results[fname] = {"error": f"Could not parse: {str(ex)}"}
-        response = jsonify({"success": True, "results": results})
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
-        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-        return response
+        return jsonify({"success": True, "results": results})
     except Exception as e:
-        response = jsonify({
+        return jsonify({
             "success": False, 
             "error": str(e), 
             "traceback": traceback.format_exc()
-        })
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
-        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-        return response, 500
+        }), 500
 
 @app.route('/api/lunar-analysis/progress', methods=['GET'])
 def get_lunar_analysis_progress():
@@ -940,33 +919,21 @@ def get_lunar_analysis_progress():
             with open(progress_file, 'r', encoding='utf-8') as f:
                 progress_data = json.load(f)
             
-            response = jsonify({
+            return jsonify({
                 "success": True,
                 "progress": progress_data
             })
-            response.headers['Access-Control-Allow-Origin'] = '*'
-            response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
-            response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-            return response
         else:
-            response = jsonify({
+            return jsonify({
                 "success": False,
                 "message": "No progress information available"
-            })
-            response.headers['Access-Control-Allow-Origin'] = '*'
-            response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
-            response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-            return response, 404
+            }), 404
             
     except Exception as e:
-        response = jsonify({
+        return jsonify({
             "success": False,
             "error": str(e)
-        })
-        response.headers['Access-Control-Allow-Origin'] = '*'
-        response.headers['Access-Control-Allow-Methods'] = 'GET, OPTIONS'
-        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-        return response, 500
+        }), 500
 
 if __name__ == '__main__':
     # Initialize boulder detection system

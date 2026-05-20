@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 
 # QGIS setup
-QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.40.9"
+QGIS_PREFIX_PATH = os.environ.get('QGIS_PREFIX_PATH', r'C:\Program Files\QGIS 3.40.9')
 os.environ["QGIS_PREFIX_PATH"] = QGIS_PREFIX_PATH
 os.environ["QT_QPA_PLATFORM_PLUGIN_PATH"] = os.path.join(QGIS_PREFIX_PATH, "qt5", "plugins")
 os.environ["PATH"] += ";" + os.path.join(QGIS_PREFIX_PATH, "bin")
@@ -123,7 +123,8 @@ class ElevationStats:
             print("✅ QGIS cleanup completed (no cleanup needed)")
 
 def main():
-    tif_path = r"D:\moon extract\ch2_tmc_ndn_20200208T0057596133_d_dtm_m65.tif"
+    # Example: tif_path = r"D:\moon extract\ch2_tmc_ndn_20200208T0057596133_d_dtm_m65.tif"
+    tif_path = sys.argv[1] if len(sys.argv) > 1 else None
     if not os.path.exists(tif_path):
         print(f"❌ DEM file not found: {tif_path}")
         print("Please check the path and try again.")

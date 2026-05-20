@@ -10,7 +10,7 @@ import { MOCK_ANALYSIS_RECORDS } from './constants';
 import './analytics.css';
 
 const Analytics = () => {
-  const [records, setRecords] = useState(MOCK_ANALYSIS_RECORDS);
+  const [records] = useState(MOCK_ANALYSIS_RECORDS);
   const [filteredRecords, setFilteredRecords] = useState(MOCK_ANALYSIS_RECORDS);
   const [filters, setFilters] = useState({
     analysisType: 'all',

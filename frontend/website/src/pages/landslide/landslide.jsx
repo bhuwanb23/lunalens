@@ -161,7 +161,7 @@ const LandslideDetection = () => {
       } else {
         setError(data.error || 'Analysis failed.');
       }
-    } catch (err) {
+    } catch {
       setError('Error connecting to backend.');
     }
     setIsAnalyzing(false);
@@ -232,6 +232,12 @@ const LandslideDetection = () => {
                                         <span>Start Analysis</span>
                                     )}
                                 </button>
+                            )}
+
+                            {error && (
+                                <div className="rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+                                    {error}
+                                </div>
                             )}
           </div>
 

@@ -560,7 +560,9 @@ def main():
         processor = LunarContourGenerator()
         
         # Example TIF file path (replace with your actual path)
-        tif_path = r"D:\data\derived\20090731\ch1_tmc_ndn_20090731T1812342475_d_oth_d18.tif"
+        # Example: # Example: tif_path = r"D:\data\derived\20090731\ch1_tmc_ndn_20090731T1812342475_d_oth_d18.tif"
+    tif_path = sys.argv[1] if len(sys.argv) > 1 else None
+    tif_path = sys.argv[1] if len(sys.argv) > 1 else None
         
         # Check if file exists
         if not os.path.exists(tif_path):

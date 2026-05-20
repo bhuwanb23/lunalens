@@ -626,7 +626,8 @@ def main():
     try:
         print("🌙 Starting Real-Time Lunar Contour Generator...")
         processor = LunarContourGenerator()
-        tif_path = r"D:\moon extract\ch2_tmc_ndn_20200208T0057596133_d_dtm_m65.tif"
+        # Example: tif_path = r"D:\moon extract\ch2_tmc_ndn_20200208T0057596133_d_dtm_m65.tif"
+    tif_path = sys.argv[1] if len(sys.argv) > 1 else None
         if not os.path.exists(tif_path):
             print(f"❌ DEM file not found: {tif_path}")
             print("Please check the path and try again.")

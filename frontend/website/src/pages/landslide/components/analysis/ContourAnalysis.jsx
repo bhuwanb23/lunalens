@@ -37,15 +37,6 @@ const ContourAnalysis = ({ data }) => {
     return Number(value).toFixed(decimals);
   };
 
-  const getComplexityColor = (complexity) => {
-    const colors = {
-      'LOW': 'text-green-400',
-      'MODERATE': 'text-yellow-400',
-      'HIGH': 'text-orange-400',
-      'VERY HIGH': 'text-red-400'
-    };
-    return colors[complexity] || 'text-gray-400';
-  };
 
   const getComplexityBgColor = (complexity) => {
     const colors = {

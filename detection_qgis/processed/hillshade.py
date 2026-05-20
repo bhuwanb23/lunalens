@@ -584,7 +584,8 @@ def main():
         processor = LunarHillshadeProcessor()
         
         # Example TIF file path (replace with your actual path)
-        tif_path = r"D:\moon extract\ch2_tmc_ndn_20200208T0057596133_d_dtm_m65.tif"
+        # Example: tif_path = r"D:\moon extract\ch2_tmc_ndn_20200208T0057596133_d_dtm_m65.tif"
+    tif_path = sys.argv[1] if len(sys.argv) > 1 else None
         
         # Check if file exists
         if not os.path.exists(tif_path):

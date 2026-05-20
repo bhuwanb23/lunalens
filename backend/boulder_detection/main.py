@@ -21,18 +21,23 @@ class BoulderDetectionController:
         self.yolo_model_path = "best.pt"
         self.vit_model_path = "vit_model.pth"
         
+        self.is_ready = False
+        self.detector = None
+
         # Validate model paths
         if not self._validate_model_paths():
-            print("❌ Model files not found. Please ensure best.pt and vit_model.pth are in the boulder_detection folder.")
-            sys.exit(1)
-        
+            print("⚠️ Model files not found. Boulder detection is disabled until best.pt and vit_model.pth are placed in the boulder_detection folder.")
+            return
+
         print("🚀 Loading models...")
         try:
             self.detector = BoulderDetector(self.yolo_model_path, self.vit_model_path, scale=1.0)
+            self.is_ready = True
             print("✅ Models loaded successfully!")
         except Exception as e:
-            print(f"❌ Error loading models: {e}")
-            sys.exit(1)
+            print(f"⚠️ Error loading models: {e}. Boulder detection is disabled.")
+            self.detector = None
+            self.is_ready = False
     
     def _validate_model_paths(self) -> bool:
         """Validate that model files exist."""

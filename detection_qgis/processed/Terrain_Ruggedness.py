@@ -5,7 +5,7 @@ import json
 from datetime import datetime
 
 # ✅ 1. QGIS installation path (update if needed)
-QGIS_PREFIX_PATH = r"C:\Program Files\QGIS 3.40.9"
+QGIS_PREFIX_PATH = os.environ.get('QGIS_PREFIX_PATH', r'C:\Program Files\QGIS 3.40.9')
 OSGEO4W_ROOT = QGIS_PREFIX_PATH
 
 # ✅ 2. Set required environment variables based on QGIS batch file
@@ -805,7 +805,8 @@ class TerrainRuggednessCalculator:
 # Example usage
 if __name__ == "__main__":
     # Set the DEM path to the requested file
-    dem_path = r"D:\moon extract\ch2_tmc_ndn_20200208T0057596133_d_dtm_m65.tif"
+    # Example: dem_path = r"D:\moon extract\ch2_tmc_ndn_20200208T0057596133_d_dtm_m65.tif"
+    dem_path = sys.argv[1] if len(sys.argv) > 1 else None
     if not os.path.exists(dem_path):
         print(f"❌ DEM file not found: {dem_path}")
         print("Please check the path and try again.")
