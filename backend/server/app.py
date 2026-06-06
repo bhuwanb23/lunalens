@@ -5,6 +5,7 @@ import datetime
 import json
 import os
 import sys
+import time
 import numpy as np
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
@@ -448,8 +449,10 @@ def analyze_boulder():
         
         # Detect boulders
         print(f"🔍 Starting boulder detection for: {absolute_filepath}")
+        analysis_start_time = time.time()
         detected_objects = boulder_controller.detect_boulders(absolute_filepath)
-        print(f"🔍 Detection completed. Found {len(detected_objects) if detected_objects else 0} objects")
+        analysis_processing_time = round(time.time() - analysis_start_time, 3)
+        print(f"🔍 Detection completed in {analysis_processing_time}s. Found {len(detected_objects) if detected_objects else 0} objects")
         
         if not detected_objects:
             return jsonify({
@@ -534,7 +537,7 @@ def analyze_boulder():
                 "total_volume": float(sum(obj.get('volume_real', 0.0) for obj in results["detected_objects"])),
                 "average_circularity": float(sum(obj.get('circularity', 0.0) for obj in results["detected_objects"]) / total_objects) if total_objects > 0 else 0,
                 "average_elongation": float(sum(obj.get('elongation', 0.0) for obj in results["detected_objects"]) / total_objects) if total_objects > 0 else 0,
-                "processing_time": 2.4,  # This would be calculated from actual processing time
+                "processing_time": analysis_processing_time,
                 "analysis_type": analysis_type,
                 "image_filename": os.path.basename(absolute_filepath)
             }
@@ -549,7 +552,7 @@ def analyze_boulder():
                 "total_volume": 0.0,
                 "average_circularity": 0.0,
                 "average_elongation": 0.0,
-                "processing_time": 2.4,
+                "processing_time": analysis_processing_time,
                 "analysis_type": analysis_type,
                 "image_filename": os.path.basename(absolute_filepath)
             }
