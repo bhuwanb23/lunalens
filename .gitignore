@@ -66,6 +66,10 @@ logs/
 backend/server/uploads/*
 !backend/server/uploads/.gitkeep
 
+# ----- Generated image artifacts in backend -----
+backend/**/*_detected.png
+backend/**/*_gradcam.png
+
 # ----- QGIS / lunar analysis intermediates -----
 detection_qgis/processed/json_results/
 detection_qgis/processed/output/
