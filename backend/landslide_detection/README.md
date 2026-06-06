@@ -1,5 +1,9 @@
 ### YOLOv8 training & testing for landslide detection (Roboflow dataset)
 
+> **Note:** This is a standalone training module, NOT integrated with the Flask API or the frontend.  
+> The frontend landslide page (`/landslide`) calls `/api/lunar-analysis` which uses the QGIS terrain analysis pipeline (`detection_qgis/`), not this YOLO model.  
+> This module is kept for training and evaluating YOLOv8 models on landslide datasets. Future integration with the API is planned.
+
 This module provides a simple CLI to train and evaluate YOLOv8 models using a Roboflow dataset or a local `data.yaml`.
 
 #### 1) Install
