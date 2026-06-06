@@ -122,10 +122,11 @@ class PhysicalCalculator:
         else:
             return "Highly degraded"
     
-    def estimate_crater_depth(self, image_gray: np.ndarray, bbox: Tuple[int, int, int, int], 
+    def estimate_shadow_depth(self, image_gray: np.ndarray, bbox: Tuple[int, int, int, int], 
                             solar_incidence_angle: float) -> Optional[float]:
         """
-        Estimate crater depth from shadow length.
+        Estimate object depth/height from shadow length.
+        Works for both boulders and craters using shadow analysis.
         
         Args:
             image_gray: Grayscale image
@@ -204,10 +205,10 @@ class PhysicalCalculator:
         # Degradation state
         degradation_state = self.determine_degradation_state(confidence)
         
-        # Depth estimation (only for craters)
+        # Depth estimation via shadow analysis (for boulders and craters)
         estimated_depth = None
-        if class_name == 'boulder' and image_gray is not None and solar_incidence_angle is not None:
-            estimated_depth = self.estimate_crater_depth(image_gray, bbox, solar_incidence_angle)
+        if class_name in ('boulder', 'crater') and image_gray is not None and solar_incidence_angle is not None:
+            estimated_depth = self.estimate_shadow_depth(image_gray, bbox, solar_incidence_angle)
         
         return ObjectMeasurements(
             class_name=class_name,
