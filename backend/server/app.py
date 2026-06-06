@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_cors import CORS
 import jwt
 import datetime
+import json
 import os
 import sys
 import numpy as np
@@ -774,8 +775,6 @@ def run_lunar_analysis():
     # Handle actual POST request
     print("🔍 Handling POST request for lunar analysis")
     import subprocess
-    import json as pyjson
-    import os
     from pathlib import Path
     import traceback
 
@@ -897,10 +896,11 @@ def run_lunar_analysis():
                 fpath = os.path.join(json_dir, fname)
                 try:
                     with open(fpath, 'r', encoding='utf-8') as f:
-                        results[fname] = pyjson.load(f)
+                        results[fname] = json.load(f)
                 except Exception as ex:
                     results[fname] = {"error": f"Could not parse: {str(ex)}"}
         return jsonify({"success": True, "results": results})
+
     except Exception as e:
         return jsonify({
             "success": False, 
