@@ -298,7 +298,7 @@ class GradCAMVisualizer:
                         continue
                     
                     # Determine class ID for ViT (0 for crater, 1 for boulder)
-                    class_id = 0 if obj.class_name == 'boulder' else 0
+                    class_id = 1 if obj.class_name == 'boulder' else 0
                     
                     # Normalization parameters for ViT
                     normalization_params = {
