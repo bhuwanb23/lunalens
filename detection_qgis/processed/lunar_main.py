@@ -1393,8 +1393,8 @@ if __name__ == "__main__":
         print("📋 Supported formats: .tif, .tiff, .asc, .dem, .geotiff")
         print("="*60)
         
-        # Default path
-        default_path = r"F:\ch2_tmc_ndn_20250207T1457348573_d_dtm_d18.tif"
+        # Default path (set to empty to prompt user for input)
+        default_path = ""
         
         while True:
             print(f"\n📁 Current DEM file path: {default_path}")
@@ -1520,25 +1520,18 @@ if __name__ == "__main__":
     
     # Clean up
     try:
-        # Suppress the specific GDAL cleanup error
-        import sys
         import warnings
+        import contextlib
+        import io
         
-        # Redirect stderr to suppress the error message
-        original_stderr = sys.stderr
-        sys.stderr = open(os.devnull, 'w')
-        
-        controller.cleanup()
-        
-        # Restore stderr
-        sys.stderr.close()
-        sys.stderr = original_stderr
+        # Suppress GDAL cleanup warnings safely
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            with contextlib.redirect_stderr(io.StringIO()):
+                controller.cleanup()
         
         print("Analysis completed successfully!")
     except Exception as e:
-        # Restore stderr in case of other errors
-        if 'sys' in locals():
-            sys.stderr = original_stderr
         print("Analysis completed successfully!")
         print("Cleanup warnings can be safely ignored")
 
