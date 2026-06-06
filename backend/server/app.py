@@ -432,10 +432,6 @@ def analyze_boulder():
         if user:
             log_system_event('INFO', 'analysis', f'Starting {analysis_type} analysis for {filepath}', user.id)
         
-        # Change to boulder_detection directory for model loading
-        boulder_dir = os.path.join(os.path.dirname(__file__), '..', 'boulder_detection')
-        os.chdir(boulder_dir)
-        
         # Convert relative filepath to absolute path
         if not os.path.isabs(filepath):
             server_dir = os.path.dirname(__file__)
@@ -678,14 +674,9 @@ def analyze_boulder():
                 print(f"❌ Error saving to database: {e}")
                 log_system_event('ERROR', 'database', f'Error saving analysis to database: {str(e)}', user.id)
         
-        # Change back to server directory
-        os.chdir(os.path.dirname(__file__))
-        
         return jsonify(results), 200
         
     except Exception as e:
-        # Change back to server directory
-        os.chdir(os.path.dirname(__file__))
         print(f"❌ Error during analysis: {str(e)}")
         import traceback
         traceback.print_exc()
