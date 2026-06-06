@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import jwt
 import datetime
@@ -186,24 +186,6 @@ def validate_credentials(mission_id, access_code):
 def get_user_by_mission_id(mission_id):
     """Get user by mission ID from database"""
     return User.query.filter_by(mission_id=mission_id).first()
-
-@app.route('/', methods=['GET'])
-def home():
-    return render_template('home.html')
-
-@app.route('/credentials', methods=['GET'])
-def credentials():
-    return render_template('login_credentials.html')
-
-@app.route('/boulder-detection', methods=['GET'])
-def boulder_detection():
-    """Serve the boulder detection HTML interface"""
-    return render_template('boulder_detection.html')
-
-@app.route('/database', methods=['GET'])
-def database_view():
-    """Serve the database management HTML interface"""
-    return render_template('database_view.html')
 
 @app.route('/login', methods=['POST'])
 def login():
