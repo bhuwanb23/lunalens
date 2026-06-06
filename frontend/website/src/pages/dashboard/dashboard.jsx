@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StatsCard,
   LunarAnalysis,
@@ -8,9 +8,55 @@ import {
   Footer
 } from './components';
 import { DASHBOARD_DATA } from './constants';
+import { apiUrl } from '../../config/api';
 import './dashboard.css';
 
 const Dashboard = () => {
+  const [dashboardData, setDashboardData] = useState(DASHBOARD_DATA);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      try {
+        const token = localStorage.getItem('lunalens_token');
+        const response = await fetch(apiUrl('/api/analytics/summary'), {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch analytics');
+
+        const result = await response.json();
+        if (result.success && result.data) {
+          const { total_analyses, total_users, recent_analyses } = result.data;
+
+          setDashboardData(prev => ({
+            ...prev,
+            stats: prev.stats.map(stat => {
+              switch (stat.id) {
+                case 'crater-detection':
+                  return { ...stat, value: String(total_analyses), subtitle: `${recent_analyses} this week` };
+                case 'boulder-analysis':
+                  return { ...stat, value: String(total_analyses), subtitle: 'Objects classified' };
+                case 'model-status':
+                  return { ...stat, subtitle: `${total_users} users registered` };
+                default:
+                  return stat;
+              }
+            })
+          }));
+        }
+      } catch (err) {
+        console.warn('Dashboard: using fallback data, API unavailable:', err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnalytics();
+  }, []);
+
   return (
     <div className="bg-gray-900 text-gray-100 overflow-x-hidden">
       
@@ -20,7 +66,7 @@ const Dashboard = () => {
           {/* Hero Stats Section */}
           <section className="mb-12">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              {DASHBOARD_DATA.stats.map((stat, index) => (
+              {dashboardData.stats.map((stat, index) => (
                 <StatsCard 
                   key={stat.id}
                   stat={stat}
@@ -35,19 +81,19 @@ const Dashboard = () => {
             
             {/* Lunar Analysis Panel */}
             <div className="lg:col-span-2">
-              <LunarAnalysis data={DASHBOARD_DATA.lunarAnalysis} />
+              <LunarAnalysis data={dashboardData.lunarAnalysis} />
             </div>
 
             {/* Sidebar Panels */}
             <div className="space-y-6">
-              <AlertsPanel alerts={DASHBOARD_DATA.alerts} />
-              <QuickActions actions={DASHBOARD_DATA.quickActions} />
+              <AlertsPanel alerts={dashboardData.alerts} />
+              <QuickActions actions={dashboardData.quickActions} />
             </div>
           </section>
 
           {/* Recent Scans Section */}
           <section className="mb-12">
-            <RecentScans scans={DASHBOARD_DATA.recentScans} />
+            <RecentScans scans={dashboardData.recentScans} />
           </section>
 
         </div>
