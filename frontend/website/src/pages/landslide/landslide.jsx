@@ -150,7 +150,10 @@ const LandslideDetection = () => {
     try {
       const response = await fetch(apiUrl('/api/lunar-analysis'), {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('lunalens_token')}`
+        },
         body: JSON.stringify({ dem_path: image.path })  
       });
       const data = await response.json();

@@ -50,6 +50,9 @@ const Boulder = () => {
     try {
       const response = await fetch(apiUrl('/api/boulder/upload'), {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('lunalens_token')}`
+        },
         body: formData,
       });
 
@@ -72,6 +75,7 @@ const Boulder = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('lunalens_token')}`
         },
         body: JSON.stringify({
           filepath: filepath,
