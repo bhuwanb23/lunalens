@@ -222,16 +222,6 @@ print("✅ QGIS setup completed successfully!")
 
 class LunarMainController:
     def __init__(self, output_dir="lunar_analysis_output"):
-        self.output_dir = output_dir
-        self.analysis_results = {}
-        self.available_modules = {}
-        self.progress_tracker = ProgressTracker()
-        
-        # Create output directory
-        os.makedirs(self.output_dir, exist_ok=True)
-        
-        # Initialize modules
-        self.initialize_modules()
         """
         Initialize the Lunar Main Controller
         
@@ -243,6 +233,7 @@ class LunarMainController:
         self.output_dir = output_dir
         self.analysis_results = {}
         self.available_modules = {}
+        self.progress_tracker = ProgressTracker()
         
         # Create output directory if it doesn't exist
         if not os.path.exists(output_dir):
