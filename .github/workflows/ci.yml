@@ -21,6 +21,7 @@ jobs:
           cache-dependency-path: frontend/website/package-lock.json
       - run: npm ci
       - run: npm run lint
+      - run: npm audit --audit-level=high
       - run: npm run build
 
   backend:
@@ -30,9 +31,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install lightweight backend deps
-        run: pip install Flask Flask-CORS Flask-SQLAlchemy Flask-Migrate PyJWT python-dotenv Werkzeug numpy SQLAlchemy
+          cache: pip
+      - name: Install dependencies
+        run: pip install -r backend/requirements.txt ruff
+      - name: Lint with ruff
+        run: ruff check backend/
       - name: Compile Python modules
         run: |
-          python -m py_compile backend/server/app.py backend/server/database.py backend/server/setup_database.py backend/server/config.py backend/server/security_config.py backend/server/models.py
-          python -m py_compile backend/boulder_detection/main.py backend/boulder_detection/detector.py backend/boulder_detection/ml_models.py backend/boulder_detection/gradcam.py backend/boulder_detection/measurements.py backend/boulder_detection/transforms.py
+          python -m py_compile backend/server/app.py
+          python -m py_compile backend/server/database.py
+          python -m py_compile backend/server/config.py
+          python -m py_compile backend/server/security_config.py
+          python -m py_compile backend/server/models.py
