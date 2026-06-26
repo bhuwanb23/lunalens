@@ -59,10 +59,9 @@ representative at an online or offline event.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to the community leaders responsible for enforcement at
-conduct@lunalens.dev.
-
-> **TODO:** Replace the contact email above with the maintainer's preferred address.
+reported to the community leaders responsible for enforcement by opening a
+[GitHub Issue](https://github.com/bhuwanb23/lunalens/issues) or contacting
+the maintainers directly.
 
 All complaints will be reviewed and investigated promptly and fairly.
 
