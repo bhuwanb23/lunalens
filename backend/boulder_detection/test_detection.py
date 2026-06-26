@@ -14,24 +14,24 @@ if current_dir not in sys.path:
 def test_detection_with_mapping():
     """Test that detection returns correct class names."""
     print("🧪 Testing detection with class name mapping...")
-    
+
     try:
         from detector import BoulderDetector
-        
+
         # Initialize detector
         print("🔧 Initializing BoulderDetector...")
         detector = BoulderDetector("best.pt", "vit_model.pth", scale=1.0)
-        
+
         # Test with a sample image if available
         test_image_path = "download.png"  # Use the sample image if available
         if os.path.exists(test_image_path):
             print(f"🔍 Testing with sample image: {test_image_path}")
-            
+
             # Run detection
             detected_objects = detector.detect_objects(test_image_path)
-            
+
             print(f"✅ Detection completed. Found {len(detected_objects)} objects")
-            
+
             # Check class names
             all_correct = True
             for i, obj in enumerate(detected_objects):
@@ -41,7 +41,7 @@ def test_detection_with_mapping():
                     all_correct = False
                 else:
                     print(f"   ✅ Object {i+1} has correct class_name: '{obj.class_name}'")
-            
+
             if all_correct:
                 print("✅ All objects have correct class_name 'boulder'")
                 return True
@@ -51,7 +51,7 @@ def test_detection_with_mapping():
         else:
             print("⚠️ No test image found, skipping detection test")
             return True
-            
+
     except Exception as e:
         print(f"❌ Error during test: {e}")
         import traceback
@@ -64,5 +64,5 @@ if __name__ == "__main__":
         print("\n🎉 Test passed! The detection with class name mapping is working correctly.")
     else:
         print("\n⚠️ Test failed. The detection with class name mapping is not working.")
-    
-    sys.exit(0 if success else 1) 
+
+    sys.exit(0 if success else 1)

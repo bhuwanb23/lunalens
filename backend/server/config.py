@@ -1,5 +1,6 @@
 import os
 import secrets
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -42,10 +43,10 @@ class Config:
     # JWT configuration
     JWT_SECRET_KEY = _get_required_secret('JWT_SECRET_KEY')
     JWT_ACCESS_TOKEN_EXPIRES = 24 * 60 * 60  # 24 hours
-    
+
     # Boulder detection configuration
     BOULDER_DETECTION_MODELS_PATH = os.environ.get('BOULDER_DETECTION_MODELS_PATH', '../boulder_detection/models')
-    
+
     # Logging configuration
     LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO')
     LOG_FILE = os.environ.get('LOG_FILE', 'logs/lunalens.log')
@@ -62,7 +63,7 @@ class ProductionConfig(Config):
     """Production configuration"""
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///lunalens_prod.db')
-    
+
     # Security settings for production
     SESSION_COOKIE_SECURE = True
     SESSION_COOKIE_HTTPONLY = True
@@ -82,4 +83,4 @@ config = {
     'production': ProductionConfig,
     'testing': TestingConfig,
     'default': DevelopmentConfig
-} 
+}

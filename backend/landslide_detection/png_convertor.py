@@ -16,11 +16,12 @@ Usage examples:
   python png_convertor.py input.tif output.png --mode display --clip 2,98
 """
 
-from pathlib import Path
 import argparse
 import sys
-import numpy as np
+from pathlib import Path
+
 import cv2
+import numpy as np
 
 try:
     import tifffile  # type: ignore
@@ -62,7 +63,7 @@ def load_tiff_preserve_dtype(input_path: Path) -> tuple[np.ndarray, bool]:
             if arr is None:
                 raise ValueError(f"Failed to read image: {input_path}")
             # Handle channels-first data (C,H,W) → (H,W,C)
-            if arr.ndim == 3 and arr.shape[0] in (3, 4) and not (arr.shape[2] in (3, 4)):
+            if arr.ndim == 3 and arr.shape[0] in (3, 4) and arr.shape[2] not in (3, 4):
                 arr = np.transpose(arr, (1, 2, 0))
             return arr, False
         except Exception as tif_err:

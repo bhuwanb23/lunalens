@@ -1,10 +1,9 @@
 import argparse
 import os
-import ultralytics
 import sys
-from pathlib import Path
-from typing import Optional
 import warnings
+from pathlib import Path
+
 warnings.filterwarnings('ignore')
 
 
@@ -77,7 +76,7 @@ def train_model(
     data_yaml: Path,
     epochs: int,
     imgsz: int,
-    batch: Optional[int],
+    batch: int | None,
     device: str,
     project_out: Path,
     run_name: str,
@@ -148,7 +147,7 @@ def evaluate_model(
     model: "YOLO",
     data_yaml: Path,
     imgsz: int,
-    batch: Optional[int],
+    batch: int | None,
     device: str,
     project_out: Path,
     run_name_prefix: str,
@@ -182,7 +181,7 @@ def predict_on_split(
 ) -> None:
     import yaml
 
-    with open(data_yaml, "r", encoding="utf-8") as f:
+    with open(data_yaml, encoding="utf-8") as f:
         data_cfg = yaml.safe_load(f)
 
     split_path = data_cfg.get(split_key)

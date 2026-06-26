@@ -4,6 +4,7 @@ This file contains security settings to control network access
 """
 
 import os
+
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -13,24 +14,24 @@ load_dotenv()
 NETWORK_SECURITY = {
     # Set to 'true' to allow external network access (NOT RECOMMENDED for development)
     'allow_external_access': os.environ.get('ALLOW_EXTERNAL_ACCESS', 'false').lower() == 'true',
-    
+
     # Allowed hosts (localhost variants)
     'allowed_hosts': [
         '127.0.0.1',      # IPv4 localhost
         'localhost',      # Hostname localhost
         '::1',           # IPv6 localhost
     ],
-    
+
     # Blocked IP addresses (add IPs to block here)
     'blocked_ips': set(),
-    
+
     # Require HTTPS (set to 'true' in production)
     'require_https': os.environ.get('REQUIRE_HTTPS', 'false').lower() == 'true',
-    
+
     # Server binding configuration
     'host': '127.0.0.1',  # Only bind to localhost
     'port': 5000,         # Default port
-    
+
     # CORS origins — configurable via CORS_ORIGINS env var (comma-separated)
     'allowed_origins': [
         origin.strip()
@@ -74,4 +75,4 @@ def print_security_status():
     print(f"   Server Port: {NETWORK_SECURITY['port']}")
     print(f"   HTTPS Required: {'✅ Yes' if NETWORK_SECURITY['require_https'] else '❌ No'}")
     print(f"   Allowed Origins: {NETWORK_SECURITY['allowed_origins']}")
-    print() 
+    print()

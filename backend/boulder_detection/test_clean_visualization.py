@@ -3,38 +3,39 @@ Test script to verify that visualization shows only bounding boxes without text 
 """
 
 import os
-import sys
+
 from detector import BoulderDetector
 from measurements import ObjectMeasurements
+
 
 def test_clean_visualization():
     """Test that visualization shows only bounding boxes."""
     print("🧪 Testing clean visualization (bounding boxes only)...")
-    
+
     # Check if model files exist
     yolo_model_path = "best.pt"
     vit_model_path = "vit_model.pth"
-    
+
     if not os.path.exists(yolo_model_path):
         print(f"❌ YOLO model not found at: {yolo_model_path}")
         return False
-    
+
     if not os.path.exists(vit_model_path):
         print(f"❌ ViT model not found at: {vit_model_path}")
         return False
-    
+
     try:
         # Initialize detector
         detector = BoulderDetector(yolo_model_path, vit_model_path, scale=1.0)
         print("✅ Detector initialized successfully!")
-        
+
         # Test image path
         test_image_path = "download.png"
-        
+
         if not os.path.exists(test_image_path):
             print(f"❌ Test image not found at: {test_image_path}")
             return False
-        
+
         # Create mock detected objects for testing
         mock_objects = [
             ObjectMeasurements(
@@ -66,10 +67,10 @@ def test_clean_visualization():
                 estimated_depth=3.0
             )
         ]
-        
+
         # Create visualization
         visualization = detector.create_visualization(test_image_path, mock_objects)
-        
+
         if visualization is not None:
             # Save the visualization
             import cv2
@@ -81,7 +82,7 @@ def test_clean_visualization():
         else:
             print("❌ Visualization returned None")
             return False
-            
+
     except Exception as e:
         print(f"❌ Test failed with error: {e}")
         return False
@@ -91,4 +92,4 @@ if __name__ == "__main__":
     if success:
         print("\n🎉 All tests passed! The visualization now shows only bounding boxes.")
     else:
-        print("\n❌ Tests failed!") 
+        print("\n❌ Tests failed!")

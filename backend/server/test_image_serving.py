@@ -3,15 +3,16 @@
 Test script to verify image serving functionality
 """
 
+
 import requests
-import os
+
 
 def test_image_serving():
     """Test if images are being served correctly"""
     base_url = "http://localhost:5000"
-    
+
     print("🧪 Testing image serving...")
-    
+
     # Test 1: Check if server is running
     try:
         response = requests.get(f"{base_url}/")
@@ -19,15 +20,15 @@ def test_image_serving():
     except requests.exceptions.ConnectionError:
         print("❌ Server is not running")
         return False
-    
+
     # Test 2: Check available files
     try:
         response = requests.get(f"{base_url}/api/test/files")
         if response.status_code == 200:
             data = response.json()
-            print(f"✅ Files endpoint working")
+            print("✅ Files endpoint working")
             print(f"📁 Uploads directory: {data['uploads_directory']}")
-            print(f"📄 Available files:")
+            print("📄 Available files:")
             for file_info in data['files']:
                 print(f"  - {file_info['filename']} ({file_info['size']} bytes)")
                 print(f"    URL: {file_info['full_url']}")
@@ -35,7 +36,7 @@ def test_image_serving():
             print(f"❌ Files endpoint failed: {response.status_code}")
     except Exception as e:
         print(f"⚠️ Files endpoint error: {e}")
-    
+
     # Test 3: Test direct image access
     test_files = ['download_detected.png', 'download_gradcam.png', 'download.png']
     for filename in test_files:
@@ -50,9 +51,9 @@ def test_image_serving():
                 print(f"❌ {filename}: Status {response.status_code}")
         except Exception as e:
             print(f"❌ {filename}: Error - {e}")
-    
+
     print("\n🎉 Image serving test completed!")
     return True
 
 if __name__ == "__main__":
-    test_image_serving() 
+    test_image_serving()

@@ -1,6 +1,11 @@
 [tool.ruff]
 target-version = "py311"
 line-length = 120
+exclude = [
+    "backend/boulder_detection/lunalena_yolo_train.py",
+    "backend/landslide_detection/train_test_yolov8.py",
+    "backend/image_conversion/process_lunar_images.py",
+]
 
 [tool.ruff.lint]
 select = [
@@ -14,8 +19,11 @@ select = [
 ignore = [
     "E501",   # line too long (handled by formatter)
     "B008",   # function call in default argument (Flask patterns)
+    "E402",   # module level import not at top (sys.path manipulation)
 ]
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
-"backend/server/app.py" = ["E402"]
+"backend/boulder_detection/*.py" = ["E402", "F841", "B007"]
+"backend/landslide_detection/*.py" = ["B904", "F821"]
+"**/test_*.py" = ["F401", "F841"]

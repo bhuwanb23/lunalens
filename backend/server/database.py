@@ -1,8 +1,7 @@
-from flask_migrate import Migrate
-from models import db, User, Analysis, DetectedObject, DensityAnalysis, AnalysisSession, SystemLog
-from config import config
-import os
 from datetime import datetime, timedelta
+
+from flask_migrate import Migrate
+from models import Analysis, DensityAnalysis, DetectedObject, SystemLog, User, db
 
 migrate = Migrate()
 
@@ -10,14 +9,14 @@ def init_db(app):
     """Initialize database with Flask app"""
     db.init_app(app)
     migrate.init_app(app, db)
-    
+
     with app.app_context():
         # Create all tables
         db.create_all()
-        
+
         # Initialize demo users if they don't exist
         init_demo_users()
-        
+
         print("✅ Database initialized successfully!")
 
 def init_demo_users():
@@ -93,10 +92,10 @@ def create_analysis_record(user_id, analysis_data):
             visualization_path=analysis_data.get('visualization_path'),
             gradcam_path=analysis_data.get('gradcam_path')
         )
-        
+
         db.session.add(analysis)
         db.session.flush()  # Get the analysis ID
-        
+
         # Add detected objects
         detected_objects = analysis_data.get('detected_objects', [])
         for i, obj_data in enumerate(detected_objects):
@@ -115,17 +114,17 @@ def create_analysis_record(user_id, analysis_data):
                 circularity=obj_data.get('circularity', 0.0),
                 elongation=obj_data.get('elongation', 0.0)
             )
-            
+
             # Set bounding box if available
             if obj_data.get('bounding_box'):
                 detected_obj.set_bounding_box(obj_data['bounding_box'])
-            
+
             # Set pixel measurements if available
             if obj_data.get('pixel_measurements'):
                 detected_obj.set_pixel_measurements(obj_data['pixel_measurements'])
-            
+
             db.session.add(detected_obj)
-        
+
         # Add density analysis if available
         density_data = analysis_data.get('density_analysis')
         if density_data:
@@ -136,10 +135,10 @@ def create_analysis_record(user_id, analysis_data):
                 overall_density=density_data.get('density', 0.0)
             )
             db.session.add(density_analysis)
-        
+
         db.session.commit()
         return analysis
-        
+
     except Exception as e:
         db.session.rollback()
         print(f"❌ Error creating analysis record: {e}")
@@ -158,17 +157,17 @@ def get_analysis_with_details(analysis_id):
     analysis = Analysis.query.get(analysis_id)
     if not analysis:
         return None
-    
+
     # Convert to dictionary with all details
     analysis_dict = analysis.to_dict()
-    
+
     # Add detected objects
     analysis_dict['detected_objects'] = [obj.to_dict() for obj in analysis.detected_objects]
-    
+
     # Add density analysis
     if analysis.density_analysis:
         analysis_dict['density_analysis'] = analysis.density_analysis.to_dict()
-    
+
     return analysis_dict
 
 def log_system_event(level, category, message, user_id=None, analysis_id=None, additional_data=None):
@@ -181,13 +180,13 @@ def log_system_event(level, category, message, user_id=None, analysis_id=None, a
             user_id=user_id,
             analysis_id=analysis_id
         )
-        
+
         if additional_data:
             log_entry.set_additional_data(additional_data)
-        
+
         db.session.add(log_entry)
         db.session.commit()
-        
+
     except Exception as e:
         print(f"❌ Error logging system event: {e}")
         db.session.rollback()
@@ -200,7 +199,7 @@ def get_analytics_summary():
         recent_analyses = Analysis.query.filter(
             Analysis.created_at >= datetime.utcnow() - timedelta(days=7)
         ).count()
-        
+
         # Get top users by analysis count
         top_users = db.session.query(
             User.mission_id,
@@ -209,7 +208,7 @@ def get_analytics_summary():
         ).join(Analysis).group_by(User.id).order_by(
             db.func.count(Analysis.id).desc()
         ).limit(5).all()
-        
+
         return {
             'total_analyses': total_analyses,
             'total_users': total_users,
@@ -223,7 +222,7 @@ def get_analytics_summary():
                 for user in top_users
             ]
         }
-        
+
     except Exception as e:
         print(f"❌ Error getting analytics summary: {e}")
         return {
@@ -231,4 +230,4 @@ def get_analytics_summary():
             'total_users': 0,
             'recent_analyses': 0,
             'top_users': []
-        } 
+        }
