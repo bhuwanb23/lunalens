@@ -762,8 +762,15 @@ def run_lunar_analysis():
     # Optionally get DEM path from request
     data = request.get_json() or {}
     dem_path = data.get('dem_path', None)
-    print(f"🔍 Received data: {data}")
-    print(f"🔍 DEM path: {dem_path}")
+
+    # Validate dem_path if provided
+    if dem_path is not None:
+        if not isinstance(dem_path, str) or not dem_path.strip():
+            return jsonify({"success": False, "error": "Invalid dem_path parameter."}), 400
+        dem_path = dem_path.strip()
+        # Block path traversal attempts
+        if '..' in dem_path or dem_path.startswith('/'):
+            return jsonify({"success": False, "error": "Invalid dem_path format."}), 400
     
     # Path to lunar_main.py (adjust if needed)
     script_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'detection_qgis', 'processed', 'lunar_main.py'))

@@ -31,12 +31,14 @@ NETWORK_SECURITY = {
     'host': '127.0.0.1',  # Only bind to localhost
     'port': 5000,         # Default port
     
-    # CORS origins (only localhost variants)
+    # CORS origins — configurable via CORS_ORIGINS env var (comma-separated)
     'allowed_origins': [
-        "http://localhost:5173",
-        "http://127.0.0.1:5173", 
-        "http://localhost:3000",
-        "http://127.0.0.1:3000"
+        origin.strip()
+        for origin in os.environ.get(
+            'CORS_ORIGINS',
+            'http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000'
+        ).split(',')
+        if origin.strip()
     ]
 }
 
