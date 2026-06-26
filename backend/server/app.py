@@ -669,8 +669,7 @@ def analyze_boulder():
         
         return jsonify({
             "success": False,
-            "message": f"Error during analysis: {str(e)}",
-            "error_details": str(e)
+            "message": "An error occurred during analysis. Please try again."
         }), 500
 
 @app.route('/uploads/<filename>')
@@ -850,17 +849,13 @@ def run_lunar_analysis():
         print(f"Script stdout: {e.stdout}")
         print(f"Script stderr: {e.stderr}")
         return jsonify({
-            "success": False, 
-            "error": e.stderr or "Script failed with no error message",
-            "stdout": e.stdout,
-            "stderr": e.stderr,
-            "traceback": traceback.format_exc()
+            "success": False,
+            "error": "Analysis script failed. Check server logs for details."
         }), 500
     except Exception as e:
         return jsonify({
-            "success": False, 
-            "error": str(e), 
-            "traceback": traceback.format_exc()
+            "success": False,
+            "error": "An unexpected error occurred. Check server logs for details."
         }), 500
 
     # Read all JSON results
@@ -926,7 +921,7 @@ if __name__ == '__main__':
     print(f"🔒 Access URL: http://localhost:{server_config['port']}")
     
     app.run(
-        host=server_config['host'], 
-        port=server_config['port'], 
-        debug=True
+        host=server_config['host'],
+        port=server_config['port'],
+        debug=app.config.get('DEBUG', False)
     )
