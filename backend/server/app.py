@@ -174,13 +174,10 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
 def validate_credentials(mission_id, access_code):
-    """Validate user credentials from database"""
+    """Validate user credentials from database using hashed passwords"""
     user = User.query.filter_by(mission_id=mission_id).first()
-    if user and user.is_active:
-        # In a real system, you'd hash the access code
-        # For demo purposes, we'll use a simple check
-        if access_code == f"{mission_id}@2024":
-            return user
+    if user and user.is_active and user.check_password(access_code):
+        return user
     return None
 
 def get_user_by_mission_id(mission_id):
@@ -190,8 +187,17 @@ def get_user_by_mission_id(mission_id):
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
+    if not data:
+        return jsonify({"success": False, "message": "Invalid request body."}), 400
+
     mission_id = data.get('missionId')
     access_code = data.get('accessCode')
+
+    if not mission_id or not access_code:
+        return jsonify({"success": False, "message": "Mission ID and access code are required."}), 400
+
+    if not isinstance(mission_id, str) or not isinstance(access_code, str):
+        return jsonify({"success": False, "message": "Invalid credential format."}), 400
 
     # Validate user credentials
     user = validate_credentials(mission_id, access_code)

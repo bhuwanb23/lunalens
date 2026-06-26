@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 import json
 
 db = SQLAlchemy()
@@ -7,30 +8,39 @@ db = SQLAlchemy()
 class User(db.Model):
     """User model for authentication and permissions"""
     __tablename__ = 'users'
-    
+
     id = db.Column(db.Integer, primary_key=True)
     mission_id = db.Column(db.String(50), unique=True, nullable=False)
     name = db.Column(db.String(100), nullable=False)
     role = db.Column(db.String(50), nullable=False, default='user')
+    password_hash = db.Column(db.String(256), nullable=False)
     permissions = db.Column(db.Text, default='[]')  # JSON string of permissions
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_login = db.Column(db.DateTime)
     is_active = db.Column(db.Boolean, default=True)
-    
+
     # Relationships
     analyses = db.relationship('Analysis', backref='user', lazy=True)
-    
+
+    def set_password(self, password):
+        """Hash and set the user's password"""
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        """Verify a password against the stored hash"""
+        return check_password_hash(self.password_hash, password)
+
     def get_permissions(self):
         """Get permissions as a list"""
         try:
             return json.loads(self.permissions)
         except (json.JSONDecodeError, TypeError):
             return []
-    
+
     def set_permissions(self, permissions_list):
         """Set permissions from a list"""
         self.permissions = json.dumps(permissions_list)
-    
+
     def has_permission(self, permission):
         """Check if user has specific permission"""
         return permission in self.get_permissions()

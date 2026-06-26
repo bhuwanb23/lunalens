@@ -21,34 +21,38 @@ def init_db(app):
         print("✅ Database initialized successfully!")
 
 def init_demo_users():
-    """Initialize demo users for testing"""
+    """Initialize demo users for testing. Password format: {mission_id}@2024"""
     demo_users = [
         {
             'mission_id': 'isro123',
             'name': 'ISRO Mission Control',
             'role': 'admin',
+            'password': 'isro123@2024',
             'permissions': ['dashboard', 'analytics', 'settings', 'boulder_detection']
         },
         {
             'mission_id': 'mission001',
             'name': 'Lunar Mission Team',
             'role': 'user',
+            'password': 'mission001@2024',
             'permissions': ['dashboard', 'analytics', 'boulder_detection']
         },
         {
             'mission_id': 'research002',
             'name': 'Research Team',
             'role': 'researcher',
+            'password': 'research002@2024',
             'permissions': ['dashboard', 'analytics', 'data_export', 'boulder_detection']
         },
         {
             'mission_id': 'test001',
             'name': 'Test User',
             'role': 'user',
+            'password': 'test001@2024',
             'permissions': ['dashboard', 'boulder_detection']
         }
     ]
-    
+
     for user_data in demo_users:
         existing_user = User.query.filter_by(mission_id=user_data['mission_id']).first()
         if not existing_user:
@@ -57,9 +61,10 @@ def init_demo_users():
                 name=user_data['name'],
                 role=user_data['role']
             )
+            user.set_password(user_data['password'])
             user.set_permissions(user_data['permissions'])
             db.session.add(user)
-    
+
     try:
         db.session.commit()
         print("✅ Demo users initialized successfully!")
