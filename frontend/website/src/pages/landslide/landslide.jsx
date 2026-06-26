@@ -154,8 +154,12 @@ const LandslideDetection = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('lunalens_token')}`
         },
-        body: JSON.stringify({ dem_path: image.path })  
+        body: JSON.stringify({ dem_path: image.path })
       });
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP ${response.status}: ${response.statusText}`);
+      }
       const data = await response.json();
       if (data.success) {
         const mapped = mapBackendResultsToAnalysisData(data.results);
