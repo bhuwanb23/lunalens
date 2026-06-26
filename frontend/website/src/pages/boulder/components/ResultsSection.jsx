@@ -52,9 +52,7 @@ const ResultsSection = ({ analysisResults, handleProceed }) => {
                       className="w-full h-auto max-h-96 object-contain transition-all duration-300 transform group-hover:scale-[1.02]"
                       onError={(e) => {
                         console.error('Detection image failed to load:', e.target.src);
-                        console.error('Error details:', e);
                       }}
-                      onLoad={() => console.log('Detection image loaded successfully')}
                   />
                   </div>
                   <div className="absolute top-2 right-2 bg-gradient-to-r from-blue-600 to-indigo-700 text-white px-2 py-1 rounded text-xs font-semibold shadow-md">
@@ -175,17 +173,14 @@ const ResultsSection = ({ analysisResults, handleProceed }) => {
                 </i>
                 Grad-CAM Visualization
               </h4>
-              {console.log('Grad-CAM image path:', analysisResults.gradcamImage)}
               <div className="max-w-full overflow-hidden rounded-lg sm:rounded-xl border border-gray-600 shadow-lg">
-              <img 
+              <img
                 src={apiUrl(analysisResults.gradcamImage)}
                 alt="Grad-CAM Visualization"
                   className="w-full h-auto max-h-80 object-contain"
                   onError={(e) => {
                     console.error('Grad-CAM image failed to load:', e.target.src);
-                    console.error('Error details:', e);
                   }}
-                  onLoad={() => console.log('Grad-CAM image loaded successfully')}
               />
               </div>
             </div>

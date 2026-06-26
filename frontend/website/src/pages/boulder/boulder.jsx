@@ -137,22 +137,7 @@ const Boulder = () => {
           analysisType: analysisResult.analysis_type || selectedAnalysis,
           imageFilename: analysisResult.analysis_summary?.image_filename || 'Unknown'
         };
-        
-        // Debug logging
-        console.log('Full analysis result:', analysisResult);
-        console.log('Processed results:', results);
-        console.log('Additional files:', analysisResult.additional_files);
-        console.log('Visualization image path:', results.visualizationImage);
-        console.log('Grad-CAM image path:', results.gradcamImage);
-        
-        // Test image URLs
-        if (results.visualizationImage) {
-          console.log('Testing visualization URL:', apiUrl(results.visualizationImage));
-        }
-        if (results.gradcamImage) {
-          console.log('Testing Grad-CAM URL:', apiUrl(results.gradcamImage));
-        }
-        
+
         setAnalysisResults(results);
       } else {
         setError(analysisResult.message || 'Analysis failed');
