@@ -3,7 +3,7 @@
 <div align="center">
 
 ![LunaLens](https://img.shields.io/badge/LunaLens-Lunar%20Analysis-blue?style=for-the-badge&logo=moon)
-![React](https://img.shields.io/badge/React-18+-blue?style=for-the-badge&logo=react)
+![React](https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react)
 ![Python](https://img.shields.io/badge/Python-3.9+-green?style=for-the-badge&logo=python)
 ![Flask](https://img.shields.io/badge/Flask-API-red?style=for-the-badge&logo=flask)
 ![YOLO](https://img.shields.io/badge/YOLO-v8-red?style=for-the-badge&logo=yolo)
@@ -25,6 +25,7 @@
 [![Forks](https://img.shields.io/github/forks/bhuwanb23/lunalens?style=social)](https://github.com/bhuwanb23/lunalens)
 [![Issues](https://img.shields.io/github/issues/bhuwanb23/lunalens)](https://github.com/bhuwanb23/lunalens/issues)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+![CI](https://img.shields.io/github/actions/workflow/status/bhuwanb23/lunalens/ci.yml?label=CI)
 
 </div>
 
@@ -94,8 +95,8 @@ Click the link to download the PPT
 <div style="background: linear-gradient(45deg, #ff6b35, #f7931e); padding: 25px; border-radius: 20px; margin: 25px 0;">
 
 ### ⚡ **Prerequisites**
-- 🖥️ **Node.js** (v16+)
-- 🐍 **Python** (v3.9+)
+- 🖥️ **Node.js** (v18+)
+- 🐍 **Python** (v3.11+)
 - 🗺️ **QGIS 3.x** (optional, for terrain analysis)
 - 📦 **npm** or **yarn**
 
@@ -134,6 +135,23 @@ python app.py
 | `test001` | `test001@2024` | 🧪 Test User |
 
 > Access codes follow the pattern `<missionId>@2024`. Change them before deploying — see [backend/server/database.py](backend/server/database.py) and [backend/server/app.py](backend/server/app.py).
+
+### 🐳 **Docker Quick Start**
+
+```bash
+# Clone and start with Docker Compose
+git clone https://github.com/bhuwanb23/lunalens.git
+cd lunalens
+
+# Set secret keys (required for production)
+export SECRET_KEY=$(python -c "import secrets; print(secrets.token_hex(32))")
+export JWT_SECRET_KEY=$(python -c "import secrets; print(secrets.token_hex(32))")
+
+# Build and run
+docker-compose up --build
+```
+
+🌐 **Frontend**: `http://localhost` | 🔌 **Backend**: `http://localhost:5000`
 
 </div>
 
