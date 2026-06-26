@@ -9,11 +9,9 @@ Briefly describe what this PR changes and why.
 - [ ] CI / tooling
 
 ## Checklist
-- [ ] Frontend builds: 
-pm run build in rontend/website
-- [ ] Frontend lints clean: 
-pm run lint in rontend/website
-- [ ] Backend compiles: python -m py_compile backend/server/*.py backend/boulder_detection/*.py
+- [ ] Frontend builds: `npm run build` in `frontend/website`
+- [ ] Frontend lints clean: `npm run lint` in `frontend/website`
+- [ ] Backend compiles: `python -m py_compile backend/server/*.py`
 - [ ] No secrets, API keys, or local machine paths committed
 - [ ] README / env examples updated if setup or config changed
 
