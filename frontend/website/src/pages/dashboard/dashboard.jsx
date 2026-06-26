@@ -13,7 +13,6 @@ import './dashboard.css';
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(DASHBOARD_DATA);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -49,8 +48,6 @@ const Dashboard = () => {
         }
       } catch (err) {
         console.warn('Dashboard: using fallback data, API unavailable:', err.message);
-      } finally {
-        setLoading(false);
       }
     };
 
