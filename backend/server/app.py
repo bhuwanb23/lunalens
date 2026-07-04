@@ -181,6 +181,14 @@ def validate_credentials(mission_id, access_code):
         return user
     return None
 
+def validate_email_credentials(email, password):
+    """Validate user credentials by email and password"""
+    normalized_email = email.lower().strip()
+    user = User.query.filter_by(email=normalized_email).first()
+    if user and user.is_active and user.check_password(password):
+        return user
+    return None
+
 def get_user_by_mission_id(mission_id):
     """Get user by mission ID from database"""
     return User.query.filter_by(mission_id=mission_id).first()
@@ -191,25 +199,33 @@ def login():
     if not data:
         return jsonify({"success": False, "message": "Invalid request body."}), 400
 
+    email = data.get('email')
+    password = data.get('password')
     mission_id = data.get('missionId')
     access_code = data.get('accessCode')
 
-    if not mission_id or not access_code:
-        return jsonify({"success": False, "message": "Mission ID and access code are required."}), 400
+    user = None
+    login_identifier = None
 
-    if not isinstance(mission_id, str) or not isinstance(access_code, str):
-        return jsonify({"success": False, "message": "Invalid credential format."}), 400
+    if email and password:
+        if not isinstance(email, str) or not isinstance(password, str):
+            return jsonify({"success": False, "message": "Invalid credential format."}), 400
+        user = validate_email_credentials(email, password)
+        login_identifier = email.lower().strip()
+    elif mission_id and access_code:
+        if not isinstance(mission_id, str) or not isinstance(access_code, str):
+            return jsonify({"success": False, "message": "Invalid credential format."}), 400
+        user = validate_credentials(mission_id, access_code)
+        login_identifier = mission_id
+    else:
+        return jsonify({"success": False, "message": "Email and password are required."}), 400
 
-    # Validate user credentials
-    user = validate_credentials(mission_id, access_code)
     if user:
-        # Update last login
         user.last_login = datetime.datetime.utcnow()
         db.session.commit()
 
-        # Generate JWT token
         payload = {
-            'missionId': mission_id,
+            'missionId': user.mission_id,
             'user_id': user.id,
             'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=24),
             'iat': datetime.datetime.utcnow()
@@ -217,23 +233,27 @@ def login():
         token = jwt.encode(payload, app.config['SECRET_KEY'], algorithm='HS256')
         ACTIVE_TOKENS.add(token)
 
-        # Log login event
-        log_system_event('INFO', 'auth', f'User {mission_id} logged in successfully', user.id)
+        log_system_event('INFO', 'auth', f'User {user.mission_id} logged in successfully', user.id)
 
         return jsonify({
             "success": True,
             "message": "Login successful!",
             "token": token,
             "user": {
-                "missionId": mission_id,
+                "missionId": user.mission_id,
+                "email": user.email,
                 "name": user.name,
                 "role": user.role,
                 "permissions": user.get_permissions()
             }
         }), 200
-    else:
-        log_system_event('WARNING', 'auth', f'Failed login attempt for mission_id: {mission_id}')
-        return jsonify({"success": False, "message": "Invalid credentials."}), 401
+
+    if email and password:
+        log_system_event('WARNING', 'auth', f'Failed login attempt for email: {login_identifier}')
+        return jsonify({"success": False, "message": "Invalid email or password."}), 401
+
+    log_system_event('WARNING', 'auth', f'Failed login attempt for mission_id: {login_identifier}')
+    return jsonify({"success": False, "message": "Invalid credentials."}), 401
 
 @app.route('/logout', methods=['POST'])
 def logout():

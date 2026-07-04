@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from flask_migrate import Migrate
+from sqlalchemy import inspect, text
 from models import Analysis, DensityAnalysis, DetectedObject, SystemLog, User, db
 
 migrate = Migrate()
@@ -11,19 +12,30 @@ def init_db(app):
     migrate.init_app(app, db)
 
     with app.app_context():
-        # Create all tables
         db.create_all()
-
-        # Initialize demo users if they don't exist
+        ensure_user_email_column()
         init_demo_users()
 
         print("✅ Database initialized successfully!")
+
+def ensure_user_email_column():
+    """Add email column to users table if missing (SQLite backfill)."""
+    inspector = inspect(db.engine)
+    if 'users' not in inspector.get_table_names():
+        return
+
+    columns = {column['name'] for column in inspector.get_columns('users')}
+    if 'email' not in columns:
+        with db.engine.begin() as connection:
+            connection.execute(text('ALTER TABLE users ADD COLUMN email VARCHAR(120)'))
+        print("✅ Added email column to users table")
 
 def init_demo_users():
     """Initialize demo users for testing. Password format: {mission_id}@2024"""
     demo_users = [
         {
             'mission_id': 'isro123',
+            'email': 'isro123@lunalens.app',
             'name': 'ISRO Mission Control',
             'role': 'admin',
             'password': 'isro123@2024',
@@ -31,6 +43,7 @@ def init_demo_users():
         },
         {
             'mission_id': 'mission001',
+            'email': 'mission001@lunalens.app',
             'name': 'Lunar Mission Team',
             'role': 'user',
             'password': 'mission001@2024',
@@ -38,6 +51,7 @@ def init_demo_users():
         },
         {
             'mission_id': 'research002',
+            'email': 'research002@lunalens.app',
             'name': 'Research Team',
             'role': 'researcher',
             'password': 'research002@2024',
@@ -45,6 +59,7 @@ def init_demo_users():
         },
         {
             'mission_id': 'test001',
+            'email': 'test001@lunalens.app',
             'name': 'Test User',
             'role': 'user',
             'password': 'test001@2024',
@@ -57,12 +72,18 @@ def init_demo_users():
         if not existing_user:
             user = User(
                 mission_id=user_data['mission_id'],
+                email=user_data['email'],
                 name=user_data['name'],
                 role=user_data['role']
             )
             user.set_password(user_data['password'])
             user.set_permissions(user_data['permissions'])
             db.session.add(user)
+        elif not existing_user.email:
+            existing_user.email = user_data['email']
+
+    for user in User.query.filter(User.email.is_(None)).all():
+        user.email = f"{user.mission_id}@lunalens.app"
 
     try:
         db.session.commit()
