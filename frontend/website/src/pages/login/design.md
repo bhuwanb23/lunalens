@@ -1,88 +1,102 @@
-# Login Page Design System
+# Login Page Design System (Redesign)
 
 ## Color Palette
 
 | Token | Value | Usage |
 |-------|-------|-------|
-| `primary` | `#1A7A6D` | Buttons, links, accents |
-| `primary-dark` | `#0D3B35` | Hover states, right panel bg |
-| `primary-light` | `#E8F5F3` | Tab active bg, subtle highlights |
-| `background` | `#F0F4F8` | Page background |
-| `surface` | `#FFFFFF` | Card, input backgrounds |
-| `text-primary` | `#1A2B3C` | Headings, body text |
+| `background` | `#000000` | Page background (dark) |
+| `surface` | `#FFFFFF` | Card right panel background |
+| `card-left-bg` | Image (abstract waves) | Left panel background |
+| `text-primary` | `#1A2B3C` | Headings, body text on white |
 | `text-secondary` | `#6B7B8D` | Labels, placeholders |
 | `text-muted` | `#9CA3AF` | Disabled text |
-| `border` | `#E2E8F0` | Input borders, dividers |
-| `border-focus` | `#1A7A6D` | Focused input border |
+| `input-bg` | `#F5F5F5` | Input field background |
+| `button-primary` | `#000000` | Sign In button background |
+| `button-primary-text` | `#FFFFFF` | Sign In button text |
+| `border` | `#E2E8F0` | Social button borders |
 | `error` | `#DC3545` | Validation errors |
 | `success` | `#28A745` | Success states |
 
 ## Typography
 
-- **Font Family:** Inter (Google Fonts)
+- **Font Family:** Plus Jakarta Sans (Google Fonts)
 - **Weights:** 400 (regular), 500 (medium), 600 (semibold), 700 (bold)
 - **Sizes:**
-  - Page title: 28px / 700
-  - Section heading: 20px / 600
-  - Body: 15px / 400
-  - Label: 14px / 500
-  - Small: 13px / 400
-  - Footer: 12px / 400
+  - Page title (brand): 24px / 700
+  - Heading: 28px / 700
+  - Subheading: 14px / 400
+  - Body: 14px / 400
+  - Label: 13px / 500
+  - Small: 12px / 400
+  - Button: 14px / 600
 
 ## Spacing
 
 - Card padding: 48px (desktop), 32px (mobile)
-- Input padding: 14px vertical, 16px horizontal
-- Gap between form fields: 20px
-- Gap between sections: 24px
+- Input padding: 12px vertical, 16px horizontal
+- Gap between form fields: 16px
+- Gap between sections: 20px
 - Social buttons gap: 12px
 
 ## Borders & Shadows
 
-- Card border-radius: 16px
-- Input border-radius: 10px
-- Button border-radius: 10px
+- Card border-radius: 24px
+- Input border-radius: 8px
+- Button border-radius: 8px
 - Social icon border-radius: 50%
-- Card shadow: `0 4px 24px rgba(0,0,0,0.08)`
-- Input shadow (focus): `0 0 0 3px rgba(26,122,109,0.12)`
+- Card shadow: `0 8px 32px rgba(0,0,0,0.12)`
 
 ## Layout
 
 - Split screen: 50% / 50% on desktop (>= 1024px)
-- Mobile: single column, right panel hidden
-- Left panel: white background, centered content
-- Right panel: dark teal gradient with floating cards
+- Mobile: single column, left panel hidden or shown above form
+- Left panel: abstract wave image with overlaid text
+- Right panel: white background, centered form
 
 ## Components
 
-### Sign In / Sign Up Tabs
-- Container: rounded pill shape, light gray bg
-- Active tab: white bg, subtle shadow, teal text
-- Inactive tab: transparent, gray text
+### Brand Logo
+- Name: LunaLens
+- Font: Plus Jakarta Sans, 24px, bold
+- Color: text-primary
 
 ### Input Fields
-- Label above input, 14px, weight 500, color text-secondary
-- Icon inside input (left), 18px, color text-muted
+- Label above input, 13px, weight 500, color text-secondary
+- No icons inside inputs (as per design)
 - Placeholder: text-muted
-- Border: 1px solid border
-- Focus: border-color primary, ring effect
+- Background: input-bg
+- Border: none
+- Border-radius: 8px
+- Focus: subtle ring effect
 
-### Social Login Buttons
-- Size: 48x48px circle
+### Primary Button (Sign In)
+- Full width
+- Background: button-primary (black)
+- Text: button-primary-text (white), 14px, weight 600
+- Padding: 12px vertical
+- Hover: opacity 0.9
+- Border-radius: 8px
+
+### Google Button
+- Full width
+- Background: white
+- Border: 1px solid border
+- Text: 14px, weight 500
+- Padding: 12px vertical
+- Border-radius: 8px
+- Includes Google icon
+
+### Social Icons (secondary)
+- Size: 44x44px circle
 - Border: 1px solid border
 - Background: white
 - Hover: background #F8F9FA
 - Icons: brand-colored SVGs
 
-### Primary Button
-- Full width
-- Background: primary
-- Text: white, 15px, weight 600
-- Padding: 14px vertical
-- Hover: primary-dark
-- Border-radius: 10px
-
-### Right Panel Cards
-- Floating dashboard preview cards
-- White cards with shadows, slight rotation
-- Positioned absolutely with staggered offsets
+### Left Panel
+- Background image: abstract colorful waves
+- Overlay: dark gradient (for text readability)
+- Text:
+  - Small label: "A WISE QUOTE"
+  - Large heading: "Get Everything You Want"
+  - Subtitle: motivational quote
