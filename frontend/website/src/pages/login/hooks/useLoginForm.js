@@ -4,62 +4,57 @@ import { apiUrl } from '../../../config/api';
 
 export const useLoginForm = (onLoginSuccess) => {
   const [formData, setFormData] = useState({
-    missionId: '',
-    accessCode: '',
-    rememberMission: false
+    email: '',
+    password: '',
+    rememberMe: false,
   });
 
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [serverError, setServerError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+
+  const validateEmail = (email) => {
+    if (!email) return LOGIN_CONSTANTS.validation.email.required;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) return LOGIN_CONSTANTS.validation.email.invalid;
+    return '';
+  };
+
+  const validatePassword = (password) => {
+    if (!password) return LOGIN_CONSTANTS.validation.password.required;
+    if (password.length < LOGIN_CONSTANTS.validation.password.minLength) {
+      return LOGIN_CONSTANTS.validation.password.minLengthMessage;
+    }
+    return '';
+  };
 
   const validateField = (name, value) => {
-    const validation = LOGIN_CONSTANTS.validation[name];
-    if (!validation) return '';
-
-    if (validation.required && !value) {
-      return validation.required;
-    }
-
-    if (validation.minLength && value.length < validation.minLength) {
-      return `${name === 'missionId' ? 'Mission ID' : 'Access code'} must be at least ${validation.minLength} characters`;
-    }
-
-    if (validation.maxLength && value.length > validation.maxLength) {
-      return `${name === 'missionId' ? 'Mission ID' : 'Access code'} must be less than ${validation.maxLength} characters`;
-    }
-
+    if (name === 'email') return validateEmail(value);
+    if (name === 'password') return validatePassword(value);
     return '';
   };
 
   const handleInputChange = (name, value) => {
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-
-    // Clear error when user starts typing
     if (errors[name]) {
-      setErrors(prev => ({
-        ...prev,
-        [name]: ''
-      }));
+      setErrors(prev => ({ ...prev, [name]: '' }));
     }
     if (serverError) setServerError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Validate all fields
+
     const newErrors = {};
     Object.keys(formData).forEach(key => {
-      if (key !== 'rememberMission') {
+      if (key !== 'rememberMe') {
         const error = validateField(key, formData[key]);
-        if (error) {
-          newErrors[key] = error;
-        }
+        if (error) newErrors[key] = error;
       }
     });
 
@@ -75,12 +70,10 @@ export const useLoginForm = (onLoginSuccess) => {
     try {
       const response = await fetch(apiUrl('/login'), {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          missionId: formData.missionId,
-          accessCode: formData.accessCode,
+          email: formData.email,
+          password: formData.password,
         }),
       });
 
@@ -88,13 +81,12 @@ export const useLoginForm = (onLoginSuccess) => {
       if (response.ok && data.success) {
         setIsSuccess(true);
         setErrors({});
-        // Call the success callback with the token
         if (onLoginSuccess && data.token) {
           onLoginSuccess(data.token);
         }
       } else {
         setIsSuccess(false);
-        setServerError(data.message || 'Login failed.');
+        setServerError(data.message || 'Invalid email or password.');
       }
     } catch {
       setIsSuccess(false);
@@ -105,15 +97,12 @@ export const useLoginForm = (onLoginSuccess) => {
   };
 
   const resetForm = () => {
-    setFormData({
-      missionId: '',
-      accessCode: '',
-      rememberMission: false
-    });
+    setFormData({ email: '', password: '', rememberMe: false });
     setErrors({});
     setIsLoading(false);
     setIsSuccess(false);
     setServerError('');
+    setShowPassword(false);
   };
 
   return {
@@ -122,8 +111,10 @@ export const useLoginForm = (onLoginSuccess) => {
     isLoading,
     isSuccess,
     serverError,
+    showPassword,
+    setShowPassword,
     handleInputChange,
     handleSubmit,
-    resetForm
+    resetForm,
   };
-}; 
+};
