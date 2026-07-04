@@ -1,3 +1,4 @@
+import './login.css';
 import { useLoginForm } from './hooks/useLoginForm';
 import LoginCard from './components/LoginCard';
 import { LOGIN_CONSTANTS } from './constants';
