@@ -1,17 +1,5 @@
 import { LOGIN_CONSTANTS } from '../constants';
 
-const MailIcon = () => (
-  <svg className="w-5 h-5 text-[#9CA3AF]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
-  </svg>
-);
-
-const LockIcon = () => (
-  <svg className="w-5 h-5 text-[#9CA3AF]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-  </svg>
-);
-
 const EyeIcon = () => (
   <svg className="w-5 h-5 text-[#9CA3AF]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
@@ -40,47 +28,39 @@ const CheckIcon = () => (
 
 const LoginForm = ({ formData, errors, isLoading, isSuccess, serverError, handleInputChange, handleSubmit, showPassword, setShowPassword }) => {
   return (
-    <form className="space-y-3.5" onSubmit={handleSubmit}>
+    <form className="space-y-4" onSubmit={handleSubmit}>
       <div>
-        <label className="block text-xs font-semibold text-[#6B7B8D] mb-1.5 uppercase tracking-wide">
+        <label className="block text-sm font-medium text-[#1A2B3C] mb-2">
           {LOGIN_CONSTANTS.content.login.emailLabel}
         </label>
-        <div className="relative">
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-            <MailIcon />
-          </div>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={(e) => handleInputChange('email', e.target.value)}
-            placeholder={LOGIN_CONSTANTS.content.login.emailPlaceholder}
-            className={`w-full pl-10 pr-4 py-3 bg-white border rounded-xl text-sm text-[#1A2B3C] placeholder-[#9CA3AF] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#1A7A6D]/20 focus:border-[#1A7A6D] ${
-              errors.email ? 'border-[#DC3545]' : 'border-[#E2E8F0]'
-            }`}
-          />
-        </div>
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={(e) => handleInputChange('email', e.target.value)}
+          placeholder={LOGIN_CONSTANTS.content.login.emailPlaceholder}
+          className={`w-full px-4 py-3 bg-[#F5F5F5] rounded-lg text-sm text-[#1A2B3C] placeholder-[#9CA3AF] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-black/20 ${
+            errors.email ? 'ring-2 ring-red-500/50' : ''
+          }`}
+        />
         {errors.email && (
-          <p className="text-xs text-[#DC3545] mt-1">{errors.email}</p>
+          <p className="text-xs text-red-500 mt-1">{errors.email}</p>
         )}
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-[#6B7B8D] mb-1.5 uppercase tracking-wide">
+        <label className="block text-sm font-medium text-[#1A2B3C] mb-2">
           {LOGIN_CONSTANTS.content.login.passwordLabel}
         </label>
         <div className="relative">
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-            <LockIcon />
-          </div>
           <input
             type={showPassword ? 'text' : 'password'}
             name="password"
             value={formData.password}
             onChange={(e) => handleInputChange('password', e.target.value)}
             placeholder={LOGIN_CONSTANTS.content.login.passwordPlaceholder}
-            className={`w-full pl-10 pr-10 py-3 bg-white border rounded-xl text-sm text-[#1A2B3C] placeholder-[#9CA3AF] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#1A7A6D]/20 focus:border-[#1A7A6D] ${
-              errors.password ? 'border-[#DC3545]' : 'border-[#E2E8F0]'
+            className={`w-full px-4 py-3 bg-[#F5F5F5] rounded-lg text-sm text-[#1A2B3C] placeholder-[#9CA3AF] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-black/20 ${
+              errors.password ? 'ring-2 ring-red-500/50' : ''
             }`}
           />
           <button
@@ -93,7 +73,7 @@ const LoginForm = ({ formData, errors, isLoading, isSuccess, serverError, handle
           </button>
         </div>
         {errors.password && (
-          <p className="text-xs text-[#DC3545] mt-1">{errors.password}</p>
+          <p className="text-xs text-red-500 mt-1">{errors.password}</p>
         )}
       </div>
 
@@ -103,26 +83,26 @@ const LoginForm = ({ formData, errors, isLoading, isSuccess, serverError, handle
             type="checkbox"
             checked={formData.rememberMe}
             onChange={(e) => handleInputChange('rememberMe', e.target.checked)}
-            className="w-4 h-4 rounded border-[#E2E8F0] text-[#1A7A6D] focus:ring-[#1A7A6D]/20 focus:ring-2"
+            className="w-4 h-4 rounded border-[#E2E8F0] text-black focus:ring-black/20 focus:ring-2"
           />
-          <span className="text-xs text-[#6B7B8D]">{LOGIN_CONSTANTS.content.login.rememberMe}</span>
+          <span className="text-sm text-[#6B7B8D]">{LOGIN_CONSTANTS.content.login.rememberMe}</span>
         </label>
-        <span className="text-xs font-semibold text-[#1A7A6D] hover:text-[#0D3B35] cursor-pointer transition-colors">
+        <span className="text-sm font-medium text-[#1A2B3C] hover:underline cursor-pointer transition-colors">
           {LOGIN_CONSTANTS.content.login.forgotPassword}
         </span>
       </div>
 
       {serverError && (
-        <div className="text-xs text-[#DC3545] text-center bg-red-50 rounded-lg py-2">{serverError}</div>
+        <div className="text-sm text-red-500 text-center bg-red-50 rounded-lg py-2">{serverError}</div>
       )}
 
       <button
         type="submit"
         disabled={isLoading}
-        className={`w-full py-3 rounded-xl text-sm font-semibold text-white transition-all duration-200 flex items-center justify-center gap-2 ${
+        className={`w-full py-3 rounded-lg text-sm font-semibold text-white transition-all duration-200 flex items-center justify-center gap-2 ${
           isSuccess
             ? 'bg-green-500'
-            : 'bg-[#1A7A6D] hover:bg-[#0D3B35] active:scale-[0.98]'
+            : 'bg-black hover:bg-gray-800 active:scale-[0.98]'
         } disabled:opacity-70 disabled:cursor-not-allowed`}
       >
         {isLoading ? (
