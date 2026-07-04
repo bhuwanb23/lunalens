@@ -24,14 +24,14 @@ input[type="checkbox"] {
 
 /* Custom styles for the new login page */
 .login-background {
-  background-image: url('https://images.unsplash.com/photo-1557682250-33bd709cbe85?ixlib=rb-4.0.3&auto=format&fit=crop&w=2029&q=80');
+  background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1920&q=80');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
 
 .login-card-left {
-  background-image: url('https://images.unsplash.com/photo-1557682250-33bd709cbe85?ixlib=rb-4.0.3&auto=format&fit=crop&w=2029&q=80');
+  background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1920&q=80');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
