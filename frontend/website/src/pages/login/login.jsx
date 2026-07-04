@@ -1,7 +1,6 @@
 import './login.css';
 import { useLoginForm } from './hooks/useLoginForm';
-import LoginCard from './components/LoginCard';
-import { LOGIN_CONSTANTS } from './constants';
+import { LoginCard, LeftPanel } from './components';
 
 const Login = ({ onLoginSuccess }) => {
   const {
@@ -16,75 +15,15 @@ const Login = ({ onLoginSuccess }) => {
     handleSubmit,
   } = useLoginForm(onLoginSuccess);
 
-  const { leftPanel } = LOGIN_CONSTANTS.content;
-
   return (
-    <div className="relative h-screen w-full overflow-hidden">
-      {/* Beautiful gradient background */}
-      <div className="login-bg" />
+    <div className="login-page">
+      <div className="login-page-glow" />
 
-      {/* Centered card container */}
       <div className="relative z-10 h-full flex items-center justify-center px-4 py-8 sm:px-6 sm:py-12 md:px-8">
-        <div
-          className="w-full max-w-[1000px] bg-white overflow-hidden flex flex-col md:flex-row"
-          style={{
-            borderRadius: 'var(--radius-card)',
-            boxShadow: 'var(--shadow-card)',
-            minHeight: '560px',
-          }}
-        >
-          {/* ==========================================
-              LEFT PANEL - Wave Image + Quote
-              ========================================== */}
-          <div className="relative w-full md:w-[45%] hidden md:flex flex-col justify-between overflow-hidden">
-            {/* Beautiful gradient background */}
-            <div className="login-card-left-bg" />
+        <div className="login-card animate-fade-in-up">
+          <LeftPanel />
 
-            {/* Gradient overlay - bottom heavy for text readability */}
-            <div
-              className="absolute inset-0"
-              style={{
-                background: 'linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.25) 45%, transparent 75%)',
-              }}
-            />
-
-            {/* Content */}
-            <div className="relative z-10 flex flex-col justify-between h-full p-10 text-white">
-              {/* Top: Quote label */}
-              <div>
-                <span
-                  className="inline-block text-[11px] font-semibold tracking-[0.2em] uppercase"
-                  style={{ color: 'rgba(255,255,255,0.9)' }}
-                >
-                  {leftPanel.quoteLabel}
-                </span>
-                <div
-                  className="mt-3 h-[2px] w-10"
-                  style={{ background: 'rgba(255,255,255,0.6)' }}
-                />
-              </div>
-
-              {/* Bottom: Quote text */}
-              <div>
-                <h1 className="text-[40px] sm:text-[46px] font-extrabold leading-[1.08] tracking-tight mb-4">
-                  <span className="block">{leftPanel.quoteHeading1}</span>
-                  <span className="block">{leftPanel.quoteHeading2}</span>
-                  <span className="block">{leftPanel.quoteHeading3}</span>
-                </h1>
-                <p
-                  className="text-[13px] leading-relaxed max-w-[280px]"
-                  style={{ color: 'rgba(255,255,255,0.85)' }}
-                >
-                  {leftPanel.quoteSubtitle}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* ==========================================
-              RIGHT PANEL - Login Form
-              ========================================== */}
-          <div className="w-full md:w-[55%] bg-white flex flex-col justify-center">
+          <div className="w-full md:w-1/2 bg-white flex flex-col justify-center">
             <div className="w-full max-w-[380px] mx-auto px-8 sm:px-12 py-10 sm:py-14">
               <LoginCard
                 formData={formData}

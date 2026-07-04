@@ -117,7 +117,7 @@ const LoginForm = ({
             {login.rememberMe}
           </span>
         </label>
-        <a href="#" className="login-link" style={{ fontWeight: 600 }}>
+        <a href="#" className="login-link">
           {login.forgotPassword}
         </a>
       </div>

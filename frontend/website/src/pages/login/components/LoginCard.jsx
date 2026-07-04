@@ -2,6 +2,18 @@ import { LOGIN_CONSTANTS } from '../constants';
 import LoginForm from './LoginForm';
 import SocialLogin from './SocialLogin';
 
+const LunaLensLogo = () => (
+  <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+    <circle cx="18" cy="18" r="17" stroke="#111827" strokeWidth="1.5" />
+    <path
+      d="M8 14c3 2 5 2 8 0s5-2 8 0M8 18c3 2 5 2 8 0s5-2 8 0M8 22c3 2 5 2 8 0s5-2 8 0"
+      stroke="#111827"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
 const LoginCard = ({
   formData,
   errors,
@@ -17,45 +29,22 @@ const LoginCard = ({
 
   return (
     <div className="w-full">
-      {/* Brand Logo */}
       <div className="flex items-center justify-center gap-2.5 mb-8">
-        <div
-          className="w-9 h-9 rounded-xl flex items-center justify-center"
-          style={{ backgroundColor: 'var(--color-button)' }}
-        >
-          <svg
-            className="w-[18px] h-[18px] text-white"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
-            />
-          </svg>
-        </div>
-        <span className="text-[18px] font-bold" style={{ color: 'var(--color-text-primary)' }}>
+        <LunaLensLogo />
+        <span className="text-[18px] font-bold text-[var(--color-text-primary)]">
           {brand.name}
         </span>
       </div>
 
-      {/* Welcome Heading */}
       <div className="text-center mb-7">
-        <h2
-          className="text-[28px] font-bold leading-tight mb-2"
-          style={{ color: 'var(--color-text-primary)' }}
-        >
+        <h2 className="login-heading-serif text-[32px] leading-tight mb-2 text-[var(--color-text-primary)]">
           {login.welcome}
         </h2>
-        <p className="text-[14px]" style={{ color: 'var(--color-text-secondary)' }}>
+        <p className="text-[14px] text-[var(--color-text-secondary)]">
           {login.subtitle}
         </p>
       </div>
 
-      {/* Login Form */}
       <div>
         <LoginForm
           formData={formData}
@@ -70,21 +59,14 @@ const LoginCard = ({
         />
       </div>
 
-      {/* Divider */}
-      <div className="login-divider my-6">
-        <span>{login.orContinueWith}</span>
-      </div>
-
-      {/* Social Login */}
-      <div>
+      <div className="animate-fade-in delay-400 mt-5">
         <SocialLogin />
       </div>
 
-      {/* Sign Up Link */}
-      <div className="mt-7 text-center">
-        <p className="text-[13px]" style={{ color: 'var(--color-text-secondary)' }}>
+      <div className="animate-fade-in delay-500 mt-7 text-center">
+        <p className="text-[13px] text-[var(--color-text-secondary)]">
           {login.dontHaveAccount}{' '}
-          <a href="#" className="login-link font-semibold" style={{ color: 'var(--color-text-primary)' }}>
+          <a href="#" className="login-link font-semibold text-[var(--color-text-primary)]">
             {login.signUp}
           </a>
         </p>

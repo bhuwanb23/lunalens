@@ -2,13 +2,14 @@
 
 ## Overview
 
-Premium split-panel login page with abstract wave background.
+Premium split-panel login page inspired by the Dribbble Cogie login design — dark canvas, ribbon art, serif headings.
 
 ## Layout
 
-- **Desktop**: Split card (48% left / 52% right), centered on dark background
+- **Desktop**: Split card (50% left / 50% right), centered on `#0A0A0A` background
 - **Mobile**: Single column, left panel hidden
-- **Card**: max-width 1020px, rounded-2xl, heavy shadow
+- **Card**: max-width 1020px, border-radius 28px, heavy shadow
+- **Corner glow**: Ribbon asset bleeds outside card at top-left and bottom-right
 
 ## Color Palette
 
@@ -20,7 +21,7 @@ Premium split-panel login page with abstract wave background.
 | `--color-text-primary` | `#111827` | Headings, body |
 | `--color-text-secondary` | `#6B7280` | Subtitles, labels |
 | `--color-text-muted` | `#9CA3AF` | Placeholders |
-| `--color-border` | `#E5E7EB` | Input borders, dividers |
+| `--color-border` | `#E5E7EB` | Input borders |
 | `--color-button` | `#000000` | Primary button |
 | `--color-button-hover` | `#1F2937` | Button hover |
 | `--color-error` | `#EF4444` | Validation errors |
@@ -28,31 +29,36 @@ Premium split-panel login page with abstract wave background.
 
 ## Typography
 
-- **Font**: Plus Jakarta Sans
+- **Serif headings**: Playfair Display (`--font-serif`)
+- **Sans body**: Plus Jakarta Sans (`--font-sans`)
 - **Brand**: 18px / 700
-- **Heading**: 28px / 700
+- **Welcome heading**: 32px serif / 600
+- **Left quote**: 42px serif / 600
 - **Subheading**: 14px / 400
-- **Label**: 14px / 500
-- **Input**: 14px / 400
+- **Label**: 14px / 600
+- **Input**: 14px / 500
 - **Button**: 14px / 600
-- **Small**: 13px / 400
 
-## Animations
+## Assets
 
-- `fadeInUp`: Card entrance (0.7s ease-out)
-- `fadeIn`: Staggered element entrance
-- `subtlePulse`: Background breathing (optional)
+- `/images/login-ribbon-bg.webp` — left panel + corner glow background
 
 ## Components
 
-### Left Panel
-- Abstract wave image (Unsplash)
-- Bottom-up gradient overlay
-- Quote text: "Get Everything You Want"
+### Left Panel (`LeftPanel.jsx`)
+- Black base + ribbon image
+- "A WISE QUOTE" label with underline
+- Serif headline: "Get Everything You Want"
 
-### Right Panel
-- Brand logo + name
-- "Welcome Back" heading
-- Email/password form
-- Social login (Google full-width + Apple/Facebook/X circles)
+### Right Panel (`LoginCard.jsx`)
+- Wave-circle logo + LunaLens name
+- Serif "Welcome Back" heading
+- Email/password form with eye toggle
+- Black Sign In button
+- Google sign-in (UI only, coming soon)
 - Sign up link
+
+## Auth
+
+- Frontend sends `{ email, password }` to `POST /login`
+- Demo: `test001@lunalens.app` / `test001@2024`

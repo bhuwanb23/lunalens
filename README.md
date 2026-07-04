@@ -132,12 +132,12 @@ Frontend: `http://localhost` | Backend: `http://localhost:5000`
 
 ### Demo Credentials
 
-| Mission ID | Access Code | Role |
-|------------|-------------|------|
-| `isro123` | `isro123@2024` | Admin |
-| `mission001` | `mission001@2024` | User |
-| `research002` | `research002@2024` | Researcher |
-| `test001` | `test001@2024` | Test User |
+| Email | Password | Role |
+|-------|----------|------|
+| `isro123@lunalens.app` | `isro123@2024` | Admin |
+| `mission001@lunalens.app` | `mission001@2024` | User |
+| `research002@lunalens.app` | `research002@2024` | Researcher |
+| `test001@lunalens.app` | `test001@2024` | Test User |
 
 ## How It Works
 

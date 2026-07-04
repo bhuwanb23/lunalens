@@ -1,3 +1,4 @@
+// Demo: test001@lunalens.app / test001@2024
 export const LOGIN_CONSTANTS = {
   content: {
     brand: {
