@@ -40,13 +40,13 @@ const CheckIcon = () => (
 
 const LoginForm = ({ formData, errors, isLoading, isSuccess, serverError, handleInputChange, handleSubmit, showPassword, setShowPassword }) => {
   return (
-    <form className="space-y-5" onSubmit={handleSubmit}>
+    <form className="space-y-3.5" onSubmit={handleSubmit}>
       <div>
-        <label className="block text-sm font-medium text-[#6B7B8D] mb-1.5">
+        <label className="block text-xs font-semibold text-[#6B7B8D] mb-1.5 uppercase tracking-wide">
           {LOGIN_CONSTANTS.content.login.emailLabel}
         </label>
         <div className="relative">
-          <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
             <MailIcon />
           </div>
           <input
@@ -55,22 +55,22 @@ const LoginForm = ({ formData, errors, isLoading, isSuccess, serverError, handle
             value={formData.email}
             onChange={(e) => handleInputChange('email', e.target.value)}
             placeholder={LOGIN_CONSTANTS.content.login.emailPlaceholder}
-            className={`w-full pl-11 pr-4 py-3.5 bg-white border rounded-xl text-sm text-[#1A2B3C] placeholder-[#9CA3AF] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#1A7A6D]/20 focus:border-[#1A7A6D] ${
+            className={`w-full pl-10 pr-4 py-3 bg-white border rounded-xl text-sm text-[#1A2B3C] placeholder-[#9CA3AF] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#1A7A6D]/20 focus:border-[#1A7A6D] ${
               errors.email ? 'border-[#DC3545]' : 'border-[#E2E8F0]'
             }`}
           />
         </div>
         {errors.email && (
-          <p className="text-xs text-[#DC3545] mt-1.5">{errors.email}</p>
+          <p className="text-xs text-[#DC3545] mt-1">{errors.email}</p>
         )}
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-[#6B7B8D] mb-1.5">
+        <label className="block text-xs font-semibold text-[#6B7B8D] mb-1.5 uppercase tracking-wide">
           {LOGIN_CONSTANTS.content.login.passwordLabel}
         </label>
         <div className="relative">
-          <div className="absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
             <LockIcon />
           </div>
           <input
@@ -79,21 +79,21 @@ const LoginForm = ({ formData, errors, isLoading, isSuccess, serverError, handle
             value={formData.password}
             onChange={(e) => handleInputChange('password', e.target.value)}
             placeholder={LOGIN_CONSTANTS.content.login.passwordPlaceholder}
-            className={`w-full pl-11 pr-11 py-3.5 bg-white border rounded-xl text-sm text-[#1A2B3C] placeholder-[#9CA3AF] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#1A7A6D]/20 focus:border-[#1A7A6D] ${
+            className={`w-full pl-10 pr-10 py-3 bg-white border rounded-xl text-sm text-[#1A2B3C] placeholder-[#9CA3AF] transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#1A7A6D]/20 focus:border-[#1A7A6D] ${
               errors.password ? 'border-[#DC3545]' : 'border-[#E2E8F0]'
             }`}
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-[#6B7B8D] transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#9CA3AF] hover:text-[#6B7B8D] transition-colors"
             tabIndex={-1}
           >
             {showPassword ? <EyeSlashIcon /> : <EyeIcon />}
           </button>
         </div>
         {errors.password && (
-          <p className="text-xs text-[#DC3545] mt-1.5">{errors.password}</p>
+          <p className="text-xs text-[#DC3545] mt-1">{errors.password}</p>
         )}
       </div>
 
@@ -105,9 +105,9 @@ const LoginForm = ({ formData, errors, isLoading, isSuccess, serverError, handle
             onChange={(e) => handleInputChange('rememberMe', e.target.checked)}
             className="w-4 h-4 rounded border-[#E2E8F0] text-[#1A7A6D] focus:ring-[#1A7A6D]/20 focus:ring-2"
           />
-          <span className="text-sm text-[#6B7B8D]">{LOGIN_CONSTANTS.content.login.rememberMe}</span>
+          <span className="text-xs text-[#6B7B8D]">{LOGIN_CONSTANTS.content.login.rememberMe}</span>
         </label>
-        <span className="text-sm font-medium text-[#1A7A6D] hover:text-[#0D3B35] cursor-pointer transition-colors">
+        <span className="text-xs font-semibold text-[#1A7A6D] hover:text-[#0D3B35] cursor-pointer transition-colors">
           {LOGIN_CONSTANTS.content.login.forgotPassword}
         </span>
       </div>
@@ -119,7 +119,7 @@ const LoginForm = ({ formData, errors, isLoading, isSuccess, serverError, handle
       <button
         type="submit"
         disabled={isLoading}
-        className={`w-full py-3.5 rounded-xl text-sm font-semibold text-white transition-all duration-200 flex items-center justify-center gap-2 ${
+        className={`w-full py-3 rounded-xl text-sm font-semibold text-white transition-all duration-200 flex items-center justify-center gap-2 ${
           isSuccess
             ? 'bg-green-500'
             : 'bg-[#1A7A6D] hover:bg-[#0D3B35] active:scale-[0.98]'

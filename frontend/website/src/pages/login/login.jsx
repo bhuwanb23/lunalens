@@ -16,8 +16,8 @@ const Login = ({ onLoginSuccess }) => {
   } = useLoginForm(onLoginSuccess);
 
   return (
-    <div className="flex min-h-screen bg-[#F0F4F8]">
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-10">
+    <div className="flex h-screen overflow-hidden bg-[#F0F4F8]">
+      <div className="w-full lg:w-1/2 h-screen overflow-y-auto flex items-center justify-center p-6 sm:p-8">
         <LoginCard
           formData={formData}
           errors={errors}

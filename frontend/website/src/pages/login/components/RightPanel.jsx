@@ -27,7 +27,7 @@ const RightPanel = () => {
   ];
 
   return (
-    <div className="relative hidden lg:flex w-1/2 min-h-screen bg-gradient-to-br from-[#0D3B35] via-[#0F4A42] to-[#1A7A6D] items-center justify-center overflow-hidden">
+    <div className="relative hidden lg:flex w-1/2 h-screen bg-gradient-to-br from-[#0D3B35] via-[#0F4A42] to-[#1A7A6D] items-center justify-center overflow-hidden">
       <div className="absolute inset-0 opacity-5">
         <div className="absolute top-10 left-10 w-72 h-72 bg-white rounded-full blur-3xl"></div>
         <div className="absolute bottom-20 right-20 w-96 h-96 bg-teal-300 rounded-full blur-3xl"></div>
