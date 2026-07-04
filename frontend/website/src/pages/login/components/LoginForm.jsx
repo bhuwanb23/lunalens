@@ -85,12 +85,12 @@ const LoginForm = ({
             onChange={(e) => handleInputChange('password', e.target.value)}
             placeholder={login.passwordPlaceholder}
             autoComplete="current-password"
-            className={`login-input pr-11 ${errors.password ? 'error' : ''}`}
+            className={`login-input pr-12 ${errors.password ? 'error' : ''}`}
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-md transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg transition-colors hover:bg-black/5"
             style={{ color: 'var(--color-text-muted)' }}
             tabIndex={-1}
             aria-label={showPassword ? 'Hide password' : 'Show password'}
@@ -112,7 +112,6 @@ const LoginForm = ({
             type="checkbox"
             checked={formData.rememberMe}
             onChange={(e) => handleInputChange('rememberMe', e.target.checked)}
-            className="rounded"
           />
           <span className="text-[13px]" style={{ color: 'var(--color-text-secondary)' }}>
             {login.rememberMe}
@@ -126,7 +125,7 @@ const LoginForm = ({
       {/* Server Error */}
       {serverError && (
         <div
-          className="text-[13px] text-center py-2.5 rounded-lg font-medium"
+          className="text-[13px] text-center py-2.5 rounded-xl font-medium"
           style={{ backgroundColor: '#FEF2F2', color: 'var(--color-error)' }}
         >
           {serverError}
