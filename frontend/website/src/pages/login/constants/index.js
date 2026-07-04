@@ -1,98 +1,69 @@
 export const LOGIN_CONSTANTS = {
-  // Theme colors
   colors: {
-    primary: {
-      blue: '#60a5fa',
-      purple: '#9333ea',
-      orange: '#fb923c',
-      red: '#ef4444',
-      green: '#4ade80',
-      gray: {
-        300: '#d1d5db',
-        400: '#9ca3af',
-        500: '#6b7280',
-        600: '#4b5563',
-        700: '#374151',
-        800: '#1f2937',
-        900: '#111827'
-      }
-    }
+    primary: '#1A7A6D',
+    primaryDark: '#0D3B35',
+    primaryLight: '#E8F5F3',
+    textPrimary: '#1A2B3C',
+    textSecondary: '#6B7B8D',
+    textMuted: '#9CA3AF',
+    border: '#E2E8F0',
+    borderFocus: '#1A7A6D',
+    error: '#DC3545',
+    success: '#28A745',
   },
 
-  // Text content
   content: {
-    header: {
-      title: 'ISRO',
-      subtitle: 'Indian Space Research Organisation',
-      missionControl: 'Mission Control'
+    brand: {
+      name: 'LunaLens',
+      tagline: 'A Unified Hub for Satellite Data, Analytics & Monitoring',
+      description: 'Access real-time satellite imagery, perform advanced analytics, and monitor geographic changes through an integrated mission control platform.',
     },
     login: {
-      title: 'Lunar Access',
-      subtitle: 'Enter your mission credentials',
-      missionId: 'Mission ID',
-      accessCode: 'Access Code',
-      rememberMission: 'Remember mission',
-      forgotCode: 'Forgot code?',
-      launchMission: 'Launch Mission'
-    },
-    status: {
-      systemsOnline: 'Systems Online',
-      chandrayaan3: 'Chandrayaan-3',
-      secureConnection: 'Secure connection to Lunar Mission Control',
-      encrypted: 'Encrypted',
-      monitoring: '24/7 Monitoring',
-      connectedToDeepSpace: 'Connected to Deep Space Network'
+      welcome: 'Welcome to LunaLens',
+      subtitle: 'Sign in to access your mission control dashboard',
+      emailLabel: 'Email Address',
+      emailPlaceholder: 'Enter your email address',
+      passwordLabel: 'Password',
+      passwordPlaceholder: 'Enter your password',
+      rememberMe: 'Remember me',
+      forgotPassword: 'Forgot Password?',
+      signIn: 'Sign In',
+      signUp: 'Sign Up',
+      signUpComingSoon: 'Sign up is coming soon',
+      orContinueWith: 'Or continue with',
+      signingIn: 'Signing in...',
     },
     footer: {
-      copyright: '© 2024 ISRO',
-      lunarExploration: 'Lunar Exploration Program'
-    }
+      copyright: '© 2024 LunaLens. All rights reserved.',
+      terms: 'Term & Condition',
+      privacy: 'Privacy & Policy',
+    },
   },
 
-  // Animation configurations
-  animations: {
-    float: {
-      duration: '6s',
-      timing: 'ease-in-out',
-      iteration: 'infinite'
-    },
-    sparkle: {
-      duration: '8s',
-      timing: 'linear',
-      iteration: 'infinite'
-    },
-    pulse: {
-      duration: '2s',
-      timing: 'cubic-bezier(0.4, 0, 0.6, 1)',
-      iteration: 'infinite'
-    }
-  },
-
-  // Form validation
   validation: {
-    missionId: {
-      required: 'Mission ID is required',
-      minLength: 3,
-      maxLength: 50
+    email: {
+      required: 'Email is required',
+      invalid: 'Please enter a valid email address',
     },
-    accessCode: {
-      required: 'Access code is required',
+    password: {
+      required: 'Password is required',
       minLength: 6,
-      maxLength: 100
-    }
-  }
+      minLengthMessage: 'Password must be at least 6 characters',
+      maxLength: 100,
+    },
+  },
 };
 
 export const ICONS = {
-  rocket: 'fas fa-rocket',
-  moon: 'fas fa-moon',
-  user: 'fas fa-user',
+  mail: 'fas fa-envelope',
   lock: 'fas fa-lock',
-  globe: 'fas fa-globe',
-  satellite: 'fas fa-satellite',
-  shield: 'fas fa-shield-halved',
-  clock: 'fas fa-clock',
-  wifi: 'fas fa-wifi',
+  eye: 'fas fa-eye',
+  eyeSlash: 'fas fa-eye-slash',
+  google: 'fab fa-google',
+  apple: 'fab fa-apple',
+  facebook: 'fab fa-facebook-f',
+  x: 'fab fa-x-twitter',
   spinner: 'fas fa-spinner',
-  check: 'fas fa-check'
-}; 
+  check: 'fas fa-check',
+  arrowRight: 'fas fa-arrow-right',
+};
