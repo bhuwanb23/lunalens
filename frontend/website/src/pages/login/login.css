@@ -1,17 +1,62 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
+/* ========================================
+   LOGIN PAGE DESIGN SYSTEM
+   ======================================== */
+
+:root {
+  /* Colors */
+  --color-bg: #0A0A0A;
+  --color-surface: #FFFFFF;
+  --color-input: #F5F5F5;
+  --color-text-primary: #111827;
+  --color-text-secondary: #6B7280;
+  --color-text-muted: #9CA3AF;
+  --color-border: #E5E7EB;
+  --color-button: #000000;
+  --color-button-hover: #1F2937;
+  --color-error: #EF4444;
+  --color-success: #22C55E;
+  --color-focus-ring: rgba(0, 0, 0, 0.08);
+
+  /* Typography */
+  --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Shadows */
+  --shadow-card: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+  --shadow-focus: 0 0 0 3px var(--color-focus-ring);
+  --shadow-input-focus: 0 0 0 4px rgba(0, 0, 0, 0.06);
+
+  /* Border Radius */
+  --radius-card: 20px;
+  --radius-input: 12px;
+  --radius-button: 12px;
+  --radius-full: 9999px;
+}
+
+/* ========================================
+   GLOBAL RESETS
+   ======================================== */
+
 * {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: var(--font-family);
+  box-sizing: border-box;
 }
 
 html, body {
   height: 100%;
+  margin: 0;
+  padding: 0;
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  background-color: #000;
+  background-color: var(--color-bg);
+}
+
+#root {
+  height: 100%;
 }
 
 ::-webkit-scrollbar {
@@ -19,20 +64,245 @@ html, body {
 }
 
 input[type="checkbox"] {
-  accent-color: #000;
+  accent-color: var(--color-button);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
 }
 
-/* Custom styles for the new login page */
-.login-background {
+/* ========================================
+   BACKGROUND IMAGE
+   ======================================== */
+
+.login-bg {
+  position: fixed;
+  inset: 0;
+  background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1920&q=80');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.45;
+  z-index: 0;
+}
+
+.login-card-left-bg {
+  position: absolute;
+  inset: 0;
   background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1920&q=80');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 }
 
-.login-card-left {
-  background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1920&q=80');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes subtlePulse {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.55; }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+
+/* ========================================
+   FORM INPUT STYLES
+   ======================================== */
+
+.login-input {
+  width: 100%;
+  padding: 13px 16px;
+  background-color: var(--color-input);
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-input);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-text-primary);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.login-input::placeholder {
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+.login-input:focus {
+  background-color: #F0F0F0;
+  border-color: var(--color-button);
+  box-shadow: var(--shadow-input-focus);
+}
+
+.login-input.error {
+  border-color: var(--color-error);
+  background-color: #FEF2F2;
+}
+
+/* ========================================
+   BUTTON STYLES
+   ======================================== */
+
+.login-button-primary {
+  width: 100%;
+  padding: 13px 24px;
+  background-color: var(--color-button);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-button);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-button-primary:hover:not(:disabled) {
+  background-color: var(--color-button-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.login-button-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.login-button-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-button-google {
+  width: 100%;
+  padding: 12px 24px;
+  background-color: #FFFFFF;
+  color: var(--color-text-primary);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-button);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.login-button-google:hover {
+  background-color: #F9FAFB;
+  border-color: #D1D5DB;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.login-button-social {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  background-color: #FFFFFF;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-button-social:hover {
+  background-color: #F9FAFB;
+  border-color: #D1D5DB;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+
+.login-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: 8px;
+}
+
+.login-link {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  cursor: pointer;
+  transition: color 0.2s ease;
+  text-decoration: none;
+}
+
+.login-link:hover {
+  color: var(--color-button);
+  text-decoration: underline;
+}
+
+.login-divider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-divider::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background-color: var(--color-border);
+}
+
+.login-divider span {
+  position: relative;
+  background-color: #FFFFFF;
+  padding: 0 16px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+  font-weight: 400;
 }
