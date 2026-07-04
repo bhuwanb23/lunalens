@@ -59,11 +59,11 @@ const LoginCard = ({
         />
       </div>
 
-      <div className="animate-fade-in delay-400 mt-5">
+      <div className="mt-5">
         <SocialLogin />
       </div>
 
-      <div className="animate-fade-in delay-500 mt-7 text-center">
+      <div className="mt-7 text-center">
         <p className="text-[13px] text-[var(--color-text-secondary)]">
           {login.dontHaveAccount}{' '}
           <a href="#" className="login-link font-semibold text-[var(--color-text-primary)]">
