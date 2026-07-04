@@ -18,7 +18,7 @@ const LoginCard = ({
   return (
     <div className="w-full">
       {/* Brand Logo */}
-      <div className="animate-fade-in delay-100 flex items-center justify-center gap-2.5 mb-8">
+      <div className="flex items-center justify-center gap-2.5 mb-8">
         <div
           className="w-9 h-9 rounded-xl flex items-center justify-center"
           style={{ backgroundColor: 'var(--color-button)' }}
@@ -43,7 +43,7 @@ const LoginCard = ({
       </div>
 
       {/* Welcome Heading */}
-      <div className="animate-fade-in delay-200 text-center mb-7">
+      <div className="text-center mb-7">
         <h2
           className="text-[28px] font-bold leading-tight mb-2"
           style={{ color: 'var(--color-text-primary)' }}
@@ -56,7 +56,7 @@ const LoginCard = ({
       </div>
 
       {/* Login Form */}
-      <div className="animate-fade-in delay-300">
+      <div>
         <LoginForm
           formData={formData}
           errors={errors}
@@ -71,17 +71,17 @@ const LoginCard = ({
       </div>
 
       {/* Divider */}
-      <div className="animate-fade-in delay-400 login-divider my-6">
+      <div className="login-divider my-6">
         <span>{login.orContinueWith}</span>
       </div>
 
       {/* Social Login */}
-      <div className="animate-fade-in delay-400">
+      <div>
         <SocialLogin />
       </div>
 
       {/* Sign Up Link */}
-      <div className="animate-fade-in delay-500 mt-7 text-center">
+      <div className="mt-7 text-center">
         <p className="text-[13px]" style={{ color: 'var(--color-text-secondary)' }}>
           {login.dontHaveAccount}{' '}
           <a href="#" className="login-link font-semibold" style={{ color: 'var(--color-text-primary)' }}>

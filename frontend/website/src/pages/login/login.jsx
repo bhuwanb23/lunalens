@@ -26,7 +26,7 @@ const Login = ({ onLoginSuccess }) => {
       {/* Centered card container */}
       <div className="relative z-10 h-full flex items-center justify-center px-4 py-8 sm:px-6 sm:py-12 md:px-8">
         <div
-          className="animate-fade-in-up w-full max-w-[1000px] bg-white overflow-hidden flex flex-col md:flex-row"
+          className="w-full max-w-[1000px] bg-white overflow-hidden flex flex-col md:flex-row"
           style={{
             borderRadius: 'var(--radius-card)',
             boxShadow: 'var(--shadow-card)',
@@ -51,7 +51,7 @@ const Login = ({ onLoginSuccess }) => {
             {/* Content */}
             <div className="relative z-10 flex flex-col justify-between h-full p-10 text-white">
               {/* Top: Quote label */}
-              <div className="animate-fade-in delay-200">
+              <div>
                 <span
                   className="inline-block text-[11px] font-semibold tracking-[0.2em] uppercase"
                   style={{ color: 'rgba(255,255,255,0.9)' }}
@@ -65,7 +65,7 @@ const Login = ({ onLoginSuccess }) => {
               </div>
 
               {/* Bottom: Quote text */}
-              <div className="animate-fade-in delay-400">
+              <div>
                 <h1 className="text-[40px] sm:text-[46px] font-extrabold leading-[1.08] tracking-tight mb-4">
                   <span className="block">{leftPanel.quoteHeading1}</span>
                   <span className="block">{leftPanel.quoteHeading2}</span>
