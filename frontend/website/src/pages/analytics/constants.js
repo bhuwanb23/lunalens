@@ -13,9 +13,6 @@ export const MOCK_ANALYSIS_RECORDS = [
     processingTime: 2.3,
     status: 'completed',
     user: 'ISRO Mission Control',
-    density: 0.000156,
-    visualizationImage: '/uploads/lunar_surface_001_detected.png',
-    gradcamImage: '/uploads/lunar_surface_001_gradcam.png'
   },
   {
     id: 2,
@@ -30,28 +27,114 @@ export const MOCK_ANALYSIS_RECORDS = [
     processingTime: 3.1,
     status: 'completed',
     user: 'Lunar Mission Team',
-    density: 0.000234,
-    visualizationImage: '/uploads/crater_analysis_002_detected.png',
-    gradcamImage: '/uploads/crater_analysis_002_gradcam.png'
-  }
+  },
+  {
+    id: 3,
+    timestamp: '2024-01-13T09:15:00Z',
+    analysisType: 'depth',
+    imageName: 'mare_tranquillitatis_003.jpg',
+    totalObjects: 24,
+    boulders: 15,
+    craters: 9,
+    averageSize: 1.8,
+    confidence: 0.95,
+    processingTime: 4.2,
+    status: 'completed',
+    user: 'NASA JPL',
+  },
+  {
+    id: 4,
+    timestamp: '2024-01-12T14:20:00Z',
+    analysisType: 'gradcam',
+    imageName: 'highland_region_004.jpg',
+    totalObjects: 8,
+    boulders: 5,
+    craters: 3,
+    averageSize: 2.9,
+    confidence: 0.78,
+    processingTime: 5.1,
+    status: 'processing',
+    user: 'ESA Science Team',
+  },
+  {
+    id: 5,
+    timestamp: '2024-01-11T11:00:00Z',
+    analysisType: 'basic',
+    imageName: 'crater_field_005.jpg',
+    totalObjects: 31,
+    boulders: 20,
+    craters: 11,
+    averageSize: 1.5,
+    confidence: 0.89,
+    processingTime: 2.8,
+    status: 'completed',
+    user: 'ISRO Mission Control',
+  },
+  {
+    id: 6,
+    timestamp: '2024-01-10T16:30:00Z',
+    analysisType: 'advanced',
+    imageName: 'boulder_density_006.jpg',
+    totalObjects: 15,
+    boulders: 10,
+    craters: 5,
+    averageSize: 2.7,
+    confidence: 0.91,
+    processingTime: 3.5,
+    status: 'failed',
+    user: 'Lunar Mission Team',
+  },
+  {
+    id: 7,
+    timestamp: '2024-01-09T08:45:00Z',
+    analysisType: 'depth',
+    imageName: 'polar_region_007.jpg',
+    totalObjects: 19,
+    boulders: 12,
+    craters: 7,
+    averageSize: 2.1,
+    confidence: 0.84,
+    processingTime: 4.8,
+    status: 'completed',
+    user: 'NASA JPL',
+  },
+  {
+    id: 8,
+    timestamp: '2024-01-08T13:10:00Z',
+    analysisType: 'gradcam',
+    imageName: 'terminator_zone_008.jpg',
+    totalObjects: 14,
+    boulders: 9,
+    craters: 5,
+    averageSize: 2.6,
+    confidence: 0.88,
+    processingTime: 5.3,
+    status: 'pending',
+    user: 'ESA Science Team',
+  },
+  {
+    id: 9,
+    timestamp: '2024-01-07T10:20:00Z',
+    analysisType: 'basic',
+    imageName: 'sea_of_tranquility_009.jpg',
+    totalObjects: 22,
+    boulders: 14,
+    craters: 8,
+    averageSize: 1.9,
+    confidence: 0.93,
+    processingTime: 2.5,
+    status: 'completed',
+    user: 'ISRO Mission Control',
+  },
 ];
 
 export const ANALYSIS_TYPES = {
-  basic: { name: 'Basic Detection', color: 'orange', icon: '🔍' },
-  advanced: { name: 'Advanced Analysis', color: 'blue', icon: '🧠' },
-  depth: { name: 'Depth Estimation', color: 'green', icon: '📏' },
-  gradcam: { name: 'Grad-CAM Visualization', color: 'purple', icon: '👁️' }
+  basic: { name: 'Basic Detection', color: 'orange' },
+  advanced: { name: 'Advanced Analysis', color: 'blue' },
+  depth: { name: 'Depth Estimation', color: 'green' },
+  gradcam: { name: 'Grad-CAM', color: 'purple' },
 };
 
-export const STATUS_COLORS = {
-  completed: 'green',
-  processing: 'yellow',
-  failed: 'red',
-  pending: 'gray'
-};
+export const STATUS_OPTIONS = ['all', 'completed', 'processing', 'failed', 'pending'];
 
-export const FILTER_OPTIONS = {
-  analysisType: ['all', 'basic', 'advanced', 'depth', 'gradcam'],
-  status: ['all', 'completed', 'processing', 'failed', 'pending'],
-  dateRange: ['all', 'today', 'week', 'month', 'year']
-}; 
+export const TYPE_OPTIONS = ['all', 'basic', 'advanced', 'depth', 'gradcam'];
