@@ -12,7 +12,7 @@ import './App.css';
 // Layout wrapper for authenticated pages
 const AuthenticatedLayout = ({ children, onLogout }) => {
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen">
       <Header onLogout={onLogout} />
       <div className="pt-20">
         {children}
