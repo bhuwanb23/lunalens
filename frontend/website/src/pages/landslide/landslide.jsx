@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { apiUrl } from '../../config/api';
 
 function mapBackendResultsToAnalysisData(results) {
@@ -87,6 +87,12 @@ const LandslideDetection = () => {
   const [analysisData, setAnalysisData] = useState(MOCK_DATA);
   const [error, setError] = useState(null);
   const [dragOver, setDragOver] = useState(false);
+  const [animated, setAnimated] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setAnimated(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleFile = (file) => {
     if (file) {
@@ -274,9 +280,9 @@ const LandslideDetection = () => {
                       <svg width="140" height="100" viewBox="0 0 140 100">
                         <path d="M 10 90 A 60 60 0 0 1 130 90" fill="none" stroke="#E5E7EB" strokeWidth="12" strokeLinecap="round" />
                         <path d="M 10 90 A 60 60 0 0 1 130 90" fill="none" stroke={analysisData.composite?.overallRisk?.score > 70 ? '#EF4444' : analysisData.composite?.overallRisk?.score > 40 ? '#F59E0B' : '#10B981'} strokeWidth="12" strokeLinecap="round"
-                          strokeDasharray="188" strokeDashoffset={188 - (analysisData.composite?.overallRisk?.score / 100) * 188}
-                          style={{ transition: 'stroke-dashoffset 0.8s ease' }} />
-                        <text x="70" y="75" textAnchor="middle" fontSize="28" fontWeight="700" fill="#1A1D26">{analysisData.composite?.overallRisk?.score}</text>
+                          strokeDasharray="188" strokeDashoffset={animated ? 188 - (analysisData.composite?.overallRisk?.score / 100) * 188 : 188}
+                          style={{ transition: 'stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                        <text x="70" y="75" textAnchor="middle" fontSize="28" fontWeight="700" fill="#1A1D26">{animated ? analysisData.composite?.overallRisk?.score : 0}</text>
                         <text x="70" y="92" textAnchor="middle" fontSize="10" fill="#6B7280">out of 100</text>
                       </svg>
                     </div>
@@ -290,16 +296,25 @@ const LandslideDetection = () => {
                   {/* Risk Components Bar Chart */}
                   <div className="ll-card lg:col-span-2">
                     <h3 style={{ fontSize: 14, fontWeight: 600, color: '#1A1D26', marginBottom: 16 }}>Risk Components</h3>
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {analysisData.composite?.components?.map((c, i) => {
                         const colors = ['#EF4444', '#F59E0B', '#3B82F6', '#8B5CF6'];
                         return (
-                          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                            <span style={{ fontSize: 12, color: '#6B7280', width: 80 }}>{c.name}</span>
-                            <div style={{ flex: 1, height: 10, background: '#F5F7FA', borderRadius: 5, overflow: 'hidden' }}>
-                              <div style={{ width: `${c.riskScore}%`, height: '100%', background: colors[i % colors.length], borderRadius: 5, transition: 'width 0.8s ease' }} />
+                          <div key={i} className="group" style={{ cursor: 'default' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                              <span style={{ fontSize: 12, fontWeight: 500, color: '#6B7280' }}>{c.name}</span>
+                              <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1D26' }}>{c.riskScore?.toFixed(1)}</span>
                             </div>
-                            <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1D26', width: 50 }}>{c.riskScore?.toFixed(1)}</span>
+                            <div style={{ height: 10, background: '#F5F7FA', borderRadius: 5, overflow: 'hidden' }}>
+                              <div style={{
+                                width: animated ? `${c.riskScore}%` : '0%',
+                                height: '100%',
+                                background: colors[i % colors.length],
+                                borderRadius: 5,
+                                transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)',
+                                transitionDelay: `${i * 150}ms`,
+                              }} />
+                            </div>
                           </div>
                         );
                       })}
@@ -317,10 +332,13 @@ const LandslideDetection = () => {
                         <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.05" />
                       </linearGradient>
                     </defs>
-                    <path d="M0,100 Q50,80 100,85 T200,60 T300,75 T400,40 T500,50 V120 H0 Z" fill="url(#terrainGrad)" />
-                    <path d="M0,100 Q50,80 100,85 T200,60 T300,75 T400,40 T500,50" fill="none" stroke="#3B82F6" strokeWidth="2" />
+                    <path d="M0,100 Q50,80 100,85 T200,60 T300,75 T400,40 T500,50 V120 H0 Z" fill="url(#terrainGrad)"
+                      style={{ opacity: animated ? 1 : 0, transition: 'opacity 0.8s ease 0.5s' }} />
+                    <path d="M0,100 Q50,80 100,85 T200,60 T300,75 T400,40 T500,50" fill="none" stroke="#3B82F6" strokeWidth="2.5"
+                      strokeDasharray="700" strokeDashoffset={animated ? 0 : 700}
+                      style={{ transition: 'stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1)' }} />
                     {[0, 100, 200, 300, 400, 500].map((x, i) => (
-                      <g key={i}>
+                      <g key={i} style={{ opacity: animated ? 1 : 0, transition: `opacity 0.5s ease ${0.3 + i * 0.1}s` }}>
                         <line x1={x} y1="0" x2={x} y2="120" stroke="#E5E7EB" strokeWidth="1" strokeDasharray="4" />
                         <text x={x} y="115" textAnchor="middle" fontSize="9" fill="#9CA3AF">{['0m', '200m', '400m', '600m', '800m', '1000m'][i]}</text>
                       </g>
