@@ -102,7 +102,7 @@ const Boulder = () => {
 
   return (
     <div style={{ backgroundColor: 'var(--bg-primary)', minHeight: '100vh' }}>
-      <main className="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto">
+      <main className="pt-10 pb-12 px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto">
         <div className="boulder-layout">
 
           {/* Sidebar */}
