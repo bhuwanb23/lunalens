@@ -1,12 +1,12 @@
 const ProfileCard = ({ user }) => {
   return (
-    <div className="dashboard-card p-6 flex flex-col items-center text-center">
+    <div className="dashboard-card p-6 flex flex-col items-center text-center animate-fade-in-up delay-1">
       {/* Header */}
       <div className="w-full flex items-center justify-between mb-6">
         <h3 className="text-[15px] font-semibold" style={{ color: 'var(--text-primary)' }}>
           Profile
         </h3>
-        <button className="p-1.5 rounded-lg transition-colors" style={{ color: 'var(--text-muted)' }}>
+        <button className="p-1.5 rounded-lg transition-all duration-200 hover:bg-gray-100" style={{ color: 'var(--text-muted)' }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
             <path d="M21 3v5h-5" />
@@ -16,7 +16,7 @@ const ProfileCard = ({ user }) => {
 
       {/* Avatar */}
       <div className="profile-avatar mb-4">
-        <div className="w-[72px] h-[72px] rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white text-[24px] font-bold">
+        <div className="w-[72px] h-[72px] rounded-full bg-gradient-to-br from-pink-400 to-purple-500 flex items-center justify-center text-white text-[24px] font-bold shadow-lg">
           {user.name.charAt(0)}
         </div>
       </div>
@@ -32,7 +32,10 @@ const ProfileCard = ({ user }) => {
       {/* Stats Row */}
       <div className="flex items-center gap-2 w-full">
         {user.stats.map((stat, index) => (
-          <div key={index} className="profile-stat flex-1 justify-center">
+          <div
+            key={index}
+            className="profile-stat flex-1 justify-center cursor-default transition-all duration-200 hover:scale-105 hover:shadow-sm"
+          >
             {stat.icon === 'users' && (
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: '#EF4444' }}>
                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
