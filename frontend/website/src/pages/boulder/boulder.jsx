@@ -4,11 +4,30 @@ import { BOULDER_ANALYSIS_TYPES } from './constants';
 import { apiUrl } from '../../config/api';
 import './boulder.css';
 
+// Mock data for preview
+const MOCK_RESULTS = {
+  totalObjects: 12,
+  boulders: 8,
+  confidence: 0.87,
+  processingTime: 2.4,
+  imageFilename: 'lunar_surface_001.jpg',
+  detectedObjects: [
+    { confidence: 0.95, diameter_real: 2.4, area_real: 4.52, volume_real: 0.0032 },
+    { confidence: 0.92, diameter_real: 1.8, area_real: 2.54, volume_real: 0.0018 },
+    { confidence: 0.89, diameter_real: 3.1, area_real: 7.55, volume_real: 0.0054 },
+    { confidence: 0.87, diameter_real: 1.2, area_real: 1.13, volume_real: 0.0008 },
+    { confidence: 0.85, diameter_real: 2.8, area_real: 6.16, volume_real: 0.0044 },
+    { confidence: 0.82, diameter_real: 1.5, area_real: 1.77, volume_real: 0.0013 },
+    { confidence: 0.78, diameter_real: 2.1, area_real: 3.46, volume_real: 0.0025 },
+    { confidence: 0.75, diameter_real: 1.9, area_real: 2.84, volume_real: 0.0020 },
+  ],
+};
+
 const Boulder = () => {
-  const [selectedAnalysis, setSelectedAnalysis] = useState(null);
+  const [selectedAnalysis, setSelectedAnalysis] = useState('advanced');
   const [uploadedImage, setUploadedImage] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
-  const [analysisResults, setAnalysisResults] = useState(null);
+  const [analysisResults, setAnalysisResults] = useState(MOCK_RESULTS);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState(null);
   const [dragOver, setDragOver] = useState(false);
