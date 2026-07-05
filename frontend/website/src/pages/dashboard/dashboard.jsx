@@ -12,7 +12,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
-      <main className="pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto">
+      <main className="pt-10 pb-12 px-4 sm:px-6 lg:px-8 max-w-[1400px] mx-auto">
 
         {/* Welcome Header */}
         <div className="flex items-center justify-between mb-8">
