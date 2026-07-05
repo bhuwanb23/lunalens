@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BOULDER_ANALYSIS_TYPES } from './constants';
 import { apiUrl } from '../../config/api';
@@ -31,7 +31,13 @@ const Boulder = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [error, setError] = useState(null);
   const [dragOver, setDragOver] = useState(false);
+  const [animated, setAnimated] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const timer = setTimeout(() => setAnimated(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleImageUpload = (event) => {
     const file = event.target.files?.[0];
@@ -215,7 +221,7 @@ const Boulder = () => {
           {/* Main Content */}
           <div className="boulder-main">
             {analysisResults ? (
-              <ResultsView results={analysisResults} onBack={() => setAnalysisResults(null)} />
+              <ResultsView results={analysisResults} onBack={() => setAnalysisResults(null)} animated={animated} />
             ) : (
               <EmptyState />
             )}
@@ -244,10 +250,10 @@ const EmptyState = () => (
 );
 
 /* Donut Chart Component */
-const DonutChart = ({ value, max, color, size = 120, label }) => {
+const DonutChart = ({ value, max, color, size = 120, label, animated }) => {
   const radius = (size - 16) / 2;
   const circumference = 2 * Math.PI * radius;
-  const progress = (value / max) * circumference;
+  const progress = animated ? (value / max) * circumference : 0;
 
   return (
     <div className="flex flex-col items-center">
@@ -260,9 +266,9 @@ const DonutChart = ({ value, max, color, size = 120, label }) => {
           strokeDashoffset={circumference - progress}
           strokeLinecap="round"
           transform={`rotate(-90 ${size/2} ${size/2})`}
-          style={{ transition: 'stroke-dashoffset 0.8s ease' }}
+          style={{ transition: 'stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1)' }}
         />
-        <text x={size/2} y={size/2 - 8} textAnchor="middle" fontSize="24" fontWeight="700" fill="#1A1D26">{value}</text>
+        <text x={size/2} y={size/2 - 8} textAnchor="middle" fontSize="24" fontWeight="700" fill="#1A1D26">{animated ? value : 0}</text>
         <text x={size/2} y={size/2 + 12} textAnchor="middle" fontSize="11" fill="#6B7280">{label}</text>
       </svg>
     </div>
@@ -270,45 +276,52 @@ const DonutChart = ({ value, max, color, size = 120, label }) => {
 };
 
 /* Bar Chart Component */
-const BarChart = ({ data, maxValue }) => (
-  <div className="space-y-2">
+const BarChart = ({ data, maxValue, animated }) => (
+  <div className="space-y-3">
     {data.map((item, i) => (
-      <div key={i} className="flex items-center gap-3">
-        <span className="text-[11px] w-16 text-right" style={{ color: 'var(--text-secondary)' }}>{item.label}</span>
-        <div className="flex-1 h-3 rounded-full" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      <div key={i} className="group">
+        <div className="flex items-center justify-between mb-1">
+          <span className="text-[11px] font-medium" style={{ color: 'var(--text-secondary)' }}>{item.label}</span>
+          <span className="text-[12px] font-semibold" style={{ color: 'var(--text-primary)' }}>{item.value}</span>
+        </div>
+        <div className="h-3 rounded-full overflow-hidden" style={{ backgroundColor: 'var(--bg-primary)' }}>
           <div
-            className="h-full rounded-full transition-all duration-700"
-            style={{ width: `${(item.value / maxValue) * 100}%`, backgroundColor: item.color }}
+            className="h-full rounded-full transition-all duration-1000 ease-out group-hover:brightness-110"
+            style={{
+              width: animated ? `${(item.value / maxValue) * 100}%` : '0%',
+              backgroundColor: item.color,
+              transitionDelay: `${i * 150}ms`,
+            }}
           />
         </div>
-        <span className="text-[12px] font-semibold w-12" style={{ color: 'var(--text-primary)' }}>{item.value}</span>
       </div>
     ))}
   </div>
 );
 
 /* Confidence Ring */
-const ConfidenceRing = ({ confidence, size = 48 }) => {
+const ConfidenceRing = ({ confidence, size = 48, animated }) => {
   const radius = (size - 8) / 2;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (confidence * circumference);
+  const offset = animated ? circumference - (confidence * circumference) : circumference;
   const color = confidence >= 0.9 ? '#10B981' : confidence >= 0.8 ? '#F59E0B' : '#EF4444';
 
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="transition-transform duration-200 hover:scale-110">
       <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke="#E5E7EB" strokeWidth="4" />
       <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke={color} strokeWidth="4"
         strokeDasharray={circumference} strokeDashoffset={offset} strokeLinecap="round"
-        transform={`rotate(-90 ${size/2} ${size/2})`} />
+        transform={`rotate(-90 ${size/2} ${size/2})`}
+        style={{ transition: 'stroke-dashoffset 1s cubic-bezier(0.4, 0, 0.2, 1)' }} />
       <text x={size/2} y={size/2 + 4} textAnchor="middle" fontSize="10" fontWeight="600" fill="#1A1D26">
-        {(confidence * 100).toFixed(0)}
+        {animated ? (confidence * 100).toFixed(0) : 0}
       </text>
     </svg>
   );
 };
 
 /* Results View */
-const ResultsView = ({ results, onBack }) => {
+const ResultsView = ({ results, onBack, animated }) => {
   const boulderPct = ((results.boulders / results.totalObjects) * 100).toFixed(0);
   const otherPct = (100 - boulderPct).toFixed(0);
   const avgDiameter = (results.detectedObjects.reduce((s, o) => s + (o.diameter_real || 0), 0) / results.detectedObjects.length).toFixed(2);
@@ -377,7 +390,7 @@ const ResultsView = ({ results, onBack }) => {
         <div className="boulder-card">
           <h3 className="text-[14px] font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Object Distribution</h3>
           <div className="flex items-center justify-center gap-6">
-            <DonutChart value={results.boulders} max={results.totalObjects} color="#F97316" label="Boulders" />
+            <DonutChart value={results.boulders} max={results.totalObjects} color="#F97316" label="Boulders" animated={animated} />
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#F97316' }} />
@@ -394,14 +407,14 @@ const ResultsView = ({ results, onBack }) => {
         {/* Bar Chart - Size Distribution */}
         <div className="boulder-card">
           <h3 className="text-[14px] font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Size Distribution</h3>
-          <BarChart data={sizeDistribution} maxValue={Math.max(...sizeDistribution.map(d => d.value))} />
+          <BarChart data={sizeDistribution} maxValue={Math.max(...sizeDistribution.map(d => d.value))} animated={animated} />
         </div>
 
         {/* Confidence Overview */}
         <div className="boulder-card">
           <h3 className="text-[14px] font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Confidence Overview</h3>
           <div className="flex items-center justify-center">
-            <DonutChart value={Math.round(results.confidence * 100)} max={100} color="#10B981" size={100} label="Avg %" />
+            <DonutChart value={Math.round(results.confidence * 100)} max={100} color="#10B981" size={100} label="Avg %" animated={animated} />
           </div>
           <div className="text-center mt-3">
             <span className="text-[12px]" style={{ color: 'var(--text-secondary)' }}>
@@ -434,7 +447,7 @@ const ResultsView = ({ results, onBack }) => {
                     <td className="font-medium">Object {i + 1}</td>
                     <td>
                       <div className="flex items-center gap-2">
-                        <ConfidenceRing confidence={obj.confidence} />
+                        <ConfidenceRing confidence={obj.confidence} animated={animated} />
                         <span className="text-[12px]" style={{ color: 'var(--text-secondary)' }}>
                           {(obj.confidence * 100).toFixed(1)}%
                         </span>
