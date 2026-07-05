@@ -265,6 +265,73 @@ const LandslideDetection = () => {
                   ))}
                 </div>
 
+                {/* Risk Gauge + Charts Row */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  {/* Risk Gauge */}
+                  <div className="ll-card">
+                    <h3 style={{ fontSize: 14, fontWeight: 600, color: '#1A1D26', marginBottom: 16 }}>Risk Score</h3>
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <svg width="140" height="100" viewBox="0 0 140 100">
+                        <path d="M 10 90 A 60 60 0 0 1 130 90" fill="none" stroke="#E5E7EB" strokeWidth="12" strokeLinecap="round" />
+                        <path d="M 10 90 A 60 60 0 0 1 130 90" fill="none" stroke={analysisData.composite?.overallRisk?.score > 70 ? '#EF4444' : analysisData.composite?.overallRisk?.score > 40 ? '#F59E0B' : '#10B981'} strokeWidth="12" strokeLinecap="round"
+                          strokeDasharray="188" strokeDashoffset={188 - (analysisData.composite?.overallRisk?.score / 100) * 188}
+                          style={{ transition: 'stroke-dashoffset 0.8s ease' }} />
+                        <text x="70" y="75" textAnchor="middle" fontSize="28" fontWeight="700" fill="#1A1D26">{analysisData.composite?.overallRisk?.score}</text>
+                        <text x="70" y="92" textAnchor="middle" fontSize="10" fill="#6B7280">out of 100</text>
+                      </svg>
+                    </div>
+                    <div style={{ textAlign: 'center', marginTop: 8 }}>
+                      <span className={`ll-badge ${(analysisData.composite?.overallRisk?.level || '').toLowerCase()}`}>
+                        {analysisData.composite?.overallRisk?.level || 'N/A'} Risk
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Risk Components Bar Chart */}
+                  <div className="ll-card lg:col-span-2">
+                    <h3 style={{ fontSize: 14, fontWeight: 600, color: '#1A1D26', marginBottom: 16 }}>Risk Components</h3>
+                    <div className="space-y-3">
+                      {analysisData.composite?.components?.map((c, i) => {
+                        const colors = ['#EF4444', '#F59E0B', '#3B82F6', '#8B5CF6'];
+                        return (
+                          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                            <span style={{ fontSize: 12, color: '#6B7280', width: 80 }}>{c.name}</span>
+                            <div style={{ flex: 1, height: 10, background: '#F5F7FA', borderRadius: 5, overflow: 'hidden' }}>
+                              <div style={{ width: `${c.riskScore}%`, height: '100%', background: colors[i % colors.length], borderRadius: 5, transition: 'width 0.8s ease' }} />
+                            </div>
+                            <span style={{ fontSize: 13, fontWeight: 600, color: '#1A1D26', width: 50 }}>{c.riskScore?.toFixed(1)}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Terrain Profile Chart */}
+                <div className="ll-card">
+                  <h3 style={{ fontSize: 14, fontWeight: 600, color: '#1A1D26', marginBottom: 16 }}>Terrain Profile</h3>
+                  <svg width="100%" height="120" viewBox="0 0 500 120" preserveAspectRatio="none">
+                    <defs>
+                      <linearGradient id="terrainGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stopColor="#3B82F6" stopOpacity="0.3" />
+                        <stop offset="100%" stopColor="#3B82F6" stopOpacity="0.05" />
+                      </linearGradient>
+                    </defs>
+                    <path d="M0,100 Q50,80 100,85 T200,60 T300,75 T400,40 T500,50 V120 H0 Z" fill="url(#terrainGrad)" />
+                    <path d="M0,100 Q50,80 100,85 T200,60 T300,75 T400,40 T500,50" fill="none" stroke="#3B82F6" strokeWidth="2" />
+                    {[0, 100, 200, 300, 400, 500].map((x, i) => (
+                      <g key={i}>
+                        <line x1={x} y1="0" x2={x} y2="120" stroke="#E5E7EB" strokeWidth="1" strokeDasharray="4" />
+                        <text x={x} y="115" textAnchor="middle" fontSize="9" fill="#9CA3AF">{['0m', '200m', '400m', '600m', '800m', '1000m'][i]}</text>
+                      </g>
+                    ))}
+                  </svg>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, fontSize: 11, color: '#6B7280' }}>
+                    <span>Elevation Range: {analysisData.elevation?.statistics?.min?.toFixed(0)}m - {analysisData.elevation?.statistics?.max?.toFixed(0)}m</span>
+                    <span>Mean: {analysisData.elevation?.statistics?.mean?.toFixed(0)}m</span>
+                  </div>
+                </div>
+
                 {/* Analysis Tables */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   {/* Slope Analysis */}
