@@ -243,104 +243,215 @@ const EmptyState = () => (
   </div>
 );
 
-/* Results View */
-const ResultsView = ({ results, onBack }) => (
-  <div className="space-y-6">
-    {/* Header */}
-    <div className="boulder-card">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-[18px] font-bold" style={{ color: 'var(--text-primary)' }}>Analysis Complete</h2>
-          <p className="text-[13px]" style={{ color: 'var(--text-secondary)' }}>{results.imageFilename}</p>
-        </div>
-        <button className="btn-secondary" onClick={onBack}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <line x1="19" y1="12" x2="5" y2="12" />
-            <polyline points="12 19 5 12 12 5" />
-          </svg>
-          New Analysis
-        </button>
-      </div>
-    </div>
+/* Donut Chart Component */
+const DonutChart = ({ value, max, color, size = 120, label }) => {
+  const radius = (size - 16) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const progress = (value / max) * circumference;
 
-    {/* Stats Grid */}
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      <div className="stat-card">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--accent-blue)' }} />
-          <span className="text-[12px] font-medium" style={{ color: 'var(--text-secondary)' }}>Total Objects</span>
-        </div>
-        <div className="text-[24px] font-bold" style={{ color: 'var(--text-primary)' }}>{results.totalObjects}</div>
-      </div>
-      <div className="stat-card">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--accent-orange)' }} />
-          <span className="text-[12px] font-medium" style={{ color: 'var(--text-secondary)' }}>Boulders</span>
-        </div>
-        <div className="text-[24px] font-bold" style={{ color: 'var(--text-primary)' }}>{results.boulders}</div>
-      </div>
-      <div className="stat-card">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--accent-green)' }} />
-          <span className="text-[12px] font-medium" style={{ color: 'var(--text-secondary)' }}>Confidence</span>
-        </div>
-        <div className="text-[24px] font-bold" style={{ color: 'var(--text-primary)' }}>{(results.confidence * 100).toFixed(0)}%</div>
-      </div>
-      <div className="stat-card">
-        <div className="flex items-center gap-2 mb-2">
-          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--accent-purple)' }} />
-          <span className="text-[12px] font-medium" style={{ color: 'var(--text-secondary)' }}>Time</span>
-        </div>
-        <div className="text-[24px] font-bold" style={{ color: 'var(--text-primary)' }}>{results.processingTime}s</div>
-      </div>
-    </div>
-
-    {/* Detection Image */}
-    {results.visualizationImage && (
-      <div className="boulder-card">
-        <h3 className="text-[15px] font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Detection Visualization</h3>
-        <img
-          src={apiUrl(results.visualizationImage)}
-          alt="Detection"
-          className="w-full rounded-lg"
-          style={{ border: '1px solid var(--border)' }}
+  return (
+    <div className="flex flex-col items-center">
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke="#E5E7EB" strokeWidth="8" />
+        <circle
+          cx={size/2} cy={size/2} r={radius} fill="none"
+          stroke={color} strokeWidth="8"
+          strokeDasharray={circumference}
+          strokeDashoffset={circumference - progress}
+          strokeLinecap="round"
+          transform={`rotate(-90 ${size/2} ${size/2})`}
+          style={{ transition: 'stroke-dashoffset 0.8s ease' }}
         />
-      </div>
-    )}
+        <text x={size/2} y={size/2 - 8} textAnchor="middle" fontSize="24" fontWeight="700" fill="#1A1D26">{value}</text>
+        <text x={size/2} y={size/2 + 12} textAnchor="middle" fontSize="11" fill="#6B7280">{label}</text>
+      </svg>
+    </div>
+  );
+};
 
-    {/* Objects Table */}
-    {results.detectedObjects?.length > 0 && (
-      <div className="boulder-card">
-        <h3 className="text-[15px] font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>
-          Detected Objects ({results.detectedObjects.length})
-        </h3>
-        <div className="overflow-x-auto">
-          <table className="boulder-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Confidence</th>
-                <th>Diameter (m)</th>
-                <th>Area (m²)</th>
-                <th>Volume (m³)</th>
-              </tr>
-            </thead>
-            <tbody>
-              {results.detectedObjects.map((obj, i) => (
-                <tr key={i}>
-                  <td className="font-medium">Object {i + 1}</td>
-                  <td>{(obj.confidence * 100).toFixed(1)}%</td>
-                  <td>{obj.diameter_real?.toFixed(2) || 'N/A'}</td>
-                  <td>{obj.area_real?.toFixed(2) || 'N/A'}</td>
-                  <td>{obj.volume_real?.toFixed(4) || 'N/A'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+/* Bar Chart Component */
+const BarChart = ({ data, maxValue }) => (
+  <div className="space-y-2">
+    {data.map((item, i) => (
+      <div key={i} className="flex items-center gap-3">
+        <span className="text-[11px] w-16 text-right" style={{ color: 'var(--text-secondary)' }}>{item.label}</span>
+        <div className="flex-1 h-3 rounded-full" style={{ backgroundColor: 'var(--bg-primary)' }}>
+          <div
+            className="h-full rounded-full transition-all duration-700"
+            style={{ width: `${(item.value / maxValue) * 100}%`, backgroundColor: item.color }}
+          />
         </div>
+        <span className="text-[12px] font-semibold w-12" style={{ color: 'var(--text-primary)' }}>{item.value}</span>
       </div>
-    )}
+    ))}
   </div>
 );
+
+/* Confidence Ring */
+const ConfidenceRing = ({ confidence, size = 48 }) => {
+  const radius = (size - 8) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (confidence * circumference);
+  const color = confidence >= 0.9 ? '#10B981' : confidence >= 0.8 ? '#F59E0B' : '#EF4444';
+
+  return (
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+      <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke="#E5E7EB" strokeWidth="4" />
+      <circle cx={size/2} cy={size/2} r={radius} fill="none" stroke={color} strokeWidth="4"
+        strokeDasharray={circumference} strokeDashoffset={offset} strokeLinecap="round"
+        transform={`rotate(-90 ${size/2} ${size/2})`} />
+      <text x={size/2} y={size/2 + 4} textAnchor="middle" fontSize="10" fontWeight="600" fill="#1A1D26">
+        {(confidence * 100).toFixed(0)}
+      </text>
+    </svg>
+  );
+};
+
+/* Results View */
+const ResultsView = ({ results, onBack }) => {
+  const boulderPct = ((results.boulders / results.totalObjects) * 100).toFixed(0);
+  const otherPct = (100 - boulderPct).toFixed(0);
+  const avgDiameter = (results.detectedObjects.reduce((s, o) => s + (o.diameter_real || 0), 0) / results.detectedObjects.length).toFixed(2);
+  const totalArea = results.detectedObjects.reduce((s, o) => s + (o.area_real || 0), 0).toFixed(2);
+
+  const sizeDistribution = [
+    { label: 'Small', value: results.detectedObjects.filter(o => o.diameter_real < 2).length, color: '#3B82F6' },
+    { label: 'Medium', value: results.detectedObjects.filter(o => o.diameter_real >= 2 && o.diameter_real < 3).length, color: '#F59E0B' },
+    { label: 'Large', value: results.detectedObjects.filter(o => o.diameter_real >= 3).length, color: '#EF4444' },
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="boulder-card">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-[18px] font-bold" style={{ color: 'var(--text-primary)' }}>Analysis Complete</h2>
+            <p className="text-[13px]" style={{ color: 'var(--text-secondary)' }}>{results.imageFilename}</p>
+          </div>
+          <button className="btn-secondary" onClick={onBack}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <line x1="19" y1="12" x2="5" y2="12" />
+              <polyline points="12 19 5 12 12 5" />
+            </svg>
+            New Analysis
+          </button>
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="stat-card">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--accent-blue)' }} />
+            <span className="text-[12px] font-medium" style={{ color: 'var(--text-secondary)' }}>Total Objects</span>
+          </div>
+          <div className="text-[24px] font-bold" style={{ color: 'var(--text-primary)' }}>{results.totalObjects}</div>
+        </div>
+        <div className="stat-card">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--accent-orange)' }} />
+            <span className="text-[12px] font-medium" style={{ color: 'var(--text-secondary)' }}>Boulders</span>
+          </div>
+          <div className="text-[24px] font-bold" style={{ color: 'var(--text-primary)' }}>{results.boulders}</div>
+        </div>
+        <div className="stat-card">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--accent-green)' }} />
+            <span className="text-[12px] font-medium" style={{ color: 'var(--text-secondary)' }}>Avg Confidence</span>
+          </div>
+          <div className="text-[24px] font-bold" style={{ color: 'var(--text-primary)' }}>{(results.confidence * 100).toFixed(0)}%</div>
+        </div>
+        <div className="stat-card">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: 'var(--accent-purple)' }} />
+            <span className="text-[12px] font-medium" style={{ color: 'var(--text-secondary)' }}>Total Area</span>
+          </div>
+          <div className="text-[24px] font-bold" style={{ color: 'var(--text-primary)' }}>{totalArea}m²</div>
+        </div>
+      </div>
+
+      {/* Charts Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Donut Chart - Distribution */}
+        <div className="boulder-card">
+          <h3 className="text-[14px] font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Object Distribution</h3>
+          <div className="flex items-center justify-center gap-6">
+            <DonutChart value={results.boulders} max={results.totalObjects} color="#F97316" label="Boulders" />
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#F97316' }} />
+                <span className="text-[12px]" style={{ color: 'var(--text-secondary)' }}>Boulders: {boulderPct}%</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#3B82F6' }} />
+                <span className="text-[12px]" style={{ color: 'var(--text-secondary)' }}>Other: {otherPct}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bar Chart - Size Distribution */}
+        <div className="boulder-card">
+          <h3 className="text-[14px] font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Size Distribution</h3>
+          <BarChart data={sizeDistribution} maxValue={Math.max(...sizeDistribution.map(d => d.value))} />
+        </div>
+
+        {/* Confidence Overview */}
+        <div className="boulder-card">
+          <h3 className="text-[14px] font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Confidence Overview</h3>
+          <div className="flex items-center justify-center">
+            <DonutChart value={Math.round(results.confidence * 100)} max={100} color="#10B981" size={100} label="Avg %" />
+          </div>
+          <div className="text-center mt-3">
+            <span className="text-[12px]" style={{ color: 'var(--text-secondary)' }}>
+              Avg Diameter: {avgDiameter}m
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Objects Table with Confidence Rings */}
+      {results.detectedObjects?.length > 0 && (
+        <div className="boulder-card">
+          <h3 className="text-[15px] font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>
+            Detected Objects ({results.detectedObjects.length})
+          </h3>
+          <div className="overflow-x-auto">
+            <table className="boulder-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Confidence</th>
+                  <th>Diameter (m)</th>
+                  <th>Area (m²)</th>
+                  <th>Volume (m³)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {results.detectedObjects.map((obj, i) => (
+                  <tr key={i}>
+                    <td className="font-medium">Object {i + 1}</td>
+                    <td>
+                      <div className="flex items-center gap-2">
+                        <ConfidenceRing confidence={obj.confidence} />
+                        <span className="text-[12px]" style={{ color: 'var(--text-secondary)' }}>
+                          {(obj.confidence * 100).toFixed(1)}%
+                        </span>
+                      </div>
+                    </td>
+                    <td>{obj.diameter_real?.toFixed(2) || 'N/A'}</td>
+                    <td>{obj.area_real?.toFixed(2) || 'N/A'}</td>
+                    <td>{obj.volume_real?.toFixed(4) || 'N/A'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default Boulder;
