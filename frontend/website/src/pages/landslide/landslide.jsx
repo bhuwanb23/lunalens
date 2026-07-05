@@ -52,39 +52,12 @@ function mapBackendResultsToAnalysisData(results) {
   return { slope, elevation, curvature, roughness, composite };
 }
 
-// Mock data for preview
-const MOCK_DATA = {
-  slope: {
-    riskLevel: 'High',
-    statistics: { min: 2.3, max: 45.7, mean: 18.4, stdDev: 8.2 },
-  },
-  elevation: {
-    statistics: { min: -1200, max: 2800, mean: 450, stdDev: 320 },
-  },
-  curvature: {
-    statistics: { profileMean: 0.0023, planMean: -0.0018, gaussianMean: 0.0005 },
-  },
-  roughness: {
-    riskLevel: 'High',
-    statistics: { min: 0.0012, max: 0.089, mean: 0.034 },
-  },
-  composite: {
-    overallRisk: { score: 78, level: 'High' },
-    components: [
-      { name: 'SLOPE', riskScore: 82.5 },
-      { name: 'ELEVATION', riskScore: 65.3 },
-      { name: 'CURVATURE', riskScore: 71.2 },
-      { name: 'ROUGHNESS', riskScore: 88.1 },
-    ],
-  },
-};
-
 const LandslideDetection = () => {
   const [image, setImage] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [showResults, setShowResults] = useState(true);
-  const [analysisData, setAnalysisData] = useState(MOCK_DATA);
+  const [showResults, setShowResults] = useState(false);
+  const [analysisData, setAnalysisData] = useState(null);
   const [error, setError] = useState(null);
   const [dragOver, setDragOver] = useState(false);
   const [animated, setAnimated] = useState(false);
