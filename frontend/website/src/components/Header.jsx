@@ -19,7 +19,7 @@ const Header = ({ onLogout }) => {
         className="max-w-[1200px] mx-auto flex items-center justify-between px-5 py-3"
         style={{
           backgroundColor: '#1A1D26',
-          borderRadius: '16px',
+          borderRadius: '50px',
           boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
         }}
       >
