@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 
 const TrendsChart = ({ trends }) => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [isVisible, setIsVisible] = useState(false);
   const svgRef = useRef(null);
   const containerRef = useRef(null);
@@ -71,8 +70,6 @@ const TrendsChart = ({ trends }) => {
     if (!containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    setMousePos({ x, y });
 
     // Calculate which data point is closest
     const chartX = x - padding.left;

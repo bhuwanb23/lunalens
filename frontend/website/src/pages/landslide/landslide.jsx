@@ -54,7 +54,6 @@ function mapBackendResultsToAnalysisData(results) {
 
 const LandslideDetection = () => {
   const [image, setImage] = useState(null);
-  const [isUploading, setIsUploading] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [showResults, setShowResults] = useState(false);
   const [analysisData, setAnalysisData] = useState(null);
@@ -69,11 +68,9 @@ const LandslideDetection = () => {
 
   const handleFile = (file) => {
     if (file) {
-      setIsUploading(true);
       const reader = new FileReader();
       reader.onload = (e) => {
         setImage({ name: file.name, path: e.target.result, size: file.size });
-        setIsUploading(false);
       };
       reader.readAsDataURL(file);
     }

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { BOULDER_ANALYSIS_TYPES } from './constants';
 import { apiUrl } from '../../config/api';
 import './boulder.css';
@@ -13,7 +12,6 @@ const Boulder = () => {
   const [error, setError] = useState(null);
   const [dragOver, setDragOver] = useState(false);
   const [animated, setAnimated] = useState(false);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => setAnimated(true), 100);
@@ -99,11 +97,6 @@ const Boulder = () => {
     } finally {
       setIsAnalyzing(false);
     }
-  };
-
-  const getAnalysisName = (type) => {
-    const names = { basic: 'Basic Detection', advanced: 'Advanced Analysis', depth: 'Depth Estimation', gradcam: 'Grad-CAM Visualization' };
-    return names[type] || 'Analysis';
   };
 
   return (

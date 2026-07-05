@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 from flask_migrate import Migrate
 from sqlalchemy import inspect, text
+
 from models import Analysis, DensityAnalysis, DetectedObject, SystemLog, User, db
 
 migrate = Migrate()

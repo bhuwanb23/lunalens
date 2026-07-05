@@ -6,23 +6,20 @@ import time
 import traceback
 
 import jwt
+from dotenv import load_dotenv
+from flask import Flask, jsonify, request, send_from_directory
+from flask_cors import CORS
+from werkzeug.utils import secure_filename
+
 from config import config
 from database import (
     create_analysis_record,
     get_analysis_with_details,
+    get_analytics_summary as db_get_analytics_summary,
     init_db,
     log_system_event,
 )
-from database import (
-    get_analytics_summary as db_get_analytics_summary,
-)
-from dotenv import load_dotenv
-from flask import Flask, jsonify, request, send_from_directory
-from flask_cors import CORS
-
-# Import database components
 from models import Analysis, User, db
-from werkzeug.utils import secure_filename
 
 # Import security configuration
 try:
