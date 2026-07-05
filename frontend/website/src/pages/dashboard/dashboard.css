@@ -53,23 +53,27 @@ html, body {
 
 /* Gradient stat cards */
 .stat-card-pink {
-  background: linear-gradient(135deg, #FDF2F8 0%, #FCE7F3 50%, #FBCFE8 100%);
+  background: linear-gradient(135deg, #FDF2F8 0%, #FBCFE8 50%, #F9A8D4 100%);
   border: none;
+  box-shadow: 0 4px 16px rgba(236, 72, 153, 0.15);
 }
 
 .stat-card-blue {
-  background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 50%, #BFDBFE 100%);
+  background: linear-gradient(135deg, #EFF6FF 0%, #BFDBFE 50%, #93C5FD 100%);
   border: none;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.15);
 }
 
 .stat-card-purple {
-  background: linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 50%, #DDD6FE 100%);
+  background: linear-gradient(135deg, #F5F3FF 0%, #DDD6FE 50%, #C4B5FD 100%);
   border: none;
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.15);
 }
 
 .stat-card-green {
-  background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 50%, #A7F3D0 100%);
+  background: linear-gradient(135deg, #ECFDF5 0%, #A7F3D0 50%, #6EE7B7 100%);
   border: none;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
 }
 
 /* ========================================
@@ -301,41 +305,24 @@ html, body {
 }
 
 /* Gradient card hover */
-.stat-card-pink:hover,
-.stat-card-blue:hover,
-.stat-card-purple:hover,
+.stat-card-pink:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(236, 72, 153, 0.25);
+}
+
+.stat-card-blue:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(59, 130, 246, 0.25);
+}
+
+.stat-card-purple:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(139, 92, 246, 0.25);
+}
+
 .stat-card-green:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.15);
-}
-
-/* Shimmer overlay for gradient cards */
-.stat-card-pink::after,
-.stat-card-blue::after,
-.stat-card-purple::after,
-.stat-card-green::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.4) 50%,
-    transparent 100%
-  );
-  background-size: 200% 100%;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-
-.stat-card-pink:hover::after,
-.stat-card-blue:hover::after,
-.stat-card-purple:hover::after,
-.stat-card-green:hover::after {
-  opacity: 1;
-  animation: shimmer 1.5s ease-in-out infinite;
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.25);
 }
 
 /* Profile avatar hover */

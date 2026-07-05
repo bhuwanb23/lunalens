@@ -1,16 +1,24 @@
-const GradientStatCard = ({ stat, index = 0 }) => {
+const GradientStatCard = ({ stat }) => {
   const gradientClass = `stat-card-${stat.gradient}`;
 
   return (
-    <div className={`${gradientClass} rounded-[20px] p-6 flex flex-col justify-between min-h-[180px] relative overflow-hidden cursor-default`}>
-      {/* Shimmer overlay (added via CSS ::after) */}
+    <div className={`${gradientClass} rounded-[20px] p-6 flex flex-col justify-between min-h-[180px] relative overflow-hidden cursor-default group`}>
+      {/* Decorative circle */}
+      <div
+        className="absolute -right-6 -top-6 w-24 h-24 rounded-full opacity-30 transition-transform duration-500 group-hover:scale-125"
+        style={{
+          background: stat.gradient === 'pink'
+            ? 'radial-gradient(circle, #EC4899, transparent)'
+            : 'radial-gradient(circle, #3B82F6, transparent)',
+        }}
+      />
 
       {/* Header */}
       <div className="flex items-start justify-between relative z-10">
         <h3 className="text-[14px] font-semibold text-gray-700 max-w-[120px] leading-tight">
           {stat.title}
         </h3>
-        <div className="w-9 h-9 rounded-full bg-white/60 flex items-center justify-center transition-transform duration-300 hover:rotate-12">
+        <div className="w-9 h-9 rounded-full bg-white/60 flex items-center justify-center transition-all duration-300 group-hover:bg-white/80 group-hover:scale-110">
           {stat.id === 'craters' ? (
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-gray-600">
               <circle cx="12" cy="12" r="10" />
