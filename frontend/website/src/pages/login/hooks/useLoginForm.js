@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { LOGIN_CONSTANTS } from '../constants';
-import { apiUrl } from '../../../config/api';
 
 export const useLoginForm = (onLoginSuccess) => {
   const [formData, setFormData] = useState({
@@ -68,29 +67,19 @@ export const useLoginForm = (onLoginSuccess) => {
     setIsSuccess(false);
 
     try {
-      const response = await fetch(apiUrl('/login'), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
+      // Mock login - simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
-      const data = await response.json();
-      if (response.ok && data.success) {
-        setIsSuccess(true);
-        setErrors({});
-        if (onLoginSuccess && data.token) {
-          onLoginSuccess(data.token);
-        }
-      } else {
-        setIsSuccess(false);
-        setServerError(data.message || 'Invalid email or password.');
+      // Generate fake token and succeed
+      const fakeToken = 'mock_token_' + Date.now();
+      setIsSuccess(true);
+      setErrors({});
+      if (onLoginSuccess) {
+        onLoginSuccess(fakeToken);
       }
     } catch {
       setIsSuccess(false);
-      setServerError('Could not connect to server.');
+      setServerError('Something went wrong.');
     } finally {
       setIsLoading(false);
     }
