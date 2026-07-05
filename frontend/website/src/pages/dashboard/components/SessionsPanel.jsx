@@ -1,6 +1,6 @@
 const SessionsPanel = ({ sessions }) => {
   return (
-    <div className="dashboard-card p-6 animate-fade-in-up delay-5">
+    <div className="dashboard-card p-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <h3 className="text-[17px] font-bold" style={{ color: 'var(--text-primary)' }}>

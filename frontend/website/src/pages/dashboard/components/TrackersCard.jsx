@@ -1,6 +1,6 @@
 const TrackersCard = ({ trackers }) => {
   return (
-    <div className="dashboard-card p-5 animate-fade-in-up delay-4">
+    <div className="dashboard-card p-5">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-[15px] font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>

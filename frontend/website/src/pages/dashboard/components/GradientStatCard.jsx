@@ -1,9 +1,8 @@
 const GradientStatCard = ({ stat, index = 0 }) => {
   const gradientClass = `stat-card-${stat.gradient}`;
-  const delayClass = `delay-${index + 2}`;
 
   return (
-    <div className={`${gradientClass} rounded-[20px] p-6 flex flex-col justify-between min-h-[180px] relative overflow-hidden animate-fade-in-up ${delayClass} cursor-default`}>
+    <div className={`${gradientClass} rounded-[20px] p-6 flex flex-col justify-between min-h-[180px] relative overflow-hidden cursor-default`}>
       {/* Shimmer overlay (added via CSS ::after) */}
 
       {/* Header */}

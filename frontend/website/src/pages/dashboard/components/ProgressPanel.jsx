@@ -35,7 +35,7 @@ const ProgressPanel = ({ progress }) => {
   };
 
   return (
-    <div className="dashboard-card p-6 animate-fade-in-up delay-6">
+    <div className="dashboard-card p-6">
       {/* Header */}
       <h3 className="text-[17px] font-bold mb-2" style={{ color: 'var(--text-primary)' }}>
         Analysis Progress

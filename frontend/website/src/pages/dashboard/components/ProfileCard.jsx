@@ -1,6 +1,6 @@
 const ProfileCard = ({ user }) => {
   return (
-    <div className="dashboard-card p-6 flex flex-col items-center text-center animate-fade-in-up delay-1">
+    <div className="dashboard-card p-6 flex flex-col items-center text-center">
       {/* Header */}
       <div className="w-full flex items-center justify-between mb-6">
         <h3 className="text-[15px] font-semibold" style={{ color: 'var(--text-primary)' }}>
